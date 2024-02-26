@@ -1,0 +1,62 @@
+{
+  "buttons": {
+    "default": {
+      "background": {
+        "idle": "#5d3fd3ff",
+        "hover": "#7f00ffff",
+        "press": "#800080ff"
+      },
+      "outline": {
+        "idle": "#ffffffff",
+        "hover": "#ffffffff",
+        "press": "#ffffffff"
+      },
+      "text": {
+        "idle": "#ffffffff",
+        "hover": "#ffffffff",
+        "press": "#ffffffff"
+      },
+      "outline_width": 10,
+      "corner_ratio": 0.5
+    }
+  },
+  "progress_bars": {
+    "default": {
+      "background": "#ffffffff",
+      "fill": "#9f2b68ff",
+      "outline": "#702963ff",
+      "outline_width": 5
+    }
+  },
+  "loading_screen": {
+    "background_tint": "#1a1a1aff",
+    "spinner": {
+      "size": [
+        100.000000,
+        100.000000
+      ],
+      "spin_rate": 720.000000
+    },
+    "progress_bar": {
+      "n_width": 0.800000,
+      "height": 50.000000,
+      "bottom_offset": 300.000000,
+      "outline_width": 10
+    }
+  },
+  "collect_list_item": {
+    "panel_diameter": 60.000000,
+    "panel_rgba": "#ffffffff",
+    "outline_width": 10.000000,
+    "outline_rgba": "#ff0000ff",
+    "sprite_size": [
+      40.000000,
+      40.000000
+    ],
+    "panel_y_offset": 12.000000,
+    "text_height": 20,
+    "text_rgba": "#000000ff",
+    "text_y_offset": -43.000000,
+    "item_x_pad": 10.000000
+  }
+}
