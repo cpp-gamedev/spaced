@@ -10,5 +10,8 @@ class ILayout : public IService {
 	[[nodiscard]] virtual auto get_world_space() const -> glm::vec2 = 0;
 	[[nodiscard]] virtual auto project_to_world(glm::vec2 fb_point) const -> glm::vec2 = 0;
 	[[nodiscard]] virtual auto unproject(glm::vec2 pointer) const -> glm::vec2 = 0;
+	[[nodiscard]] virtual auto get_player_x() const -> float = 0;
+
+	virtual void set_framebuffer_size(glm::vec2 size) = 0;
 };
 } // namespace spaced

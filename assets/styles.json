@@ -43,20 +43,5 @@
       "bottom_offset": 300.000000,
       "outline_width": 10
     }
-  },
-  "collect_list_item": {
-    "panel_diameter": 60.000000,
-    "panel_rgba": "#ffffffff",
-    "outline_width": 10.000000,
-    "outline_rgba": "#ff0000ff",
-    "sprite_size": [
-      40.000000,
-      40.000000
-    ],
-    "panel_y_offset": 12.000000,
-    "text_height": 20,
-    "text_rgba": "#000000ff",
-    "text_y_offset": -43.000000,
-    "item_x_pad": 10.000000
   }
 }

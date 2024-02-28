@@ -11,8 +11,6 @@ class Spaced : public bave::Driver {
 	explicit Spaced(bave::App& app);
 
   private:
-	struct Layout;
-
 	static void set_bindings(Serializer& serializer);
 
 	void on_key(bave::KeyInput const& key_input) final;
@@ -30,7 +28,7 @@ class Spaced : public bave::Driver {
 
 	bave::Logger m_log{"Hog"};
 	Services m_services{};
-	bave::Ptr<Layout> m_layout{};
+	bave::Ptr<ILayout> m_layout{};
 	std::unique_ptr<Scene> m_scene{};
 };
 } // namespace spaced

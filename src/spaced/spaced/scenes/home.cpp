@@ -1,3 +1,4 @@
+#include <spaced/scenes/game.hpp>
 #include <spaced/scenes/home.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/resources.hpp>
@@ -28,10 +29,7 @@ void Home::create_ui() {
 	auto start = std::make_unique<ui::Button>(get_services());
 	start->set_text("start");
 	start->set_position({0.0f, -200.0f});
-	start->callback = [this]() {
-		// get_services().get<ISceneSwitcher>().switch_to(/* todo */);
-		m_log.warn("start game not implemented");
-	};
+	start->callback = [this]() { get_services().get<ISceneSwitcher>().switch_to<Game>(); };
 
 	auto quit = std::make_unique<ui::Button>(get_services());
 	quit->set_text("quit");
