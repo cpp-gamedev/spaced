@@ -2,6 +2,7 @@
 #include <bave/graphics/sprite_anim.hpp>
 #include <bave/logger.hpp>
 #include <spaced/game/player_controller.hpp>
+#include <spaced/game/damage.hpp>
 
 namespace spaced {
 class Player : public bave::IDrawable {
@@ -22,6 +23,7 @@ class Player : public bave::IDrawable {
 	[[nodiscard]] auto get_y() const -> float { return ship.transform.position.y; }
 
 	bave::SpriteAnim ship{};
+	Damage damage{};
 
   private:
 	bave::Logger m_log{"Player"};

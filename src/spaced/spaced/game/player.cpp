@@ -42,6 +42,10 @@ void Player::debug_stuff() {
 			m_controller.debug_stuff();
 			ImGui::TreePop();
 		}
+		if (ImGui::TreeNodeEx("Status", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
+			damage.debug_stuff();
+			ImGui::TreePop();
+		}
 	}
 }
 } // namespace spaced
