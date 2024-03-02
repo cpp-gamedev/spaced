@@ -11,6 +11,7 @@ class Scene : public bave::PolyPinned {
   public:
 	explicit Scene(bave::App& app, Services const& services, std::string name = "Scene");
 
+	void on_focus_event(bave::FocusChange const& focus_change);
 	void on_key_event(bave::KeyInput const& key_input);
 	void on_move_event(bave::PointerMove const& pointer_move);
 	void on_tap_event(bave::PointerTap const& pointer_tap);

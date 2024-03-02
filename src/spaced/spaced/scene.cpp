@@ -17,6 +17,11 @@ void Scene::on_key_event(KeyInput const& key_input) {
 	on_key(key_input);
 }
 
+void Scene::on_focus_event(bave::FocusChange const& focus_change) {
+	if (is_loading()) { return; }
+	on_focus(focus_change);
+}
+
 void Scene::on_move_event(PointerMove const& pointer_move) {
 	if (is_loading()) { return; }
 	if (on_ui_event([pointer_move](ui::View& view) { view.on_move(pointer_move); })) { return; }

@@ -15,11 +15,6 @@ class PlayerController {
 	// touch: left pointer for motion, right pointer for firing.
 	enum class Type { eMouse, eTouch, eCOUNT_ };
 
-	struct State {
-		float y_position{};
-		bool fire{};
-	};
-
 	explicit PlayerController(Services const& services);
 
 	void on_move(bave::PointerMove const& pointer_move);
@@ -27,7 +22,7 @@ class PlayerController {
 
 	void untap();
 
-	auto tick(bave::Seconds dt) -> State;
+	auto tick(bave::Seconds dt) -> float;
 
 	[[nodiscard]] auto get_type() const -> Type { return m_type; }
 	void set_type(Type type);
@@ -39,7 +34,6 @@ class PlayerController {
 	float max_y{};
 	float min_y{};
 	float n_move_area{0.25f}; // from left
-	bave::Seconds reload_delay{1s};
 
 	float gamepad_sensitivity{2000.0f};
 
