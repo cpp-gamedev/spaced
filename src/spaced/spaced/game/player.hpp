@@ -1,8 +1,8 @@
 #pragma once
 #include <bave/graphics/sprite_anim.hpp>
 #include <bave/logger.hpp>
-#include <spaced/game/player_controller.hpp>
 #include <spaced/game/damage.hpp>
+#include <spaced/game/player_controller.hpp>
 
 namespace spaced {
 class Player : public bave::IDrawable {

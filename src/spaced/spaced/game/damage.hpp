@@ -1,6 +1,6 @@
 #pragma once
-#include <bave/imgui/im_text.hpp>
 #include <bave/app.hpp>
+#include <bave/imgui/im_text.hpp>
 
 namespace spaced {
 class Damage {
