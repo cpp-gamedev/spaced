@@ -1,7 +1,7 @@
 #pragma once
 #include <bave/graphics/sprite_anim.hpp>
 #include <bave/logger.hpp>
-#include <spaced/game/damage.hpp>
+#include <spaced/game/health.hpp>
 #include <spaced/game/player_controller.hpp>
 
 namespace spaced {
@@ -23,7 +23,7 @@ class Player : public bave::IDrawable {
 	[[nodiscard]] auto get_y() const -> float { return ship.transform.position.y; }
 
 	bave::SpriteAnim ship{};
-	Damage damage{};
+	Health health{};
 
   private:
 	bave::Logger m_log{"Player"};
