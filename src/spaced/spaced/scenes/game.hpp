@@ -2,6 +2,9 @@
 #include <spaced/game/player.hpp>
 #include <spaced/scene.hpp>
 
+// temporary
+#include <spaced/game/enemy.hpp>
+
 namespace spaced {
 class Game : public Scene {
   public:
@@ -19,6 +22,7 @@ class Game : public Scene {
 	void inspect(bave::Seconds dt, bave::Seconds frame_time);
 
 	Player m_player;
+	std::vector<std::unique_ptr<Enemy>> m_enemies{};
 	std::vector<bave::NotNull<IDamageable*>> m_targets{};
 
 	struct {
@@ -40,6 +44,12 @@ class Game : public Scene {
 				}
 			}
 		} fps{};
+
+		bave::Seconds spawn_rate{2s};
+		bave::Seconds next_spawn{spawn_rate};
 	} m_debug{};
+
+	void debug_inspect_enemies();
+	void debug_spawn_creep();
 };
 } // namespace spaced
