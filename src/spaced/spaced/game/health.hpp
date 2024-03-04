@@ -4,8 +4,8 @@ namespace spaced {
 class Health {
   public:
 	void inflict_damage(float amount);
-	bool is_dead() const;
-	int get_health() const;
+	[[nodiscard]] bool is_dead() const;
+	[[nodiscard]] float get_health() const;
 
 	void debug_stuff();
 

@@ -60,7 +60,12 @@ void PlayerController::set_type(Type const type) {
 	m_type = type;
 }
 
-auto PlayerController::tick(Seconds const dt) -> State {
+void PlayerController::stop_firing() {
+	m_fire_button = false;
+	m_fire_pointer.reset();
+}
+
+auto PlayerController::tick(Seconds const dt) -> float {
 	if (m_reload_remain > 0s) { m_reload_remain -= dt; }
 
 	tick_gamepad(dt);
@@ -69,17 +74,10 @@ auto PlayerController::tick(Seconds const dt) -> State {
 	m_spring_arm.target = glm::vec2{0.0f, m_y};
 	m_spring_arm.tick(dt);
 
-	auto ret = State{};
-	ret.y_position = m_spring_arm.position.y;
-	if (is_firing() && m_reload_remain <= 0s) {
-		ret.fire = true;
-		m_reload_remain = reload_delay;
-	}
-
-	return ret;
+	return m_spring_arm.position.y;
 }
 
-void PlayerController::debug_stuff() {
+void PlayerController::do_inspect() {
 	if constexpr (bave::imgui_v) {
 		bool firing = m_fire_pointer.has_value();
 		ImGui::BeginDisabled();

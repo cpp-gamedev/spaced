@@ -5,11 +5,11 @@
 #include <algorithm>
 
 namespace spaced {
-void Health::inflict_damage(float amount) { m_health = std::clamp(m_health - amount, 0.0f, m_health); }
+void Health::inflict_damage(float const amount) { m_health = std::clamp(m_health - amount, 0.0f, m_health); }
 
 bool Health::is_dead() const { return m_health <= 0.f; }
 
-int Health::get_health() const { return m_health; }
+float Health::get_health() const { return m_health; }
 
 void Health::debug_stuff() {
 	if constexpr (bave::imgui_v) {

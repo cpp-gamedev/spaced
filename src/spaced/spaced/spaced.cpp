@@ -78,6 +78,8 @@ Spaced::Spaced(App& app) : Driver(app), m_scene(std::make_unique<Scene>(app, m_s
 	set_scene();
 }
 
+void Spaced::on_focus(bave::FocusChange const& focus_change) { m_scene->on_focus_event(focus_change); }
+
 void Spaced::on_key(KeyInput const& key_input) { m_scene->on_key_event(key_input); }
 
 void Spaced::on_move(PointerMove const& pointer_move) { m_scene->on_move_event(pointer_move); }

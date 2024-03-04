@@ -13,6 +13,7 @@ class Spaced : public bave::Driver {
   private:
 	static void set_bindings(Serializer& serializer);
 
+	void on_focus(bave::FocusChange const& focus_change) final;
 	void on_key(bave::KeyInput const& key_input) final;
 	void on_move(bave::PointerMove const& pointer_move) final;
 	void on_tap(bave::PointerTap const& pointer_tap) final;
