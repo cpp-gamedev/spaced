@@ -4,7 +4,7 @@
 #include <spaced/services/layout.hpp>
 
 namespace spaced {
-class Projectile : public WeaponRound {
+class Projectile : public IWeaponRound {
   public:
 	struct Config {
 		std::shared_ptr<bave::Texture> texture{};

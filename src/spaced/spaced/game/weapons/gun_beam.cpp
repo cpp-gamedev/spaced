@@ -13,7 +13,7 @@ using bave::Shader;
 using bave::Sprite;
 
 namespace {
-class LaserCharge : public WeaponRound {
+class LaserCharge : public IWeaponRound {
   public:
 	using Config = GunBeam::Config;
 

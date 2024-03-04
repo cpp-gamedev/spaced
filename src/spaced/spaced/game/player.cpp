@@ -23,7 +23,6 @@ Player::Player(Services const& services) : m_services(&services), m_controller(s
 	if constexpr (bave::platform_v == bave::Platform::eAndroid) { m_controller.set_type(Controller::Type::eTouch); }
 
 	debug_switch_weapon();
-	m_debug.shots_remaining = 10;
 }
 
 void Player::on_focus(bave::FocusChange const& /*focus_changed*/) { m_controller.untap(); }
@@ -46,7 +45,7 @@ void Player::tick(std::span<NotNull<IDamageable*> const> targets, Seconds const 
 		}
 	}
 
-	auto const round_state = WeaponRound::State{.targets = targets, .muzzle_position = muzzle_position};
+	auto const round_state = IWeaponRound::State{.targets = targets, .muzzle_position = muzzle_position};
 	for (auto const& round : m_weapon_rounds) { round->tick(round_state, dt); }
 	std::erase_if(m_weapon_rounds, [](auto const& charge) { return charge->is_destroyed(); });
 

@@ -5,7 +5,7 @@
 #include <span>
 
 namespace spaced {
-class WeaponRound : public bave::IDrawable {
+class IWeaponRound : public bave::IDrawable {
   public:
 	struct State {
 		std::span<bave::NotNull<IDamageable*> const> targets{};

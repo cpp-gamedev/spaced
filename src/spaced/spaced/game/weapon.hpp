@@ -8,7 +8,7 @@
 namespace spaced {
 class Weapon : public bave::Polymorphic {
   public:
-	using Round = WeaponRound;
+	using Round = IWeaponRound;
 
 	explicit Weapon(Services const& services, std::string name) : m_log{std::move(name)}, m_layout(&services.get<ILayout>()) {}
 
