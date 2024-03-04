@@ -28,6 +28,6 @@ class Weapon : public bave::Polymorphic {
 	bave::Logger m_log{};
 
   private:
-	ILayout const* m_layout{};
+	bave::NotNull<ILayout const*> m_layout;
 };
 } // namespace spaced
