@@ -36,13 +36,19 @@ void Game::tick(Seconds const dt) {
 
 	m_player.tick(m_targets, dt);
 
+	if constexpr (bave::debug_v) { inspect(dt, ft.update()); }
+}
+
+void Game::render(Shader& shader) const { m_player.draw(shader); }
+
+void Game::inspect(Seconds const dt, Seconds const frame_time) {
 	if constexpr (bave::imgui_v) {
 		m_debug.fps.tick(dt);
 
 		if (ImGui::Begin("Debug")) {
 			if (ImGui::BeginTabBar("Game")) {
 				if (ImGui::BeginTabItem("Player")) {
-					m_player.debug_stuff();
+					m_player.inspect();
 					ImGui::EndTabItem();
 				}
 				ImGui::EndTabBar();
@@ -59,11 +65,9 @@ void Game::tick(Seconds const dt) {
 		if (m_debug.fps.lock) {
 			m_debug.fps.limit = std::clamp(m_debug.fps.limit, 5, 1000);
 			auto const min_dt = Seconds{1.0f / static_cast<float>(m_debug.fps.limit)};
-			auto const dt_remain = min_dt - ft.update();
+			auto const dt_remain = min_dt - frame_time;
 			if (dt_remain > 0s) { std::this_thread::sleep_for(dt_remain); }
 		}
 	}
 }
-
-void Game::render(Shader& shader) const { m_player.draw(shader); }
 } // namespace spaced

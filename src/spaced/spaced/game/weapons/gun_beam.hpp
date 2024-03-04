@@ -5,10 +5,10 @@ namespace spaced {
 class GunBeam final : public Weapon {
   public:
 	struct Config {
-		float charge_height{5.0f};
+		float beam_height{5.0f};
 		bave::Seconds fire_duration{2s};
 		bave::Seconds reload_delay{1s};
-		bave::Rgba charge_tint{bave::red_v};
+		bave::Rgba beam_tint{bave::red_v};
 		float dps{1.0f};
 	};
 
@@ -21,6 +21,8 @@ class GunBeam final : public Weapon {
 	Config config{};
 
   private:
+	void do_inspect() final;
+
 	bave::Seconds m_fire_remain{};
 	bave::Seconds m_reload_remain{};
 };

@@ -1,4 +1,5 @@
 #include <imgui.h>
+#include <bave/imgui/im_text.hpp>
 #include <bave/platform.hpp>
 #include <spaced/game/player.hpp>
 
@@ -7,6 +8,7 @@
 #include <spaced/game/weapons/gun_kinetic.hpp>
 
 namespace spaced {
+using bave::im_text;
 using bave::NotNull;
 using bave::PointerMove;
 using bave::PointerTap;
@@ -61,10 +63,15 @@ void Player::draw(Shader& shader) const {
 
 void Player::set_y(float const y) { ship.transform.position.y = y; }
 
-void Player::debug_stuff() {
+void Player::do_inspect() {
 	if constexpr (bave::imgui_v) {
 		if (ImGui::TreeNodeEx("Controller", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
-			m_controller.debug_stuff();
+			m_controller.inspect();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNodeEx("Weapon", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
+			m_weapon->inspect();
+			im_text("shots remaining: {}", m_debug.shots_remaining);
 			ImGui::TreePop();
 		}
 	}

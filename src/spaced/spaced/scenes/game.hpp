@@ -16,6 +16,8 @@ class Game : public Scene {
 	void tick(bave::Seconds dt) final;
 	void render(bave::Shader& shader) const final;
 
+	void inspect(bave::Seconds dt, bave::Seconds frame_time);
+
 	Player m_player;
 	std::vector<bave::NotNull<IDamageable*>> m_targets{};
 

@@ -1,10 +1,13 @@
 #include <bave/graphics/sprite.hpp>
+#include <bave/imgui/im_text.hpp>
 #include <spaced/game/weapons/gun_beam.hpp>
 
 namespace spaced {
+using bave::im_text;
 using bave::NotNull;
 using bave::Ptr;
 using bave::Rect;
+using bave::Rgba;
 using bave::Seconds;
 using bave::Shader;
 using bave::Sprite;
@@ -36,13 +39,13 @@ class LaserCharge : public WeaponRound {
 			}
 		}
 
-		auto const left_y = 0.5f * m_config.charge_height;
+		auto const left_y = 0.5f * m_config.beam_height;
 		auto const right_y = -left_y;
 		auto const rect = Rect<>{.lt = {left_x, left_y}, .rb = {right_x, right_y}};
 		m_ray.transform.position.x = rect.centre().x;
 		m_ray.transform.position.y = state.muzzle_position.y;
 		m_ray.set_size(rect.size());
-		m_ray.tint = m_config.charge_tint;
+		m_ray.tint = m_config.beam_tint;
 
 		update_scale();
 	}
@@ -110,5 +113,19 @@ void GunBeam::tick(Seconds const dt) {
 		}
 	}
 	if (m_reload_remain > 0s) { m_reload_remain -= dt; }
+}
+
+void GunBeam::do_inspect() {
+	if constexpr (bave::imgui_v) {
+		im_text("type: GunBeam");
+		ImGui::DragFloat("beam height", &config.beam_height, 0.25f, 1.0f, 100.0f);
+		auto fire_duration = config.fire_duration.count();
+		if (ImGui::DragFloat("fire duration (s)", &fire_duration, 0.25f, 0.25f, 10.0f)) { config.fire_duration = Seconds{fire_duration}; }
+		auto reload_delay = config.reload_delay.count();
+		if (ImGui::DragFloat("reload delay (s)", &reload_delay, 0.25f, 0.25f, 10.0f)) { config.reload_delay = Seconds{reload_delay}; }
+		auto beam_tint = config.beam_tint.to_vec4();
+		if (ImGui::ColorEdit4("beam tint", &beam_tint.x)) { config.beam_tint = Rgba::from(beam_tint); }
+		ImGui::DragFloat("dps", &config.dps, 0.25f, 0.25f, 10.0f);
+	}
 }
 } // namespace spaced

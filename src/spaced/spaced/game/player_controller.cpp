@@ -60,6 +60,11 @@ void PlayerController::set_type(Type const type) {
 	m_type = type;
 }
 
+void PlayerController::stop_firing() {
+	m_fire_button = false;
+	m_fire_pointer.reset();
+}
+
 auto PlayerController::tick(Seconds const dt) -> float {
 	if (m_reload_remain > 0s) { m_reload_remain -= dt; }
 
@@ -72,7 +77,7 @@ auto PlayerController::tick(Seconds const dt) -> float {
 	return m_spring_arm.position.y;
 }
 
-void PlayerController::debug_stuff() {
+void PlayerController::do_inspect() {
 	if constexpr (bave::imgui_v) {
 		bool firing = m_fire_pointer.has_value();
 		ImGui::BeginDisabled();

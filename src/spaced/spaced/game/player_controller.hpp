@@ -3,6 +3,7 @@
 #include <bave/core/time.hpp>
 #include <bave/input/event.hpp>
 #include <bave/input/gamepad.hpp>
+#include <bave/platform.hpp>
 #include <spaced/game/spring_arm.hpp>
 #include <spaced/services/gamepad_provider.hpp>
 #include <spaced/services/layout.hpp>
@@ -28,8 +29,11 @@ class PlayerController {
 	void set_type(Type type);
 
 	[[nodiscard]] auto is_firing() const -> bool { return m_fire_pointer.has_value() || m_fire_button; }
+	void stop_firing();
 
-	void debug_stuff();
+	void inspect() {
+		if constexpr (bave::debug_v) { do_inspect(); }
+	}
 
 	float max_y{};
 	float min_y{};
@@ -41,6 +45,8 @@ class PlayerController {
 	[[nodiscard]] auto is_in_move_area(glm::vec2 position) const -> bool;
 
 	void tick_gamepad(bave::Seconds dt);
+
+	void do_inspect();
 
 	bave::Ptr<ILayout const> m_layout{};
 	bave::Ptr<IGamepadProvider const> m_gamepad_provider{};

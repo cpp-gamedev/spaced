@@ -16,6 +16,8 @@ class GunKinetic final : public Weapon {
 	bave::Seconds reload_delay{0.2s};
 
   private:
+	void do_inspect() final;
+
 	bave::Seconds m_reload_remain{};
 };
 } // namespace spaced

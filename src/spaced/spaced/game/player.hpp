@@ -18,7 +18,9 @@ class Player : public bave::IDrawable {
 	void tick(std::span<bave::NotNull<IDamageable*> const> targets, bave::Seconds dt);
 	void draw(bave::Shader& shader) const final;
 
-	void debug_stuff();
+	void inspect() {
+		if constexpr (bave::debug_v) { do_inspect(); }
+	}
 
 	void set_y(float y);
 	[[nodiscard]] auto get_y() const -> float { return ship.transform.position.y; }
@@ -26,6 +28,7 @@ class Player : public bave::IDrawable {
 	bave::SpriteAnim ship{};
 
   private:
+	void do_inspect();
 	void debug_switch_weapon();
 
 	bave::Logger m_log{"Player"};

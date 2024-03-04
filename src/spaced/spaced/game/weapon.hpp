@@ -1,5 +1,6 @@
 #pragma once
 #include <bave/logger.hpp>
+#include <bave/platform.hpp>
 #include <spaced/game/weapon_round.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/services.hpp>
@@ -16,8 +17,13 @@ class Weapon : public bave::Polymorphic {
 
 	virtual void tick(bave::Seconds dt) = 0;
 
+	void inspect() {
+		if constexpr (bave::debug_v) { do_inspect(); }
+	}
+
   protected:
 	[[nodiscard]] auto get_layout() const -> ILayout const& { return *m_layout; }
+	virtual void do_inspect() {}
 
 	bave::Logger m_log{};
 
