@@ -73,6 +73,10 @@ void Player::do_inspect() {
 			im_text("shots remaining: {}", m_debug.shots_remaining);
 			ImGui::TreePop();
 		}
+		if (ImGui::TreeNodeEx("Status", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
+			health.debug_stuff();
+			ImGui::TreePop();
+		}
 	}
 }
 
