@@ -97,6 +97,8 @@ void Game::inspect(Seconds const dt, Seconds const frame_time) {
 void Game::debug_inspect_enemies() {
 	im_text("creeps: {}", m_enemies.size());
 	if (ImGui::Button("spawn creep")) { debug_spawn_creep(); }
+	auto spawn_rate = m_debug.spawn_rate.count();
+	if (ImGui::DragFloat("spawn rate", &spawn_rate, 0.25f, 0.25f, 10.0f)) { m_debug.spawn_rate = Seconds{spawn_rate}; }
 
 	ImGui::Separator();
 	for (std::size_t i = 0; i < m_enemies.size(); ++i) {
