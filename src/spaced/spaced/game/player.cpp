@@ -74,7 +74,7 @@ void Player::do_inspect() {
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNodeEx("Status", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
-			health.debug_stuff();
+			health.inspect();
 			ImGui::TreePop();
 		}
 	}

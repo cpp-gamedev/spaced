@@ -74,7 +74,7 @@ class LaserCharge : public IWeaponRound {
 		m_entries.reserve(targets.size());
 		for (auto target : targets) {
 			auto const rect = target->get_bounds();
-			if (muzzle.y > rect.top_left().y || muzzle.y < rect.bottom_right().y || muzzle.x > rect.bottom_right().x) { continue; }
+			if (muzzle.y > rect.top_left().y || muzzle.y < rect.bottom_right().y || muzzle.x > rect.top_left().x) { continue; }
 			auto const distance = rect.top_left().x;
 			m_entries.push_back(Entry{.target = target, .distance = distance});
 		}
