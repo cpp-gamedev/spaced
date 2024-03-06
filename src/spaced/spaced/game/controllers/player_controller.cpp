@@ -83,8 +83,6 @@ void PlayerController::tick_gamepad(Seconds const dt) {
 }
 
 auto PlayerController::tick_y(Seconds const dt) -> float {
-	if (m_reload_remain > 0s) { m_reload_remain -= dt; }
-
 	tick_gamepad(dt);
 	m_y = std::clamp(m_y, min_y, max_y);
 

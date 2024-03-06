@@ -1,5 +1,6 @@
 #include <bave/core/random.hpp>
 #include <bave/imgui/im_text.hpp>
+#include <spaced/game/controllers/auto_controller.hpp>
 #include <spaced/game/controllers/player_controller.hpp>
 #include <spaced/game/enemies/creep.hpp>
 #include <spaced/scenes/game.hpp>
@@ -28,7 +29,8 @@ namespace {
 }
 } // namespace
 
-Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_player(services, make_player_controller(services)) {}
+Game::Game(App& app, Services const& services)
+	: Scene(app, services, "Game"), m_player(services, std::make_unique<AutoController>(this, services.get<ILayout>().get_player_x())) {}
 
 void Game::on_focus(bave::FocusChange const& focus_change) { m_player.on_focus(focus_change); }
 

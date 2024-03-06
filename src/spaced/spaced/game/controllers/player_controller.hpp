@@ -46,7 +46,6 @@ class PlayerController : public FollowController {
 
 	Type m_type{};
 	float m_y{};
-	bave::Seconds m_reload_remain{};
 	std::optional<bave::PointerId> m_fire_pointer{};
 	bool m_fire_button{};
 	bave::CString m_gamepad_name{};
