@@ -1,7 +1,7 @@
 #include <imgui.h>
 #include <bave/imgui/im_text.hpp>
 #include <bave/platform.hpp>
-#include <spaced/game/player_controller.hpp>
+#include <spaced/game/controllers/player_controller.hpp>
 #include <algorithm>
 
 namespace spaced {

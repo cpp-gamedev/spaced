@@ -1,5 +1,6 @@
 #include <bave/core/random.hpp>
 #include <bave/imgui/im_text.hpp>
+#include <spaced/game/controllers/player_controller.hpp>
 #include <spaced/game/enemies/creep.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/home.hpp>
@@ -19,7 +20,15 @@ using bave::Ptr;
 using bave::Seconds;
 using bave::Shader;
 
-Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_player(services) {}
+namespace {
+[[nodiscard]] auto make_player_controller(Services const& services) {
+	auto ret = std::make_unique<PlayerController>(services);
+	if constexpr (bave::platform_v == bave::Platform::eAndroid) { ret->set_type(PlayerController::Type::eTouch); }
+	return ret;
+}
+} // namespace
+
+Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_player(services, make_player_controller(services)) {}
 
 void Game::on_focus(bave::FocusChange const& focus_change) { m_player.on_focus(focus_change); }
 
