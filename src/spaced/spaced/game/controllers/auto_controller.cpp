@@ -29,7 +29,7 @@ AutoController::AutoController(bave::NotNull<ITargetProvider const*> target_prov
 	: m_target_provider(target_provider), m_muzzle_x(muzzle_x) {}
 
 auto AutoController::tick_y(Seconds const dt) -> float {
-	auto const target_y = nearest_target_y(m_target_provider->get_targets(), {m_muzzle_x, m_y});
+	auto const target_y = nearest_target_y(m_target_provider->get_targets(), {m_muzzle_x, m_spring_arm.position.y});
 	if (target_y) {
 		m_target_y = target_y->centre().y;
 		m_firing = m_spring_arm.position.y >= target_y->bottom_right().y && m_spring_arm.position.y <= target_y->top_left().y;
