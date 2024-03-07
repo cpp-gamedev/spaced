@@ -12,13 +12,17 @@ using bave::im_text;
 using bave::NotNull;
 using bave::PointerMove;
 using bave::PointerTap;
+using bave::RoundedQuad;
 using bave::Seconds;
 using bave::Shader;
 
 Player::Player(Services const& services, std::unique_ptr<IController> controller) : m_services(&services), m_controller(std::move(controller)) {
 	auto const x = services.get<ILayout>().get_player_x();
 	ship.transform.position.x = x;
-	ship.set_auto_size(glm::vec2{100.0f});
+	auto rounded_quad = RoundedQuad{};
+	rounded_quad.size = glm::vec2{100.0f};
+	rounded_quad.corner_radius = 20.0f;
+	ship.set_shape(rounded_quad);
 
 	debug_switch_weapon();
 }
@@ -33,9 +37,7 @@ void Player::tick(std::span<NotNull<IDamageable*> const> targets, Seconds const 
 	auto const y_position = m_controller->tick(dt);
 	set_y(y_position);
 
-	ship.tick(dt);
-
-	auto const muzzle_position = ship.transform.position + 0.5f * glm::vec2{ship.get_size().x, 0.0f};
+	auto const muzzle_position = ship.transform.position + 0.5f * glm::vec2{ship.get_shape().size.x, 0.0f};
 	if (m_controller->is_firing() && m_debug.shots_remaining > 0) {
 		if (auto round = m_weapon->fire(muzzle_position)) {
 			m_weapon_rounds.push_back(std::move(round));

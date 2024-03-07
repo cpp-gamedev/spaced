@@ -1,5 +1,5 @@
 #pragma once
-#include <bave/graphics/sprite_anim.hpp>
+#include <bave/graphics/shape.hpp>
 #include <bave/logger.hpp>
 #include <spaced/game/controller.hpp>
 #include <spaced/game/health.hpp>
@@ -27,7 +27,7 @@ class Player : public bave::IDrawable {
 	void set_controller(std::unique_ptr<IController> controller);
 	[[nodiscard]] auto get_controller() const -> IController const& { return *m_controller; }
 
-	bave::SpriteAnim ship{};
+	bave::RoundedQuadShape ship{};
 	Health health{};
 
   private:

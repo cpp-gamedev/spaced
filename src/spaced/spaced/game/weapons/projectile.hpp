@@ -1,5 +1,5 @@
 #pragma once
-#include <bave/graphics/sprite_anim.hpp>
+#include <bave/graphics/shape.hpp>
 #include <spaced/game/weapon_round.hpp>
 #include <spaced/services/layout.hpp>
 
@@ -8,9 +8,8 @@ class Projectile : public IWeaponRound {
   public:
 	struct Config {
 		std::shared_ptr<bave::Texture> texture{};
-		std::shared_ptr<bave::TextureAtlas> atlas{};
-		std::shared_ptr<bave::AnimTimeline> anim_timeline{};
-		glm::vec2 size{50.0f, 5.0f};
+		glm::vec2 size{60.0f, 5.0f};
+		float corner_radius{2.5f};
 		float x_speed{1500.0f};
 		bave::Rgba tint{bave::white_v};
 		float damage{1.0f};
@@ -26,7 +25,7 @@ class Projectile : public IWeaponRound {
 	bave::NotNull<ILayout const*> m_layout;
 	Config m_config{};
 
-	bave::SpriteAnim m_sprite{};
+	bave::RoundedQuadShape m_shape{};
 	bool m_destroyed{};
 };
 } // namespace spaced
