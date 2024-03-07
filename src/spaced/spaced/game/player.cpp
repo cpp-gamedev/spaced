@@ -15,30 +15,28 @@ using bave::PointerTap;
 using bave::Seconds;
 using bave::Shader;
 
-Player::Player(Services const& services) : m_services(&services), m_controller(services) {
+Player::Player(Services const& services, std::unique_ptr<IController> controller) : m_services(&services), m_controller(std::move(controller)) {
 	auto const x = services.get<ILayout>().get_player_x();
 	ship.transform.position.x = x;
 	ship.set_auto_size(glm::vec2{100.0f});
 
-	if constexpr (bave::platform_v == bave::Platform::eAndroid) { m_controller.set_type(Controller::Type::eTouch); }
-
 	debug_switch_weapon();
 }
 
-void Player::on_focus(bave::FocusChange const& /*focus_changed*/) { m_controller.untap(); }
+void Player::on_focus(bave::FocusChange const& /*focus_changed*/) { m_controller->untap(); }
 
-void Player::on_move(PointerMove const& pointer_move) { m_controller.on_move(pointer_move); }
+void Player::on_move(PointerMove const& pointer_move) { m_controller->on_move(pointer_move); }
 
-void Player::on_tap(PointerTap const& pointer_tap) { m_controller.on_tap(pointer_tap); }
+void Player::on_tap(PointerTap const& pointer_tap) { m_controller->on_tap(pointer_tap); }
 
 void Player::tick(std::span<NotNull<IDamageable*> const> targets, Seconds const dt) {
-	auto const y_position = m_controller.tick(dt);
+	auto const y_position = m_controller->tick(dt);
 	set_y(y_position);
 
 	ship.tick(dt);
 
 	auto const muzzle_position = ship.transform.position + 0.5f * glm::vec2{ship.get_size().x, 0.0f};
-	if (m_controller.is_firing() && m_debug.shots_remaining > 0) {
+	if (m_controller->is_firing() && m_debug.shots_remaining > 0) {
 		if (auto round = m_weapon->fire(muzzle_position)) {
 			m_weapon_rounds.push_back(std::move(round));
 			--m_debug.shots_remaining;
@@ -62,10 +60,15 @@ void Player::draw(Shader& shader) const {
 
 void Player::set_y(float const y) { ship.transform.position.y = y; }
 
+void Player::set_controller(std::unique_ptr<IController> controller) {
+	if (!controller) { return; }
+	m_controller = std::move(controller);
+}
+
 void Player::do_inspect() {
 	if constexpr (bave::imgui_v) {
 		if (ImGui::TreeNodeEx("Controller", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
-			m_controller.inspect();
+			m_controller->inspect();
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNodeEx("Weapon", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {

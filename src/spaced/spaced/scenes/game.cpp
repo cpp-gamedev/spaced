@@ -1,5 +1,7 @@
 #include <bave/core/random.hpp>
 #include <bave/imgui/im_text.hpp>
+#include <spaced/game/controllers/auto_controller.hpp>
+#include <spaced/game/controllers/player_controller.hpp>
 #include <spaced/game/enemies/creep.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/home.hpp>
@@ -19,7 +21,19 @@ using bave::Ptr;
 using bave::Seconds;
 using bave::Shader;
 
-Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_player(services) {}
+namespace {
+[[nodiscard]] auto make_player_controller(Services const& services) {
+	auto ret = std::make_unique<PlayerController>(services);
+	if constexpr (bave::platform_v == bave::Platform::eAndroid) { ret->set_type(PlayerController::Type::eTouch); }
+	return ret;
+}
+
+[[nodiscard]] auto make_auto_controller(ITargetProvider const& target_provider, Services const& services) {
+	return std::make_unique<AutoController>(&target_provider, services.get<ILayout>().get_player_x());
+}
+} // namespace
+
+Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_player(services, make_player_controller(services)) {}
 
 void Game::on_focus(bave::FocusChange const& focus_change) { m_player.on_focus(focus_change); }
 
@@ -67,6 +81,8 @@ void Game::inspect(Seconds const dt, Seconds const frame_time) {
 			if (ImGui::BeginTabBar("Game")) {
 				if (ImGui::BeginTabItem("Player")) {
 					m_player.inspect();
+					ImGui::Separator();
+					debug_controller_type();
 					ImGui::EndTabItem();
 				}
 
@@ -113,5 +129,25 @@ void Game::debug_spawn_creep() {
 	auto creep = std::make_unique<Creep>(get_services());
 	creep->sprite.tint = bave::yellow_v;
 	m_enemies.push_back(std::move(creep));
+}
+
+void Game::debug_controller_type() {
+	static constexpr auto type_names_v = std::array{
+		PlayerController::type_name_v,
+		AutoController::type_name_v,
+	};
+
+	auto const make_controller = [this](std::string_view const type_name) -> std::unique_ptr<IController> {
+		if (type_name == AutoController::type_name_v) { return make_auto_controller(*this, get_services()); }
+		return make_player_controller(get_services());
+	};
+
+	auto const& controller = m_player.get_controller();
+	if (ImGui::BeginCombo("controller", controller.get_type_name().data())) {
+		for (auto const type_name : type_names_v) {
+			if (ImGui::Selectable(type_name.data())) { m_player.set_controller(make_controller(type_name)); }
+		}
+		ImGui::EndCombo();
+	}
 }
 } // namespace spaced

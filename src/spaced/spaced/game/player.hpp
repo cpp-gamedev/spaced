@@ -1,16 +1,14 @@
 #pragma once
 #include <bave/graphics/sprite_anim.hpp>
 #include <bave/logger.hpp>
+#include <spaced/game/controller.hpp>
 #include <spaced/game/health.hpp>
-#include <spaced/game/player_controller.hpp>
 #include <spaced/game/weapon.hpp>
 
 namespace spaced {
 class Player : public bave::IDrawable {
   public:
-	using Controller = PlayerController;
-
-	explicit Player(Services const& services);
+	explicit Player(Services const& services, std::unique_ptr<IController> controller);
 
 	void on_focus(bave::FocusChange const& focus_change);
 	void on_move(bave::PointerMove const& pointer_move);
@@ -26,6 +24,9 @@ class Player : public bave::IDrawable {
 	void set_y(float y);
 	[[nodiscard]] auto get_y() const -> float { return ship.transform.position.y; }
 
+	void set_controller(std::unique_ptr<IController> controller);
+	[[nodiscard]] auto get_controller() const -> IController const& { return *m_controller; }
+
 	bave::SpriteAnim ship{};
 	Health health{};
 
@@ -35,7 +36,7 @@ class Player : public bave::IDrawable {
 
 	bave::Logger m_log{"Player"};
 	bave::NotNull<Services const*> m_services;
-	Controller m_controller;
+	std::unique_ptr<IController> m_controller;
 	std::unique_ptr<Weapon> m_weapon{};
 	std::vector<std::unique_ptr<Weapon::Round>> m_weapon_rounds{};
 

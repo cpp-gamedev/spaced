@@ -4,9 +4,10 @@
 
 // temporary
 #include <spaced/game/enemy.hpp>
+#include <spaced/game/target_provider.hpp>
 
 namespace spaced {
-class Game : public Scene {
+class Game : public Scene, public ITargetProvider {
   public:
 	Game(bave::App& app, Services const& services);
 
@@ -18,6 +19,8 @@ class Game : public Scene {
 
 	void tick(bave::Seconds dt) final;
 	void render(bave::Shader& shader) const final;
+
+	[[nodiscard]] auto get_targets() const -> std::span<bave::NotNull<IDamageable*> const> final { return m_targets; }
 
 	void inspect(bave::Seconds dt, bave::Seconds frame_time);
 
@@ -51,5 +54,6 @@ class Game : public Scene {
 
 	void debug_inspect_enemies();
 	void debug_spawn_creep();
+	void debug_controller_type();
 };
 } // namespace spaced
