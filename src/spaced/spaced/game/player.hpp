@@ -24,6 +24,9 @@ class Player : public bave::IDrawable {
 	void set_y(float y);
 	[[nodiscard]] auto get_y() const -> float { return ship.transform.position.y; }
 
+	void set_controller(std::unique_ptr<IController> controller);
+	[[nodiscard]] auto get_controller() const -> IController const& { return *m_controller; }
+
 	bave::SpriteAnim ship{};
 	Health health{};
 

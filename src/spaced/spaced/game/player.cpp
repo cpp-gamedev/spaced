@@ -60,6 +60,11 @@ void Player::draw(Shader& shader) const {
 
 void Player::set_y(float const y) { ship.transform.position.y = y; }
 
+void Player::set_controller(std::unique_ptr<IController> controller) {
+	if (!controller) { return; }
+	m_controller = std::move(controller);
+}
+
 void Player::do_inspect() {
 	if constexpr (bave::imgui_v) {
 		if (ImGui::TreeNodeEx("Controller", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {

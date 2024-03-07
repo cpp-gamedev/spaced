@@ -54,5 +54,6 @@ class Game : public Scene, public ITargetProvider {
 
 	void debug_inspect_enemies();
 	void debug_spawn_creep();
+	void debug_controller_type();
 };
 } // namespace spaced

@@ -14,6 +14,10 @@ class PlayerController : public FollowController {
 	// touch: left pointer for motion, right pointer for firing.
 	enum class Type { eMouse, eTouch, eCOUNT_ };
 
+	static constexpr std::string_view type_name_v{"PlayerController"};
+
+	[[nodiscard]] auto get_type_name() const -> std::string_view final { return type_name_v; };
+
 	explicit PlayerController(Services const& services);
 
 	void on_move(bave::PointerMove const& pointer_move) final;

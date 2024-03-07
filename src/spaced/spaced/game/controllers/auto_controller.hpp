@@ -11,6 +11,10 @@
 namespace spaced {
 class AutoController : public FollowController {
   public:
+	static constexpr std::string_view type_name_v{"AutoController"};
+
+	[[nodiscard]] auto get_type_name() const -> std::string_view final { return type_name_v; };
+
 	explicit AutoController(bave::NotNull<ITargetProvider const*> target_provider, float muzzle_x);
 
 	void on_move(bave::PointerMove const& /*pointer_move*/) final {}

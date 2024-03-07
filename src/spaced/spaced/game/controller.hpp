@@ -7,6 +7,8 @@
 namespace spaced {
 class IController : public bave::Polymorphic {
   public:
+	[[nodiscard]] virtual auto get_type_name() const -> std::string_view = 0;
+
 	virtual void on_move(bave::PointerMove const& pointer_move) = 0;
 	virtual void on_tap(bave::PointerTap const& pointer_tap) = 0;
 
