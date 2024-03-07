@@ -1,5 +1,6 @@
 #pragma once
-#include <bave/graphics/sprite_anim.hpp>
+#include <bave/core/time.hpp>
+#include <bave/graphics/shape.hpp>
 #include <bave/platform.hpp>
 #include <spaced/game/damageable.hpp>
 #include <spaced/game/health.hpp>
@@ -11,13 +12,13 @@ class Enemy : public IDamageable, public bave::IDrawable {
   public:
 	explicit Enemy(Services const& services, std::string_view type);
 
-	[[nodiscard]] auto get_bounds() const -> bave::Rect<> override { return sprite.get_bounds(); }
+	[[nodiscard]] auto get_bounds() const -> bave::Rect<> override { return shape.get_bounds(); }
 	auto take_damage(float damage) -> bool override;
 
 	[[nodiscard]] auto is_destroyed() const -> bool { return health.is_dead(); }
 
 	virtual void tick(bave::Seconds dt) = 0;
-	void draw(bave::Shader& shader) const override { sprite.draw(shader); }
+	void draw(bave::Shader& shader) const override { shape.draw(shader); }
 
 	void setup(glm::vec2 max_size, float y_position);
 
@@ -27,7 +28,7 @@ class Enemy : public IDamageable, public bave::IDrawable {
 		if constexpr (bave::debug_v) { do_inspect(); }
 	}
 
-	bave::SpriteAnim sprite{};
+	bave::RoundedQuadShape shape{};
 	Health health{};
 
   private:

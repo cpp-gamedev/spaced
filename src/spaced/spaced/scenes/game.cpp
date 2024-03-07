@@ -127,7 +127,7 @@ void Game::debug_inspect_enemies() {
 
 void Game::debug_spawn_creep() {
 	auto creep = std::make_unique<Creep>(get_services());
-	creep->sprite.tint = bave::yellow_v;
+	creep->shape.tint = bave::yellow_v;
 	m_enemies.push_back(std::move(creep));
 }
 
