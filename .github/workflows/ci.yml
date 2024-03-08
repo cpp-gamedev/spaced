@@ -6,7 +6,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: init
-        run: sudo apt update -yqq && sudo apt install -yqq ninja-build xorg-dev g++-13 clang-15
+        run: sudo apt update -yqq && sudo apt install -yqq ninja-build xorg-dev g++-13
+      - name: build android
+        run: |
+            wget https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz
+            tar xvzf jdk-17_linux-x64_bin.tar.gz -C /opt
+            export JAVA_HOME=/opt/jdk-17.0.10
+            ls $JAVA_HOME
+            java -version
+            cd src/android
+            ./gradlew assembleDebug
       - name: configure gcc
         run: cmake -S . --preset=default -B build -DBAVE_BUILD_SHADERS=OFF -DBAVE_USE_FREETYPE=OFF -DCAPO_USE_OPENAL=OFF -DCMAKE_CXX_COMPILER=g++-13
       - name: configure clang
