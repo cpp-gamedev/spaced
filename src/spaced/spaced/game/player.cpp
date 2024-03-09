@@ -2,14 +2,17 @@
 #include <bave/imgui/im_text.hpp>
 #include <bave/platform.hpp>
 #include <spaced/game/player.hpp>
+#include <spaced/services/resources.hpp>
 
 // temp for testing
 #include <spaced/game/weapons/gun_beam.hpp>
 #include <spaced/game/weapons/gun_kinetic.hpp>
 
 namespace spaced {
+using bave::Degrees;
 using bave::im_text;
 using bave::NotNull;
+using bave::ParticleEmitter;
 using bave::PointerMove;
 using bave::PointerTap;
 using bave::RoundedQuad;
@@ -17,12 +20,8 @@ using bave::Seconds;
 using bave::Shader;
 
 Player::Player(Services const& services, std::unique_ptr<IController> controller) : m_services(&services), m_controller(std::move(controller)) {
-	auto const x = services.get<ILayout>().get_player_x();
-	ship.transform.position.x = x;
-	auto rounded_quad = RoundedQuad{};
-	rounded_quad.size = glm::vec2{100.0f};
-	rounded_quad.corner_radius = 20.0f;
-	ship.set_shape(rounded_quad);
+	setup_ship();
+	setup_foam();
 
 	debug_switch_weapon();
 }
@@ -51,10 +50,16 @@ void Player::tick(std::span<NotNull<IDamageable*> const> targets, Seconds const 
 
 	m_weapon->tick(dt);
 
+	auto const foam_position = ship.transform.position - 0.5f * glm::vec2{ship.get_shape().size.x, 0.0f};
+	for (auto& emitter : foam_particles.emitters) { emitter.set_position(foam_position); }
+
+	foam_particles.tick(dt);
+
 	if (m_debug.shots_remaining <= 0) { debug_switch_weapon(); }
 }
 
 void Player::draw(Shader& shader) const {
+	foam_particles.draw(shader);
 	ship.draw(shader);
 
 	for (auto const& round : m_weapon_rounds) { round->draw(shader); }
@@ -83,6 +88,30 @@ void Player::do_inspect() {
 			ImGui::TreePop();
 		}
 	}
+}
+
+void Player::setup_ship() {
+	auto const x = m_services->get<ILayout>().get_player_x();
+	ship.transform.position.x = x;
+	auto rounded_quad = RoundedQuad{};
+	rounded_quad.size = glm::vec2{100.0f};
+	rounded_quad.corner_radius = 20.0f;
+	ship.set_shape(rounded_quad);
+}
+
+void Player::setup_foam() {
+	using Modifier = ParticleEmitter::Modifier;
+	auto emitter = ParticleEmitter{};
+	emitter.config.quad_size = glm::vec2{10.0f};
+	emitter.config.velocity.linear.angle = {Degrees{80.0f}, Degrees{100.0f}};
+	emitter.config.velocity.linear.speed = {-80.0f, -150.0f};
+	emitter.config.ttl = {0.5s, 2s};
+	emitter.config.lerp.tint.hi.channels.w = 0x0f;
+	emitter.config.count = 500;
+	emitter.modifiers = {Modifier::eTranslate, Modifier::eTint};
+	emitter.set_position(ship.transform.position - 0.5f * glm::vec2{ship.get_shape().size.x, 0.0f});
+	emitter.pre_warm();
+	foam_particles.emitters.push_back(std::move(emitter));
 }
 
 void Player::debug_switch_weapon() {

@@ -1,4 +1,5 @@
 #pragma once
+#include <bave/graphics/particle_system.hpp>
 #include <bave/graphics/shape.hpp>
 #include <bave/logger.hpp>
 #include <spaced/game/controller.hpp>
@@ -28,9 +29,13 @@ class Player : public bave::IDrawable {
 	[[nodiscard]] auto get_controller() const -> IController const& { return *m_controller; }
 
 	bave::RoundedQuadShape ship{};
+	bave::ParticleSystem foam_particles{};
 	Health health{};
 
   private:
+	void setup_ship();
+	void setup_foam();
+
 	void do_inspect();
 	void debug_switch_weapon();
 
