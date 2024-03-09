@@ -1,5 +1,6 @@
 #include <bave/core/random.hpp>
 #include <bave/imgui/im_text.hpp>
+#include <spaced/game/asset_loader.hpp>
 #include <spaced/game/controllers/auto_controller.hpp>
 #include <spaced/game/controllers/player_controller.hpp>
 #include <spaced/game/enemies/creep.hpp>
@@ -36,7 +37,12 @@ namespace {
 
 Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_player(services, make_player_controller(services)) {
 	clear_colour = services.get<Styles>().rgbas["mocha"];
+	auto asset_loader = AssetLoader{make_loader(), &services.get<Resources>()};
+	auto task = asset_loader.make_load_texture("images/foam_bubble.png");
+	add_load_tasks({&task, 1});
 }
+
+void Game::on_loaded() { m_player.foam_particles.emitters.front().set_texture(get_services().get<Resources>().textures["images/foam_bubble.png"]); }
 
 void Game::on_focus(bave::FocusChange const& focus_change) { m_player.on_focus(focus_change); }
 

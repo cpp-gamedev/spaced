@@ -1,6 +1,7 @@
 #pragma once
 #include <bave/app.hpp>
 #include <bave/core/polymorphic.hpp>
+#include <bave/loader.hpp>
 #include <spaced/async_exec.hpp>
 #include <spaced/services/services.hpp>
 #include <spaced/ui/loading_screen.hpp>
@@ -24,6 +25,8 @@ class Scene : public bave::PolyPinned {
 
 	[[nodiscard]] auto is_loading() const -> bool { return m_loading_screen.has_value(); }
 	[[nodiscard]] auto is_ui_blocking_input() const -> bool;
+
+	[[nodiscard]] auto make_loader() const -> bave::Loader { return bave::Loader{&m_app.get_data_store(), &m_app.get_render_device()}; }
 
 	void push_view(std::unique_ptr<ui::View> view);
 

@@ -13,6 +13,8 @@ class Game : public Scene, public ITargetProvider, public IScorer {
 	Game(bave::App& app, Services const& services);
 
   private:
+	void on_loaded() final;
+
 	void on_focus(bave::FocusChange const& focus_change) final;
 	void on_key(bave::KeyInput const& key_input) final;
 	void on_move(bave::PointerMove const& pointer_move) final;
