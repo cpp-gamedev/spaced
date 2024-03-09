@@ -31,7 +31,9 @@ void Enemy::setup(glm::vec2 max_size, float y_position) {
 }
 
 void Enemy::do_inspect() {
-	im_text("type: {}", m_type);
-	health.inspect();
+	if constexpr (bave::imgui_v) {
+		im_text("type: {}", m_type);
+		health.inspect();
+	}
 }
 } // namespace spaced

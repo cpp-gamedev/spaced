@@ -114,16 +114,18 @@ void Game::inspect(Seconds const dt, Seconds const frame_time) {
 }
 
 void Game::debug_inspect_enemies() {
-	im_text("creeps: {}", m_enemies.size());
-	if (ImGui::Button("spawn creep")) { debug_spawn_creep(); }
-	auto spawn_rate = m_debug.spawn_rate.count();
-	if (ImGui::DragFloat("spawn rate", &spawn_rate, 0.25f, 0.25f, 10.0f)) { m_debug.spawn_rate = Seconds{spawn_rate}; }
+	if constexpr (bave::imgui_v) {
+		im_text("creeps: {}", m_enemies.size());
+		if (ImGui::Button("spawn creep")) { debug_spawn_creep(); }
+		auto spawn_rate = m_debug.spawn_rate.count();
+		if (ImGui::DragFloat("spawn rate", &spawn_rate, 0.25f, 0.25f, 10.0f)) { m_debug.spawn_rate = Seconds{spawn_rate}; }
 
-	ImGui::Separator();
-	for (std::size_t i = 0; i < m_enemies.size(); ++i) {
-		if (ImGui::TreeNode(FixedString{"{}", i}.c_str())) {
-			m_enemies.at(i)->inspect();
-			ImGui::TreePop();
+		ImGui::Separator();
+		for (std::size_t i = 0; i < m_enemies.size(); ++i) {
+			if (ImGui::TreeNode(FixedString{"{}", i}.c_str())) {
+				m_enemies.at(i)->inspect();
+				ImGui::TreePop();
+			}
 		}
 	}
 }
@@ -135,22 +137,24 @@ void Game::debug_spawn_creep() {
 }
 
 void Game::debug_controller_type() {
-	static constexpr auto type_names_v = std::array{
-		PlayerController::type_name_v,
-		AutoController::type_name_v,
-	};
+	if constexpr (bave::imgui_v) {
+		static constexpr auto type_names_v = std::array{
+			PlayerController::type_name_v,
+			AutoController::type_name_v,
+		};
 
-	auto const make_controller = [this](std::string_view const type_name) -> std::unique_ptr<IController> {
-		if (type_name == AutoController::type_name_v) { return make_auto_controller(*this, get_services()); }
-		return make_player_controller(get_services());
-	};
+		auto const make_controller = [this](std::string_view const type_name) -> std::unique_ptr<IController> {
+			if (type_name == AutoController::type_name_v) { return make_auto_controller(*this, get_services()); }
+			return make_player_controller(get_services());
+		};
 
-	auto const& controller = m_player.get_controller();
-	if (ImGui::BeginCombo("controller", controller.get_type_name().data())) {
-		for (auto const type_name : type_names_v) {
-			if (ImGui::Selectable(type_name.data())) { m_player.set_controller(make_controller(type_name)); }
+		auto const& controller = m_player.get_controller();
+		if (ImGui::BeginCombo("controller", controller.get_type_name().data())) {
+			for (auto const type_name : type_names_v) {
+				if (ImGui::Selectable(type_name.data())) { m_player.set_controller(make_controller(type_name)); }
+			}
+			ImGui::EndCombo();
 		}
-		ImGui::EndCombo();
 	}
 }
 } // namespace spaced

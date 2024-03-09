@@ -1,12 +1,20 @@
 name: ci
 on: [push]
 jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: format code
+        run: tools/format_code.sh
+      - name: check diff
+        run: .github/format_check_diff.sh
   build-linux:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: init
-        run: sudo apt update -yqq && sudo apt install -yqq ninja-build xorg-dev g++-13 clang-15
+        run: sudo apt update -yqq && sudo apt install -yqq ninja-build xorg-dev g++-13
       - name: configure gcc
         run: cmake -S . --preset=default -B build -DBAVE_BUILD_SHADERS=OFF -DBAVE_USE_FREETYPE=OFF -DCAPO_USE_OPENAL=OFF -DCMAKE_CXX_COMPILER=g++-13
       - name: configure clang
@@ -39,3 +47,16 @@ jobs:
         run: cmake --build build --config=Release -- -d explain
       - name: test
         run: cd build && ctest -C Release
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: init
+        run: |
+            wget https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz
+            tar xvzf jdk-17_linux-x64_bin.tar.gz -C /opt
+      - name: build
+        run: |
+            export JAVA_HOME=/opt/jdk-17.0.10
+            cd src/android
+            ./gradlew assembleDebug
