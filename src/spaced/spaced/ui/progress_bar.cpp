@@ -4,7 +4,7 @@
 namespace spaced::ui {
 using bave::Shader;
 
-ProgressBar::ProgressBar(Services const& services) : m_style(services.get<Styles>().get_progress_bar("default")) {}
+ProgressBar::ProgressBar(Services const& services) : m_style(services.get<Styles>().progress_bars["default"]) {}
 
 void ProgressBar::set_progress(float const progress) {
 	m_progress = progress;

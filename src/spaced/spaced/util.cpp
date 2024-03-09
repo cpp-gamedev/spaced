@@ -71,34 +71,6 @@ void util::from_json(dj::Json const& json, ui::ProgressBarStyle& out) {
 	out.outline_width = json["outline_width"].as<float>();
 }
 
-void util::to_json(dj::Json& out, ui::CollectListItemStyle const& collect_list_item_style) {
-	using bave::to_json;
-	out["panel_diameter"] = collect_list_item_style.panel_diameter;
-	to_json(out["panel_rgba"], collect_list_item_style.panel_rgba);
-	out["outline_width"] = collect_list_item_style.outline_width;
-	to_json(out["outline_rgba"], collect_list_item_style.outline_rgba);
-	to_json(out["sprite_size"], collect_list_item_style.sprite_size);
-	out["panel_y_offset"] = collect_list_item_style.panel_y_offset;
-	out["text_height"] = static_cast<int>(collect_list_item_style.text_height);
-	to_json(out["text_rgba"], collect_list_item_style.text_rgba);
-	out["text_y_offset"] = collect_list_item_style.text_y_offset;
-	out["item_x_pad"] = collect_list_item_style.item_x_pad;
-}
-
-void util::from_json(dj::Json const& json, ui::CollectListItemStyle& out) {
-	using bave::from_json;
-	out.panel_diameter = json["panel_diameter"].as<float>(out.panel_diameter);
-	from_json(json["panel_rgba"], out.panel_rgba);
-	out.outline_width = json["outline_width"].as<float>();
-	from_json(json["outline_rgba"], out.outline_rgba);
-	from_json(json["sprite_size"], out.sprite_size);
-	out.panel_y_offset = json["panel_y_offset"].as<float>();
-	out.text_height = bave::TextHeight{json["text_height"].as<int>()};
-	from_json(json["text_rgba"], out.text_rgba);
-	out.text_y_offset = json["text_y_offset"].as<float>();
-	out.item_x_pad = json["item_x_pad"].as<float>();
-}
-
 auto util::create_font_atlas_task(std::shared_ptr<bave::Font> font, std::vector<bave::TextHeight> heights) -> std::function<void()> {
 	if (!font || heights.empty()) { return {}; }
 	return [font = std::move(font), heights = std::move(heights)] {

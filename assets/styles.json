@@ -1,4 +1,11 @@
 {
+  "rgbas": {
+    "black": "#231d2aff",
+    "grey": "#535151ff",
+    "mocha": "#6f5a48ff",
+    "milk": "#e5cdaeff",
+    "ice": "#0xd6dbe1e1"
+  },
   "buttons": {
     "default": {
       "background": {

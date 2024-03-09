@@ -8,10 +8,10 @@ class Projectile : public IWeaponRound {
   public:
 	struct Config {
 		std::shared_ptr<bave::Texture> texture{};
-		glm::vec2 size{60.0f, 5.0f};
-		float corner_radius{2.5f};
+		glm::vec2 size{60.0f, 10.0f};
+		float corner_radius{0.5f * size.y};
 		float x_speed{1500.0f};
-		bave::Rgba tint{bave::white_v};
+		bave::Rgba tint{bave::black_v};
 		float damage{1.0f};
 	};
 

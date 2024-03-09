@@ -18,7 +18,7 @@ using bave::TextHeight;
 Button::Button(Services const& services) : m_layout(&services.get<ILayout>()), m_styles(&services.get<Styles>()) {
 	m_text.set_font(services.get<Resources>().main_font);
 	set_text_height(TextHeight::eDefault);
-	set_style(m_styles->get_button("default"));
+	set_style(m_styles->buttons["default"]);
 }
 
 void Button::set_position(glm::vec2 const position) {

@@ -98,9 +98,7 @@ void Player::debug_switch_weapon() {
 		return;
 	}
 
-	auto kinetic = std::make_unique<GunKinetic>(*m_services);
-	kinetic->projectile_config.tint = bave::cyan_v;
-	m_weapon = std::move(kinetic);
+	m_weapon = std::make_unique<GunKinetic>(*m_services);
 	m_debug.shots_remaining = 10;
 }
 } // namespace spaced

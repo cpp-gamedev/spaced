@@ -1,8 +1,8 @@
-#!/bin/bash 
+#!/bin/bash
 
 [[ ! $(clang-format --version) ]] && exit 1
 
-exclude_list="scene_switcher.hpp"
+exclude_list="scene_switcher.hpp string_map.hpp"
 
 script_path=${0%/*}
 tools_root=${script_path%/*}
@@ -15,7 +15,7 @@ fi
 
 exclude_cmd=
 for exclude in $exclude_list; do
-  exclude_cmd+="! -name $exclude"
+  exclude_cmd+="! -name $exclude "
 done
 
 files=$(find src/spaced src/android/app/src/main src/desktop -name "*.?pp" $exclude_cmd)
