@@ -5,6 +5,7 @@
 
 namespace spaced {
 class Serializer;
+class Resources;
 
 class Spaced : public bave::Driver {
   public:
@@ -30,6 +31,7 @@ class Spaced : public bave::Driver {
 	bave::Logger m_log{"Spaced"};
 	Services m_services{};
 	bave::Ptr<ILayout> m_layout{};
+	bave::Ptr<Resources> m_resources{};
 	std::unique_ptr<Scene> m_scene{};
 };
 } // namespace spaced

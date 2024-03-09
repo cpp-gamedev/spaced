@@ -35,11 +35,7 @@ template <typename FuncT>
 auto AssetLoader::make_load_task(std::string uri, bool reload, FuncT load) const -> LoadTask {
 	return [impl = m_impl, uri = std::move(uri), reload, load] {
 		auto lock = std::unique_lock{impl->mutex};
-
-		if (!reload && impl->resources->contains(uri)) {
-			lock.unlock();
-			return;
-		}
+		if (!reload && impl->resources->contains(uri)) { return; }
 
 		lock.unlock();
 		auto asset = load(impl->loader, uri);

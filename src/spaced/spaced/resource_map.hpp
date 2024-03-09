@@ -31,6 +31,8 @@ class ResourceMap {
 		return static_cast<Model<Type> const&>(*it->second).resource;
 	}
 
+	void clear() { m_resources.clear(); }
+
   private:
 	struct Base : bave::Polymorphic {
 		std::type_index type_index;
