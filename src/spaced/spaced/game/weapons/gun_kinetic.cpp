@@ -1,12 +1,13 @@
 #include <bave/imgui/im_text.hpp>
 #include <spaced/game/weapons/gun_kinetic.hpp>
+#include <spaced/services/styles.hpp>
 
 namespace spaced {
 using bave::im_text;
 using bave::Rgba;
 using bave::Seconds;
 
-GunKinetic::GunKinetic(Services const& services) : Weapon(services, "GunKinetic") {}
+GunKinetic::GunKinetic(Services const& services) : Weapon(services, "GunKinetic") { projectile_config.tint = services.get<Styles>().rgbas["black"]; }
 
 auto GunKinetic::fire(glm::vec2 const muzzle_position) -> std::unique_ptr<Round> {
 	if (m_reload_remain > 0s) { return {}; }

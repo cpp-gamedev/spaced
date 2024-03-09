@@ -17,8 +17,5 @@ void from_json(dj::Json const& json, ui::ButtonStyle& out);
 void to_json(dj::Json& out, ui::ProgressBarStyle const& progress_bar_style);
 void from_json(dj::Json const& json, ui::ProgressBarStyle& out);
 
-void to_json(dj::Json& out, ui::CollectListItemStyle const& collect_list_item_style);
-void from_json(dj::Json const& json, ui::CollectListItemStyle& out);
-
 auto create_font_atlas_task(std::shared_ptr<bave::Font> font, std::vector<bave::TextHeight> heights) -> std::function<void()>;
 } // namespace spaced::util

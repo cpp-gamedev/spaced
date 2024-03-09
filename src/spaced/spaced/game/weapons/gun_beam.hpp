@@ -12,7 +12,7 @@ class GunBeam final : public Weapon {
 		float dps{1.0f};
 	};
 
-	explicit GunBeam(Services const& services) : Weapon(services, "DeathRay") {}
+	explicit GunBeam(Services const& services);
 
 	auto fire(glm::vec2 muzzle_position) -> std::unique_ptr<Round> final;
 	[[nodiscard]] auto is_idle() const -> bool final { return m_fire_remain <= 0s; }

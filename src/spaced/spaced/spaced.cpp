@@ -109,9 +109,9 @@ void Spaced::load_resources() {
 	resources->spinner = loader.load_texture("images/spinner.png", true);
 	m_services.bind<Resources>(std::move(resources));
 
-	auto styles = std::make_unique<ui::Styles>();
+	auto styles = std::make_unique<Styles>();
 	if (auto const json = loader.load_json("styles.json")) {
-		*styles = ui::Styles::load(json);
+		*styles = Styles::load(json);
 		m_log.info("loaded Styles from 'styles.json'");
 	}
 
@@ -122,7 +122,7 @@ void Spaced::load_resources() {
 			json.to_file("styles.json");
 		}
 	}
-	m_services.bind<ui::Styles>(std::move(styles));
+	m_services.bind<Styles>(std::move(styles));
 }
 
 void Spaced::set_layout() {

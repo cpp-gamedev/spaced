@@ -6,6 +6,7 @@
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/home.hpp>
 #include <spaced/services/scene_switcher.hpp>
+#include <spaced/services/styles.hpp>
 
 namespace spaced {
 using bave::Action;
@@ -33,7 +34,9 @@ namespace {
 }
 } // namespace
 
-Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_player(services, make_player_controller(services)) {}
+Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_player(services, make_player_controller(services)) {
+	clear_colour = services.get<Styles>().rgbas["mocha"];
+}
 
 void Game::on_focus(bave::FocusChange const& focus_change) { m_player.on_focus(focus_change); }
 

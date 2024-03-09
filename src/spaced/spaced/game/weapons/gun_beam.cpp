@@ -1,6 +1,7 @@
 #include <bave/graphics/sprite.hpp>
 #include <bave/imgui/im_text.hpp>
 #include <spaced/game/weapons/gun_beam.hpp>
+#include <spaced/services/styles.hpp>
 
 namespace spaced {
 using bave::im_text;
@@ -95,6 +96,8 @@ class LaserCharge : public IWeaponRound {
 	std::vector<Entry> m_entries{};
 };
 } // namespace
+
+GunBeam::GunBeam(Services const& services) : Weapon(services, "GunBeam") { config.beam_tint = services.get<Styles>().rgbas["grey"]; }
 
 auto GunBeam::fire(glm::vec2 const muzzle_position) -> std::unique_ptr<Round> {
 	if (!is_idle() || m_reload_remain > 0s) { return {}; }
