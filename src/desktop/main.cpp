@@ -42,7 +42,7 @@ void set_log_max_levels() {
 auto run(int const argc, char const* const* argv) -> int {
 	auto create_info = bave::DesktopApp::CreateInfo{
 		.args = bave::make_args(argc, argv),
-		.title = "Hog",
+		.title = "Spaced",
 		.mode = bave::Windowed{.extent = {1920, 1080}},
 		.msaa = vk::SampleCountFlagBits::e4,
 		.assets_patterns = "assets",
