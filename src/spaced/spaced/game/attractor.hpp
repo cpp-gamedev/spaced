@@ -1,7 +1,7 @@
 #pragma once
 #include <bave/core/time.hpp>
-#include <glm/vec2.hpp>
 #include <bave/graphics/shape.hpp>
+#include <glm/vec2.hpp>
 #include <spaced/game/weapon.hpp>
 
 namespace spaced {
