@@ -97,7 +97,10 @@ class LaserCharge : public IWeaponRound {
 };
 } // namespace
 
-GunBeam::GunBeam(Services const& services) : Weapon(services, "GunBeam") { config.beam_tint = services.get<Styles>().rgbas["grey"]; }
+GunBeam::GunBeam(Services const& services) : Weapon(services, "GunBeam") {
+	auto const& rgbas = services.get<Styles>().rgbas;
+	config.beam_tint = rgbas.get_or("gun_beam", rgbas["grey"]);
+}
 
 auto GunBeam::fire(glm::vec2 const muzzle_position) -> std::unique_ptr<Round> {
 	if (!is_idle() || m_reload_remain > 0s) { return {}; }

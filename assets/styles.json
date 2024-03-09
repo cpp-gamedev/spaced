@@ -4,7 +4,8 @@
     "grey": "#535151ff",
     "mocha": "#6f5a48ff",
     "milk": "#e5cdaeff",
-    "ice": "#0xd6dbe1e1"
+    "ice": "#0xd6dbe1e1",
+    "orange": "#f75c03ff"
   },
   "buttons": {
     "default": {

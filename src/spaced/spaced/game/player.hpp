@@ -25,11 +25,14 @@ class Player : public bave::IDrawable {
 	void set_y(float y);
 	[[nodiscard]] auto get_y() const -> float { return ship.transform.position.y; }
 
+	[[nodiscard]] auto get_muzzle_position() const -> glm::vec2;
+	[[nodiscard]] auto get_exhaust_position() const -> glm::vec2;
+
 	void set_controller(std::unique_ptr<IController> controller);
 	[[nodiscard]] auto get_controller() const -> IController const& { return *m_controller; }
 
 	bave::RoundedQuadShape ship{};
-	bave::ParticleSystem foam_particles{};
+	bave::ParticleEmitter foam_particles{};
 	Health health{};
 
   private:

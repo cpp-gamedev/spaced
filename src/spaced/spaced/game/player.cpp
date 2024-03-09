@@ -36,7 +36,7 @@ void Player::tick(std::span<NotNull<IDamageable*> const> targets, Seconds const 
 	auto const y_position = m_controller->tick(dt);
 	set_y(y_position);
 
-	auto const muzzle_position = ship.transform.position + 0.5f * glm::vec2{ship.get_shape().size.x, 0.0f};
+	auto const muzzle_position = get_muzzle_position();
 	if (m_controller->is_firing() && m_debug.shots_remaining > 0) {
 		if (auto round = m_weapon->fire(muzzle_position)) {
 			m_weapon_rounds.push_back(std::move(round));
@@ -50,8 +50,7 @@ void Player::tick(std::span<NotNull<IDamageable*> const> targets, Seconds const 
 
 	m_weapon->tick(dt);
 
-	auto const foam_position = ship.transform.position - 0.5f * glm::vec2{ship.get_shape().size.x, 0.0f};
-	for (auto& emitter : foam_particles.emitters) { emitter.set_position(foam_position); }
+	foam_particles.set_position(get_exhaust_position());
 
 	foam_particles.tick(dt);
 
@@ -66,6 +65,10 @@ void Player::draw(Shader& shader) const {
 }
 
 void Player::set_y(float const y) { ship.transform.position.y = y; }
+
+auto Player::get_muzzle_position() const -> glm::vec2 { return ship.transform.position + 0.5f * glm::vec2{ship.get_shape().size.x, 0.0f}; }
+
+auto Player::get_exhaust_position() const -> glm::vec2 { return ship.transform.position - 0.5f * glm::vec2{ship.get_shape().size.x, 0.0f}; }
 
 void Player::set_controller(std::unique_ptr<IController> controller) {
 	if (!controller) { return; }
@@ -101,17 +104,16 @@ void Player::setup_ship() {
 
 void Player::setup_foam() {
 	using Modifier = ParticleEmitter::Modifier;
-	auto emitter = ParticleEmitter{};
-	emitter.config.quad_size = glm::vec2{10.0f};
-	emitter.config.velocity.linear.angle = {Degrees{80.0f}, Degrees{100.0f}};
-	emitter.config.velocity.linear.speed = {-80.0f, -150.0f};
-	emitter.config.ttl = {0.5s, 2s};
-	emitter.config.lerp.tint.hi.channels.w = 0x0f;
-	emitter.config.count = 500;
-	emitter.modifiers = {Modifier::eTranslate, Modifier::eTint};
-	emitter.set_position(ship.transform.position - 0.5f * glm::vec2{ship.get_shape().size.x, 0.0f});
-	emitter.pre_warm();
-	foam_particles.emitters.push_back(std::move(emitter));
+	foam_particles.config.quad_size = glm::vec2{20.0f};
+	foam_particles.config.velocity.linear.angle = {Degrees{80.0f}, Degrees{100.0f}};
+	foam_particles.config.velocity.linear.speed = {-100.0f, -200.0f};
+	foam_particles.config.ttl = {1s, 2s};
+	foam_particles.config.lerp.tint.hi.channels.w = 0x0;
+	foam_particles.config.lerp.scale.hi = {};
+	foam_particles.config.count = 500;
+	foam_particles.modifiers = {Modifier::eTranslate, Modifier::eTint, Modifier::eScale};
+	foam_particles.set_position(get_exhaust_position());
+	foam_particles.pre_warm();
 }
 
 void Player::debug_switch_weapon() {

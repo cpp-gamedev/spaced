@@ -22,6 +22,7 @@ using bave::PointerTap;
 using bave::Ptr;
 using bave::Seconds;
 using bave::Shader;
+using bave::Texture;
 
 namespace {
 [[nodiscard]] auto make_player_controller(Services const& services) {
@@ -42,7 +43,24 @@ Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m
 	add_load_tasks({&task, 1});
 }
 
-void Game::on_loaded() { m_player.foam_particles.emitters.front().set_texture(get_services().get<Resources>().textures["images/foam_bubble.png"]); }
+void Game::on_loaded() {
+	auto const& resources = get_services().get<Resources>();
+	auto const foam_texture = resources.get<Texture>("images/foam_bubble.png");
+	m_player.foam_particles.set_texture(foam_texture);
+
+	auto const& rgbas = get_services().get<Styles>().rgbas;
+	auto spawn = [this] {
+		auto ret = std::make_unique<Creep>(get_services(), this);
+		ret->shape.tint = bave::yellow_v;
+		return ret;
+	};
+	auto emitter = bave::ParticleEmitter{};
+	emitter.config.ttl = {0.5s, 1s};
+	emitter.set_texture(foam_texture);
+	emitter.config.lerp.tint = {rgbas["orange"], rgbas["milk"]};
+	emitter.config.lerp.tint.hi.channels.w = 0x0;
+	m_enemy_spawner.emplace(spawn, std::move(emitter));
+}
 
 void Game::on_focus(bave::FocusChange const& focus_change) { m_player.on_focus(focus_change); }
 
@@ -59,12 +77,10 @@ void Game::on_tap(PointerTap const& pointer_tap) { m_player.on_tap(pointer_tap);
 void Game::tick(Seconds const dt) {
 	auto ft = bave::DeltaTime{};
 
-	for (auto& enemy : m_enemies) { enemy->tick(dt); }
-	std::erase_if(m_enemies, [](auto const& enemy) { return enemy->is_destroyed(); });
-
+	m_enemy_spawner->tick(dt);
 	m_targets.clear();
-	m_targets.reserve(m_enemies.size());
-	for (auto& enemy : m_enemies) { m_targets.push_back(enemy.get()); }
+	m_enemy_spawner->append_targets(m_targets);
+
 	m_player.tick(m_targets, dt);
 
 	if (m_debug.next_spawn > 0s) {
@@ -78,7 +94,7 @@ void Game::tick(Seconds const dt) {
 }
 
 void Game::render(Shader& shader) const {
-	for (auto const& enemy : m_enemies) { enemy->draw(shader); }
+	m_enemy_spawner->draw(shader);
 	m_player.draw(shader);
 }
 
@@ -124,26 +140,23 @@ void Game::inspect(Seconds const dt, Seconds const frame_time) {
 
 void Game::debug_inspect_enemies() {
 	if constexpr (bave::imgui_v) {
-		im_text("creeps: {}", m_enemies.size());
+		auto const& creeps = m_enemy_spawner->get_enemies();
+		im_text("creeps: {}", creeps.size());
 		if (ImGui::Button("spawn creep")) { debug_spawn_creep(); }
 		auto spawn_rate = m_debug.spawn_rate.count();
 		if (ImGui::DragFloat("spawn rate", &spawn_rate, 0.25f, 0.25f, 10.0f)) { m_debug.spawn_rate = Seconds{spawn_rate}; }
 
 		ImGui::Separator();
-		for (std::size_t i = 0; i < m_enemies.size(); ++i) {
+		for (std::size_t i = 0; i < creeps.size(); ++i) {
 			if (ImGui::TreeNode(FixedString{"{}", i}.c_str())) {
-				m_enemies.at(i)->inspect();
+				creeps[i]->inspect();
 				ImGui::TreePop();
 			}
 		}
 	}
 }
 
-void Game::debug_spawn_creep() {
-	auto creep = std::make_unique<Creep>(get_services(), this);
-	creep->shape.tint = bave::yellow_v;
-	m_enemies.push_back(std::move(creep));
-}
+void Game::debug_spawn_creep() { m_enemy_spawner->spawn(); }
 
 void Game::debug_controller_type() {
 	if constexpr (bave::imgui_v) {
