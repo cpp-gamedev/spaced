@@ -4,13 +4,14 @@
 #include <bave/platform.hpp>
 #include <spaced/game/damageable.hpp>
 #include <spaced/game/health.hpp>
+#include <spaced/game/scorer.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/services.hpp>
 
 namespace spaced {
 class Enemy : public IDamageable, public bave::IDrawable {
   public:
-	explicit Enemy(Services const& services, std::string_view type);
+	explicit Enemy(Services const& services, bave::NotNull<IScorer*> scorer, std::string_view type);
 
 	[[nodiscard]] auto get_bounds() const -> bave::Rect<> override { return shape.get_bounds(); }
 	auto take_damage(float damage) -> bool override;
@@ -23,6 +24,7 @@ class Enemy : public IDamageable, public bave::IDrawable {
 	void setup(glm::vec2 max_size, float y_position);
 
 	[[nodiscard]] auto get_layout() const -> ILayout const& { return *m_layout; }
+	[[nodiscard]] auto get_scorer() const -> IScorer& { return *m_scorer; }
 
 	void inspect() {
 		if constexpr (bave::debug_v) { do_inspect(); }
@@ -30,11 +32,13 @@ class Enemy : public IDamageable, public bave::IDrawable {
 
 	bave::RoundedQuadShape shape{};
 	Health health{};
+	std::int64_t points{10};
 
   private:
 	virtual void do_inspect();
 
-	bave::Ptr<ILayout const> m_layout{};
+	bave::NotNull<ILayout const*> m_layout;
+	bave::NotNull<IScorer*> m_scorer;
 	std::string_view m_type{};
 };
 } // namespace spaced

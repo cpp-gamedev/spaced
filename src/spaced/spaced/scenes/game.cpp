@@ -94,6 +94,9 @@ void Game::inspect(Seconds const dt, Seconds const frame_time) {
 			}
 
 			ImGui::Separator();
+			im_text("score: {}", get_score());
+
+			ImGui::Separator();
 			im_text("dt: {:05.2f}", std::chrono::duration<float, std::milli>(dt).count());
 			im_text("fps: {}", m_debug.fps.fps);
 			ImGui::SliderInt("fps limit", &m_debug.fps.limit, 5, 1000);
@@ -128,7 +131,7 @@ void Game::debug_inspect_enemies() {
 }
 
 void Game::debug_spawn_creep() {
-	auto creep = std::make_unique<Creep>(get_services());
+	auto creep = std::make_unique<Creep>(get_services(), this);
 	creep->shape.tint = bave::yellow_v;
 	m_enemies.push_back(std::move(creep));
 }
