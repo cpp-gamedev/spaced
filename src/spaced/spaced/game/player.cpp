@@ -23,6 +23,7 @@ Player::Player(Services const& services, std::unique_ptr<IController> controller
 	rounded_quad.size = glm::vec2{100.0f};
 	rounded_quad.corner_radius = 20.0f;
 	ship.set_shape(rounded_quad);
+	m_highlight = Attractor(services);
 
 	debug_switch_weapon();
 }
@@ -36,6 +37,9 @@ void Player::on_tap(PointerTap const& pointer_tap) { m_controller->on_tap(pointe
 void Player::tick(std::span<NotNull<IDamageable*> const> targets, Seconds const dt) {
 	auto const y_position = m_controller->tick(dt);
 	set_y(y_position);
+
+	m_highlight.target = ship.transform.position;
+	m_highlight.tick(dt);
 
 	auto const muzzle_position = ship.transform.position + 0.5f * glm::vec2{ship.get_shape().size.x, 0.0f};
 	if (m_controller->is_firing() && m_debug.shots_remaining > 0) {
@@ -56,7 +60,7 @@ void Player::tick(std::span<NotNull<IDamageable*> const> targets, Seconds const 
 
 void Player::draw(Shader& shader) const {
 	ship.draw(shader);
-
+	m_highlight.shape.draw(shader);
 	for (auto const& round : m_weapon_rounds) { round->draw(shader); }
 }
 
