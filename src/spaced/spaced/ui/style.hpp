@@ -38,17 +38,4 @@ struct ProgressBarStyle {
 	bave::Rgba outline{bave::red_v};
 	float outline_width{5.0f};
 };
-
-struct CollectListItemStyle {
-	float panel_diameter{60.0f};
-	bave::Rgba panel_rgba{bave::white_v};
-	float outline_width{5.0f};
-	bave::Rgba outline_rgba{bave::red_v};
-	glm::vec2 sprite_size{40.0f};
-	float panel_y_offset{12.0f};
-	bave::TextHeight text_height = bave::TextHeight{20};
-	bave::Rgba text_rgba{bave::black_v};
-	float text_y_offset{-43.0f};
-	float item_x_pad{100.0f};
-};
 } // namespace spaced::ui

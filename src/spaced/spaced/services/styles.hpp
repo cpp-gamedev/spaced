@@ -12,7 +12,6 @@ struct Styles : IService {
 	StringMap<bave::Rgba> rgbas{};
 	StringMap<ui::ButtonStyle> buttons{};
 	StringMap<ui::ProgressBarStyle> progress_bars{};
-	ui::CollectListItemStyle collect_list_item{};
 	ui::LoadingScreenStyle loading_screen{};
 
 	static auto load(dj::Json const& json) -> Styles;

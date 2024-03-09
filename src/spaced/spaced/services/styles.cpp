@@ -36,7 +36,6 @@ auto Styles::load(dj::Json const& json) -> Styles {
 	load_styles(ret.buttons, json["buttons"]);
 	load_styles(ret.progress_bars, json["progress_bars"]);
 	if (auto const& loading_screen = json["loading_screen"]) { from_json(loading_screen, ret.loading_screen); }
-	if (auto const& collect_list_item = json["collect_list_item"]) { from_json(collect_list_item, ret.collect_list_item); }
 	return ret;
 }
 
@@ -46,7 +45,6 @@ auto Styles::save() const -> dj::Json {
 	save_styles(buttons, ret, "buttons");
 	save_styles(progress_bars, ret, "progress_bars");
 	to_json(ret["loading_screen"], loading_screen);
-	to_json(ret["collect_list_item"], collect_list_item);
 	return ret;
 }
 } // namespace spaced
