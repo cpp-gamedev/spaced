@@ -27,7 +27,7 @@ class Spaced : public bave::Driver {
 	void set_layout();
 	void set_scene();
 
-	bave::Logger m_log{"Hog"};
+	bave::Logger m_log{"Spaced"};
 	Services m_services{};
 	bave::Ptr<ILayout> m_layout{};
 	std::unique_ptr<Scene> m_scene{};
