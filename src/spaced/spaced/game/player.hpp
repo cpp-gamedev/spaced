@@ -4,6 +4,7 @@
 #include <spaced/game/controller.hpp>
 #include <spaced/game/health.hpp>
 #include <spaced/game/weapon.hpp>
+#include <spaced/game/attractor.hpp>
 
 namespace spaced {
 class Player : public bave::IDrawable {
@@ -39,6 +40,7 @@ class Player : public bave::IDrawable {
 	std::unique_ptr<IController> m_controller;
 	std::unique_ptr<Weapon> m_weapon{};
 	std::vector<std::unique_ptr<Weapon::Round>> m_weapon_rounds{};
+	Attractor m_highlight{};
 
 	struct {
 		int shots_remaining{};

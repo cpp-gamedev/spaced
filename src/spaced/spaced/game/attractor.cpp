@@ -2,6 +2,15 @@
 #include <spaced/game/Attractor.hpp>
 
 namespace spaced {
+
+using bave::RoundedQuad;
+
+Attractor::Attractor(Services const& services) {
+	auto rounded_quad = RoundedQuad{};
+	rounded_quad.size = glm::vec2{20.0f};
+	rounded_quad.corner_radius = 5.0f;
+	shape.set_shape(rounded_quad);
+}
 void Attractor::tick(bave::Seconds dt) {
 	dt += m_residue;
 	if (dt > max_dt) { return; }
@@ -10,12 +19,6 @@ void Attractor::tick(bave::Seconds dt) {
 }
 
 void Attractor::integrate() {
-	auto const to_target = target - position;
-
-	if (glm::length2(to_target) < min_distance * min_distance) {
-		position = target;
-		return;
-	}
 
 	auto const gx = position.x;
 	auto const gy = position.y;
@@ -34,5 +37,6 @@ void Attractor::integrate() {
 	m_velocity += dv;
 	m_velocity *= (1.0f - dampen);
 	position += m_velocity * time_slice.count();
+	shape.transform.position = position;
 }
 } // namespace spaced
