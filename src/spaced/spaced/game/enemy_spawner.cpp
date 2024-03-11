@@ -1,6 +1,9 @@
+#include <imgui.h>
+#include <bave/core/fixed_string.hpp>
 #include <spaced/game/enemy_spawner.hpp>
 
 namespace spaced {
+using bave::FixedString;
 using bave::ParticleEmitter;
 using bave::Seconds;
 using bave::Shader;
@@ -34,5 +37,16 @@ void EnemySpawner::append_targets(std::vector<bave::NotNull<IDamageable*>>& out)
 void EnemySpawner::explode_at(glm::vec2 const position) {
 	auto& emitter = m_explodes.emplace_back(m_explode);
 	emitter.set_position(position);
+}
+
+void EnemySpawner::do_inspect() {
+	if constexpr (bave::imgui_v) {
+		for (std::size_t i = 0; i < m_enemies.size(); ++i) {
+			if (ImGui::TreeNode(FixedString{"{}", i}.c_str())) {
+				m_enemies.at(i)->inspect();
+				ImGui::TreePop();
+			}
+		}
+	}
 }
 } // namespace spaced

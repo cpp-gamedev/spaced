@@ -18,8 +18,13 @@ class EnemySpawner {
 	[[nodiscard]] auto get_enemies() const -> std::span<std::unique_ptr<Enemy> const> { return m_enemies; }
 	void append_targets(std::vector<bave::NotNull<IDamageable*>>& out) const;
 
+	void inspect() {
+		if constexpr (bave::debug_v) { do_inspect(); }
+	}
+
   private:
 	void explode_at(glm::vec2 position);
+	void do_inspect();
 
 	Spawn m_spawn{};
 	bave::ParticleEmitter m_explode{};

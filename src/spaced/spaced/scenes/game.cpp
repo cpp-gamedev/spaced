@@ -12,7 +12,6 @@
 namespace spaced {
 using bave::Action;
 using bave::App;
-using bave::FixedString;
 using bave::im_text;
 using bave::Key;
 using bave::KeyInput;
@@ -140,19 +139,12 @@ void Game::inspect(Seconds const dt, Seconds const frame_time) {
 
 void Game::debug_inspect_enemies() {
 	if constexpr (bave::imgui_v) {
-		auto const& creeps = m_enemy_spawner->get_enemies();
-		im_text("creeps: {}", creeps.size());
 		if (ImGui::Button("spawn creep")) { debug_spawn_creep(); }
 		auto spawn_rate = m_debug.spawn_rate.count();
 		if (ImGui::DragFloat("spawn rate", &spawn_rate, 0.25f, 0.25f, 10.0f)) { m_debug.spawn_rate = Seconds{spawn_rate}; }
 
 		ImGui::Separator();
-		for (std::size_t i = 0; i < creeps.size(); ++i) {
-			if (ImGui::TreeNode(FixedString{"{}", i}.c_str())) {
-				creeps[i]->inspect();
-				ImGui::TreePop();
-			}
-		}
+		m_enemy_spawner->inspect();
 	}
 }
 
