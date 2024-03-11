@@ -1,11 +1,9 @@
 #pragma once
+#include <spaced/game/enemy_spawner.hpp>
 #include <spaced/game/player.hpp>
 #include <spaced/game/scorer.hpp>
 #include <spaced/game/target_provider.hpp>
 #include <spaced/scene.hpp>
-
-// temporary
-#include <spaced/game/enemy.hpp>
 
 namespace spaced {
 class Game : public Scene, public ITargetProvider, public IScorer {
@@ -13,6 +11,8 @@ class Game : public Scene, public ITargetProvider, public IScorer {
 	Game(bave::App& app, Services const& services);
 
   private:
+	void on_loaded() final;
+
 	void on_focus(bave::FocusChange const& focus_change) final;
 	void on_key(bave::KeyInput const& key_input) final;
 	void on_move(bave::PointerMove const& pointer_move) final;
@@ -30,7 +30,7 @@ class Game : public Scene, public ITargetProvider, public IScorer {
 
 	Player m_player;
 	std::int64_t m_score{};
-	std::vector<std::unique_ptr<Enemy>> m_enemies{};
+	std::optional<EnemySpawner> m_enemy_spawner{};
 	std::vector<bave::NotNull<IDamageable*>> m_targets{};
 
 	struct {

@@ -93,7 +93,10 @@ void Spaced::tick() {
 	m_layout->set_framebuffer_size(get_app().get_framebuffer_size());
 
 	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
-	if (auto& switcher = static_cast<SceneSwitcherImpl&>(m_services.get<ISceneSwitcher>()); switcher.next_scene) { m_scene = std::move(switcher.next_scene); }
+	if (auto& switcher = static_cast<SceneSwitcherImpl&>(m_services.get<ISceneSwitcher>()); switcher.next_scene) {
+		m_resources->clear();
+		m_scene = std::move(switcher.next_scene);
+	}
 
 	m_scene->tick_frame(dt);
 
@@ -107,6 +110,7 @@ void Spaced::load_resources() {
 	auto resources = std::make_unique<Resources>();
 	resources->main_font = loader.load_font("fonts/Vera.ttf");
 	resources->spinner = loader.load_texture("images/spinner.png", true);
+	m_resources = resources.get();
 	m_services.bind<Resources>(std::move(resources));
 
 	auto styles = std::make_unique<Styles>();

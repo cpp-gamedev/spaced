@@ -1,4 +1,5 @@
 #pragma once
+#include <bave/graphics/particle_system.hpp>
 #include <bave/graphics/shape.hpp>
 #include <bave/logger.hpp>
 #include <spaced/game/controller.hpp>
@@ -24,13 +25,20 @@ class Player : public bave::IDrawable {
 	void set_y(float y);
 	[[nodiscard]] auto get_y() const -> float { return ship.transform.position.y; }
 
+	[[nodiscard]] auto get_muzzle_position() const -> glm::vec2;
+	[[nodiscard]] auto get_exhaust_position() const -> glm::vec2;
+
 	void set_controller(std::unique_ptr<IController> controller);
 	[[nodiscard]] auto get_controller() const -> IController const& { return *m_controller; }
 
 	bave::RoundedQuadShape ship{};
+	bave::ParticleEmitter foam_particles{};
 	Health health{};
 
   private:
+	void setup_ship();
+	void setup_foam();
+
 	void do_inspect();
 	void debug_switch_weapon();
 
