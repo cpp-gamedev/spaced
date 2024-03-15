@@ -102,7 +102,7 @@ void Player::setup_ship() {
 	ship.set_shape(rounded_quad);
 
 	auto const& style = m_services->get<Styles>();
-	//m_style = style.player["default"];
+	// m_style = style.player["default"];
 }
 
 void Player::setup_foam() {

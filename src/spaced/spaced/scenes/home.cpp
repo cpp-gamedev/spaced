@@ -3,15 +3,15 @@
 #include <spaced/services/layout.hpp>
 #include <spaced/services/resources.hpp>
 #include <spaced/services/scene_switcher.hpp>
+#include <spaced/services/styles.hpp>
 #include <spaced/ui/button.hpp>
 #include <spaced/ui/text.hpp>
 #include <spaced/util.hpp>
-#include <spaced/services/styles.hpp>
 
 namespace spaced {
+using bave::Rgba;
 using bave::Seconds;
 using bave::TextHeight;
-using bave::Rgba;
 
 Home::Home(bave::App& app, Services const& services) : Scene(app, services, "Home") {
 	auto const& resources = services.get<Resources>();
