@@ -20,7 +20,6 @@ using bave::PointerMove;
 using bave::PointerTap;
 using bave::Ptr;
 using bave::random_in_range;
-using bave::Rgba;
 using bave::Seconds;
 using bave::Shader;
 using bave::Texture;
@@ -29,11 +28,6 @@ namespace {
 [[nodiscard]] auto make_player_controller(Services const& services) {
 	auto ret = std::make_unique<PlayerController>(services);
 	if constexpr (bave::platform_v == bave::Platform::eAndroid) { ret->set_type(PlayerController::Type::eTouch); }
-	auto const& layout = services.get<ILayout>();
-	auto const half_size = 0.5f * layout.get_player_size();
-	auto const play_area = layout.get_play_area();
-	ret->max_y = play_area.lt.y - half_size.y;
-	ret->min_y = play_area.rb.y + half_size.y;
 	return ret;
 }
 
@@ -45,10 +39,8 @@ namespace {
 Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_player(services, make_player_controller(services)) {
 	clear_colour = services.get<Styles>().rgbas["mocha"];
 	auto asset_loader = AssetLoader{make_loader(), &services.get<Resources>()};
-	auto tasks = std::array{
-		asset_loader.make_load_texture("images/foam_bubble.png"),
-	};
-	add_load_tasks(tasks);
+	auto task = asset_loader.make_load_texture("images/foam_bubble.png");
+	add_load_tasks({&task, 1});
 }
 
 void Game::on_loaded() {
@@ -71,10 +63,6 @@ void Game::on_loaded() {
 	emitter.config.lerp.scale.hi = glm::vec2{0.7f};
 	emitter.config.lerp.tint.hi.channels.w = 0xff;
 	m_enemy_spawner.emplace(spawn, std::move(emitter));
-
-	auto hud = std::make_unique<Hud>(get_services());
-	m_hud = hud.get();
-	push_view(std::move(hud));
 }
 
 void Game::on_focus(bave::FocusChange const& focus_change) { m_player.on_focus(focus_change); }
@@ -111,11 +99,6 @@ void Game::tick(Seconds const dt) {
 void Game::render(Shader& shader) const {
 	m_enemy_spawner->draw(shader);
 	m_player.draw(shader);
-}
-
-void Game::add_score(std::int64_t const score) {
-	m_score += score;
-	m_hud->set_score(m_score);
 }
 
 void Game::inspect(Seconds const dt, Seconds const frame_time) {
