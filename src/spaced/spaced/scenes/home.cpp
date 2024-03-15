@@ -14,7 +14,7 @@ using bave::TextHeight;
 Home::Home(bave::App& app, Services const& services) : Scene(app, services, "Home") {
 	auto const& resources = services.get<Resources>();
 	auto tasks = std::array{
-		util::create_font_atlas_task(resources.main_font, {TextHeight{100}}),
+		util::create_font_atlas_task(resources.main_font, {TextHeight{100}, TextHeight{60}}),
 	};
 	add_load_tasks(tasks);
 }

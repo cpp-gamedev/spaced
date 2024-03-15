@@ -27,7 +27,7 @@ void View::tick(Seconds const dt) {
 }
 
 void View::render(Shader& shader) const {
-	if (m_widgets.empty()) { return; }
+	if (m_elements.empty()) { return; }
 	shader.set_render_view(m_layout->get_main_view());
 	for (auto const& element : m_elements) { element->draw(shader); }
 }

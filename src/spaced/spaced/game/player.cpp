@@ -94,10 +94,11 @@ void Player::do_inspect() {
 }
 
 void Player::setup_ship() {
-	auto const x = m_services->get<ILayout>().get_player_x();
+	auto const& layout = m_services->get<ILayout>();
+	auto const x = layout.get_player_x();
 	ship.transform.position.x = x;
 	auto rounded_quad = RoundedQuad{};
-	rounded_quad.size = glm::vec2{100.0f};
+	rounded_quad.size = layout.get_player_size();
 	rounded_quad.corner_radius = 20.0f;
 	ship.set_shape(rounded_quad);
 }
