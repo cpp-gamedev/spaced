@@ -49,8 +49,6 @@ class Player : public bave::IDrawable {
 	std::unique_ptr<Weapon> m_weapon{};
 	std::vector<std::unique_ptr<Weapon::Round>> m_weapon_rounds{};
 
-	Styles m_style{};
-
 	struct {
 		int shots_remaining{};
 	} m_debug{};

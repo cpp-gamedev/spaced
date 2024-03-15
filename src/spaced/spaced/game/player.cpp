@@ -95,25 +95,26 @@ void Player::do_inspect() {
 
 void Player::setup_ship() {
 	auto const x = m_services->get<ILayout>().get_player_x();
+	auto const& rgbas = m_services->get<Styles>().rgbas;
 	ship.transform.position.x = x;
 	auto rounded_quad = RoundedQuad{};
 	rounded_quad.size = glm::vec2{100.0f};
 	rounded_quad.corner_radius = 20.0f;
+	ship.tint = rgbas["black"];
 	ship.set_shape(rounded_quad);
-
-	auto const& style = m_services->get<Styles>();
-	// m_style = style.player["default"];
 }
 
 void Player::setup_foam() {
 	using Modifier = ParticleEmitter::Modifier;
-	foam_particles.config.quad_size = glm::vec2{50.f};
+	foam_particles.config.quad_size = glm::vec2{80.f};
 	foam_particles.config.velocity.linear.angle = {Degrees{80.0f}, Degrees{100.0f}};
 	foam_particles.config.velocity.linear.speed = {-360.0f, -270.0f};
 	foam_particles.config.ttl = {2s, 3s};
-	foam_particles.config.lerp.tint.hi.channels.w = 0xff;
-	foam_particles.config.lerp.scale.hi = glm::vec2{0.85f};
+	foam_particles.config.lerp.scale.hi = glm::vec2{0.5f};
 	foam_particles.config.count = 80;
+	auto const& rgbas = m_services->get<Styles>().rgbas;
+	foam_particles.config.lerp.tint = {rgbas["black"], rgbas["black"]};
+	foam_particles.config.lerp.tint.hi.channels.w = 0x0;
 	foam_particles.modifiers = {Modifier::eTranslate, Modifier::eTint, Modifier::eScale};
 	foam_particles.set_position(get_exhaust_position());
 	foam_particles.pre_warm();

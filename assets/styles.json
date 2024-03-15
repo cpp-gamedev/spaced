@@ -51,11 +51,5 @@
       "bottom_offset": 300.000000,
       "outline_width": 10
     }
-  },
-  "player": {
-    "default": {
-      "fill": "#231d2aff",
-      "foam": "#231d2aff"
-    }
   }
 }
