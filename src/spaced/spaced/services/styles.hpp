@@ -12,6 +12,7 @@ struct Styles : IService {
 	StringMap<bave::Rgba> rgbas{};
 	StringMap<ui::ButtonStyle> buttons{};
 	StringMap<ui::ProgressBarStyle> progress_bars{};
+	StringMap<ui::ProgressBarStyle> player{};
 	ui::LoadingScreenStyle loading_screen{};
 
 	static auto load(dj::Json const& json) -> Styles;

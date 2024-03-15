@@ -37,7 +37,7 @@
     }
   },
   "loading_screen": {
-    "background_tint": "#1a1a1aff",
+    "background_tint": "#231d2aff",
     "spinner": {
       "size": [
         100.000000,
@@ -50,6 +50,12 @@
       "height": 50.000000,
       "bottom_offset": 300.000000,
       "outline_width": 10
+    }
+  },
+  "player": {
+    "default": {
+      "fill": "#231d2aff",
+      "foam": "#231d2aff"
     }
   }
 }

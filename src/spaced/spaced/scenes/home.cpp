@@ -6,10 +6,12 @@
 #include <spaced/ui/button.hpp>
 #include <spaced/ui/text.hpp>
 #include <spaced/util.hpp>
+#include <spaced/services/styles.hpp>
 
 namespace spaced {
 using bave::Seconds;
 using bave::TextHeight;
+using bave::Rgba;
 
 Home::Home(bave::App& app, Services const& services) : Scene(app, services, "Home") {
 	auto const& resources = services.get<Resources>();
@@ -22,6 +24,7 @@ Home::Home(bave::App& app, Services const& services) : Scene(app, services, "Hom
 void Home::on_loaded() { create_ui(); }
 
 void Home::create_ui() {
+
 	auto m_header = std::make_unique<ui::Text>(get_services());
 	m_header->text.set_height(TextHeight{100}).set_string("Home");
 	m_header->text.tint = bave::white_v;

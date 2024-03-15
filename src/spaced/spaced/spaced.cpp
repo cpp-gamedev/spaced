@@ -108,7 +108,7 @@ void Spaced::render() const { m_scene->render_frame(); }
 void Spaced::load_resources() {
 	auto const loader = Loader{&get_app().get_data_store(), &get_app().get_render_device()};
 	auto resources = std::make_unique<Resources>();
-	resources->main_font = loader.load_font("fonts/Vera.ttf");
+	resources->main_font = loader.load_font("fonts/hesitation.regular.ttf");
 	resources->spinner = loader.load_texture("images/spinner.png", true);
 	m_resources = resources.get();
 	m_services.bind<Resources>(std::move(resources));

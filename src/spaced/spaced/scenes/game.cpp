@@ -22,6 +22,7 @@ using bave::Ptr;
 using bave::Seconds;
 using bave::Shader;
 using bave::Texture;
+using bave::random_in_range;
 
 namespace {
 [[nodiscard]] auto make_player_controller(Services const& services) {
@@ -48,16 +49,19 @@ void Game::on_loaded() {
 	m_player.foam_particles.set_texture(foam_texture);
 
 	auto const& rgbas = get_services().get<Styles>().rgbas;
-	auto spawn = [this] {
+	auto spawn = [this, rgbas] {
 		auto ret = std::make_unique<Creep>(get_services(), this);
-		ret->shape.tint = bave::yellow_v;
+		ret->shape.tint = random_in_range(-1.f, 1.f) < 0.f ? rgbas["orange"] : rgbas["milk"];
 		return ret;
 	};
 	auto emitter = bave::ParticleEmitter{};
-	emitter.config.ttl = {0.5s, 1s};
+	emitter.config.velocity.linear.speed = {-360.0f, -80.0f};
+	emitter.config.ttl = {0.5s, 3s};
+	emitter.config.count = 40;
 	emitter.set_texture(foam_texture);
 	emitter.config.lerp.tint = {rgbas["orange"], rgbas["milk"]};
-	emitter.config.lerp.tint.hi.channels.w = 0x0;
+	emitter.config.lerp.scale.hi = glm::vec2{0.7f};
+	emitter.config.lerp.tint.hi.channels.w = 0xff;
 	m_enemy_spawner.emplace(spawn, std::move(emitter));
 }
 
