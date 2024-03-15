@@ -106,7 +106,7 @@ void Player::setup_foam() {
 	using Modifier = ParticleEmitter::Modifier;
 	foam_particles.config.quad_size = glm::vec2{20.0f};
 	foam_particles.config.velocity.linear.angle = {Degrees{80.0f}, Degrees{100.0f}};
-	foam_particles.config.velocity.linear.speed = {-100.0f, -200.0f};
+	foam_particles.config.velocity.linear.speed = {-200.0f, -100.0f};
 	foam_particles.config.ttl = {1s, 2s};
 	foam_particles.config.lerp.tint.hi.channels.w = 0x0;
 	foam_particles.config.lerp.scale.hi = {};
