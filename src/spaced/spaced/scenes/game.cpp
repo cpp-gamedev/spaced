@@ -49,9 +49,9 @@ void Game::on_loaded() {
 	m_player.foam_particles.set_texture(foam_texture);
 
 	auto const& rgbas = get_services().get<Styles>().rgbas;
-	auto spawn = [this, rgbas] {
+	auto spawn = [this, &rgbas] {
 		auto ret = std::make_unique<Creep>(get_services(), this);
-		ret->shape.tint = random_in_range(-1.f, 1.f) < 0.f ? rgbas["orange"] : rgbas["milk"];
+		ret->shape.tint = random_in_range(0, 1) == 0 ? rgbas["orange"] : rgbas["milk"];
 		return ret;
 	};
 	auto emitter = bave::ParticleEmitter{};

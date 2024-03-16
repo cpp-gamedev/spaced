@@ -3,6 +3,7 @@
 #include <bave/platform.hpp>
 #include <spaced/game/player.hpp>
 #include <spaced/services/resources.hpp>
+#include <spaced/services/styles.hpp>
 
 // temp for testing
 #include <spaced/game/weapons/gun_beam.hpp>

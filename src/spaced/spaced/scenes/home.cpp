@@ -3,13 +3,11 @@
 #include <spaced/services/layout.hpp>
 #include <spaced/services/resources.hpp>
 #include <spaced/services/scene_switcher.hpp>
-#include <spaced/services/styles.hpp>
 #include <spaced/ui/button.hpp>
 #include <spaced/ui/text.hpp>
 #include <spaced/util.hpp>
 
 namespace spaced {
-using bave::Rgba;
 using bave::Seconds;
 using bave::TextHeight;
 
@@ -24,7 +22,6 @@ Home::Home(bave::App& app, Services const& services) : Scene(app, services, "Hom
 void Home::on_loaded() { create_ui(); }
 
 void Home::create_ui() {
-
 	auto m_header = std::make_unique<ui::Text>(get_services());
 	m_header->text.set_height(TextHeight{100}).set_string("Home");
 	m_header->text.tint = bave::white_v;
