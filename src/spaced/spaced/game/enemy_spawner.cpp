@@ -15,7 +15,7 @@ EnemySpawner::EnemySpawner(Spawn spawn, ParticleEmitter explode) : m_spawn(std::
 void EnemySpawner::tick(Seconds const dt) {
 	for (auto const& enemy : m_enemies) {
 		enemy->tick(dt);
-		if (enemy->is_destroyed()) { explode_at(enemy->get_bounds().centre()); }
+		if (enemy->is_dead()) { explode_at(enemy->get_bounds().centre()); }
 	}
 
 	for (auto& emitter : m_explodes) { emitter.tick(dt); }

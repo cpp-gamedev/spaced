@@ -16,7 +16,9 @@ class Enemy : public IDamageable, public bave::IDrawable {
 	[[nodiscard]] auto get_bounds() const -> bave::Rect<> override { return shape.get_bounds(); }
 	auto take_damage(float damage) -> bool override;
 
-	[[nodiscard]] auto is_destroyed() const -> bool { return health.is_dead(); }
+	[[nodiscard]] auto is_dead() const -> bool { return health.is_dead(); }
+	[[nodiscard]] auto is_destroyed() const -> bool { return is_dead() || m_destroyed; }
+	void set_destroyed() { m_destroyed = true; }
 
 	virtual void tick(bave::Seconds dt) = 0;
 	void draw(bave::Shader& shader) const override { shape.draw(shader); }
@@ -40,5 +42,6 @@ class Enemy : public IDamageable, public bave::IDrawable {
 	bave::NotNull<ILayout const*> m_layout;
 	bave::NotNull<IScorer*> m_scorer;
 	std::string_view m_type{};
+	bool m_destroyed{};
 };
 } // namespace spaced

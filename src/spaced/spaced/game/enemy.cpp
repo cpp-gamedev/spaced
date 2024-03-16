@@ -10,8 +10,10 @@ using bave::RoundedQuad;
 Enemy::Enemy(Services const& services, bave::NotNull<IScorer*> scorer, std::string_view const type)
 	: m_layout(&services.get<ILayout>()), m_scorer(scorer), m_type(type) {
 	static constexpr auto init_size_v = glm::vec2{100.0f};
-	auto const y_bounds = 0.5f * (get_layout().get_world_space().y - 0.5f * init_size_v.y);
-	setup(init_size_v, random_in_range(-y_bounds, y_bounds));
+	auto const play_area = m_layout->get_play_area();
+	auto const y_min = play_area.rb.y + 0.5f * init_size_v.y;
+	auto const y_max = play_area.lt.y - 0.5f * init_size_v.y;
+	setup(init_size_v, random_in_range(y_min, y_max));
 }
 
 auto Enemy::take_damage(float const damage) -> bool {
