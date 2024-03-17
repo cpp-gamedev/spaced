@@ -7,7 +7,7 @@
   },
   "enemy_factories": [
     {
-      "type": "BasicCreepFactory",
+      "type_name": "BasicCreepFactory",
       "tints": [
         "orange",
         "milk"
