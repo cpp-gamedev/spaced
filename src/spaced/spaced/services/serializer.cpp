@@ -11,24 +11,29 @@ auto Serializer::get_type_name(dj::Json const& json) const -> std::string_view {
 	return ret;
 }
 
-void Serializer::bind(Factory factory, std::string_view type_name) {
+void Serializer::bind(std::string_view type_name, Factory factory) {
 	if (!factory) {
 		m_log.error("null factory");
 		return;
 	}
 	if (type_name.empty()) {
-		auto const temp = factory();
-		if (!temp) {
-			m_log.error("factory returned null serializable");
-			return;
-		}
-		type_name = temp->get_type_name();
-		if (type_name.empty()) {
-			m_log.error("serializable returned empty type_name");
-			return;
-		}
+		m_log.error("serializable returned empty type_name");
+		return;
 	}
 	m_factories.insert_or_assign(type_name, std::move(factory));
+}
+
+void Serializer::bind(Factory factory) {
+	if (!factory) {
+		m_log.error("null factory");
+		return;
+	}
+	auto const temp = factory();
+	if (!temp) {
+		m_log.error("factory returned null serializable");
+		return;
+	}
+	bind(temp->get_type_name(), std::move(factory));
 }
 
 auto Serializer::deserialize(std::string_view const type_name, dj::Json const& json) const -> std::unique_ptr<ISerializable> {

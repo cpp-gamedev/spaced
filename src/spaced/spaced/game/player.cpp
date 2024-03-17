@@ -10,7 +10,6 @@
 #include <spaced/game/weapons/gun_kinetic.hpp>
 
 namespace spaced {
-using bave::Degrees;
 using bave::im_text;
 using bave::NotNull;
 using bave::ParticleEmitter;

@@ -9,6 +9,7 @@ using bave::Seconds;
 using bave::Shader;
 
 EnemySpawner::EnemySpawner(Spawn spawn, ParticleEmitter explode) : m_spawn(std::move(spawn)), m_explode(std::move(explode)) {
+	if (!m_spawn) { throw std::runtime_error{"Null EnemyFactory passed to EnemySpawner"}; }
 	m_explode.config.respawn = false;
 }
 
@@ -31,7 +32,7 @@ void EnemySpawner::draw(Shader& shader) const {
 
 void EnemySpawner::append_targets(std::vector<bave::NotNull<IDamageable*>>& out) const {
 	out.reserve(out.size() + m_enemies.size());
-	for (auto const& enemy : m_enemies) { out.push_back(enemy.get()); }
+	for (auto const& enemy : m_enemies) { out.emplace_back(enemy.get()); }
 }
 
 void EnemySpawner::explode_at(glm::vec2 const position) {

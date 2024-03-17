@@ -3,7 +3,7 @@
 #include <spaced/game/asset_list.hpp>
 #include <spaced/game/controllers/auto_controller.hpp>
 #include <spaced/game/controllers/player_controller.hpp>
-#include <spaced/game/enemies/creep.hpp>
+#include <spaced/game/enemy_factory.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/home.hpp>
 #include <spaced/services/resources.hpp>
@@ -21,10 +21,8 @@ using bave::KeyMods;
 using bave::PointerMove;
 using bave::PointerTap;
 using bave::Ptr;
-using bave::random_in_range;
 using bave::Seconds;
 using bave::Shader;
-using bave::Texture;
 
 namespace {
 [[nodiscard]] auto make_player_controller(Services const& services) {
@@ -54,15 +52,10 @@ void Game::on_loaded() {
 	auto const& resources = get_services().get<Resources>();
 	m_player.emplace(get_services(), make_player_controller(get_services()));
 
-	auto const& rgbas = get_services().get<Styles>().rgbas;
-	auto spawn = [this, &rgbas] {
-		auto ret = std::make_unique<Creep>(get_services(), this);
-		ret->shape.tint = random_in_range(0, 1) == 0 ? rgbas["orange"] : rgbas["milk"];
-		return ret;
-	};
 	auto emitter = bave::ParticleEmitter{};
 	if (auto const& e = resources.get<bave::ParticleEmitter>("particles/explode.json")) { emitter = *e; }
-	m_enemy_spawner.emplace(spawn, std::move(emitter));
+	auto factory = EnemyFactory{&get_services(), this};
+	m_enemy_spawner.emplace(factory.build({}), std::move(emitter));
 
 	auto hud = std::make_unique<Hud>(get_services());
 	m_hud = hud.get();
