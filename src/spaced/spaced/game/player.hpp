@@ -18,9 +18,7 @@ class Player : public bave::IDrawable {
 	void tick(std::span<bave::NotNull<IDamageable*> const> targets, bave::Seconds dt);
 	void draw(bave::Shader& shader) const final;
 
-	void inspect() {
-		if constexpr (bave::debug_v) { do_inspect(); }
-	}
+	void setup_exhaust(bave::ParticleEmitter emitter);
 
 	void set_y(float y);
 	[[nodiscard]] auto get_y() const -> float { return ship.transform.position.y; }
@@ -31,13 +29,15 @@ class Player : public bave::IDrawable {
 	void set_controller(std::unique_ptr<IController> controller);
 	[[nodiscard]] auto get_controller() const -> IController const& { return *m_controller; }
 
+	void inspect() {
+		if constexpr (bave::debug_v) { do_inspect(); }
+	}
+
 	bave::RoundedQuadShape ship{};
-	bave::ParticleEmitter foam_particles{};
 	Health health{};
 
   private:
 	void setup_ship();
-	void setup_foam();
 
 	void do_inspect();
 	void debug_switch_weapon();
@@ -45,6 +45,7 @@ class Player : public bave::IDrawable {
 	bave::Logger m_log{"Player"};
 	bave::NotNull<Services const*> m_services;
 	std::unique_ptr<IController> m_controller;
+	bave::ParticleEmitter m_exhaust{};
 	std::unique_ptr<Weapon> m_weapon{};
 	std::vector<std::unique_ptr<Weapon::Round>> m_weapon_rounds{};
 

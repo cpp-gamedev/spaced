@@ -21,7 +21,6 @@ using bave::Shader;
 
 Player::Player(Services const& services, std::unique_ptr<IController> controller) : m_services(&services), m_controller(std::move(controller)) {
 	setup_ship();
-	setup_foam();
 
 	debug_switch_weapon();
 }
@@ -50,18 +49,24 @@ void Player::tick(std::span<NotNull<IDamageable*> const> targets, Seconds const 
 
 	m_weapon->tick(dt);
 
-	foam_particles.set_position(get_exhaust_position());
+	m_exhaust.set_position(get_exhaust_position());
 
-	foam_particles.tick(dt);
+	m_exhaust.tick(dt);
 
 	if (m_debug.shots_remaining <= 0) { debug_switch_weapon(); }
 }
 
 void Player::draw(Shader& shader) const {
-	foam_particles.draw(shader);
+	m_exhaust.draw(shader);
 	ship.draw(shader);
 
 	for (auto const& round : m_weapon_rounds) { round->draw(shader); }
+}
+
+void Player::setup_exhaust(ParticleEmitter emitter) {
+	m_exhaust = std::move(emitter);
+	m_exhaust.set_position(get_exhaust_position());
+	m_exhaust.pre_warm();
 }
 
 void Player::set_y(float const y) { ship.transform.position.y = y; }
@@ -103,13 +108,6 @@ void Player::setup_ship() {
 	ship.tint = rgbas["black"];
 	ship.set_shape(rounded_quad);
 	ship.tint = m_services->get<Styles>().rgbas["black"];
-}
-
-void Player::setup_foam() {
-	auto const& resources = m_services->get<Resources>();
-	if (auto const exhaust = resources.get<ParticleEmitter>("particles/exhaust.json")) { foam_particles = *exhaust; }
-	foam_particles.set_position(get_exhaust_position());
-	foam_particles.pre_warm();
 }
 
 void Player::debug_switch_weapon() {
