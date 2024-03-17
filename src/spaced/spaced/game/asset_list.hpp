@@ -6,7 +6,7 @@
 #include <set>
 
 namespace spaced {
-class Resources;
+struct Resources;
 class AssetLoader;
 
 class AssetList {
@@ -26,7 +26,9 @@ class AssetList {
 		std::string uri{};
 		bool mip_map{};
 
-		auto operator<=>(Tex const& rhs) const { return uri <=> rhs.uri; }
+		// MacOS doesn't provide operator<=> for strings :/
+		auto operator==(Tex const& rhs) const -> bool { return uri == rhs.uri; }
+		auto operator<(Tex const& rhs) const -> bool { return uri < rhs.uri; }
 	};
 
 	auto build_stage_0(AssetLoader& asset_loader) const -> AsyncExec::Stage;

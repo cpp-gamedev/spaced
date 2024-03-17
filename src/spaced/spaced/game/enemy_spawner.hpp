@@ -26,6 +26,6 @@ class EnemySpawner {
 	std::unique_ptr<IEnemyFactory> m_factory{};
 	bave::ParticleEmitter m_death_emitter{};
 	std::vector<std::unique_ptr<Enemy>> m_enemies{};
-	std::vector<bave::ParticleEmitter> m_death_particles{};
+	std::vector<bave::ParticleEmitter> m_death_emitters{};
 };
 } // namespace spaced

@@ -22,15 +22,15 @@ void EnemySpawner::tick(Seconds const dt) {
 		if (enemy->is_dead()) { explode_at(enemy->get_bounds().centre()); }
 	}
 
-	for (auto& emitter : m_death_particles) { emitter.tick(dt); }
+	for (auto& emitter : m_death_emitters) { emitter.tick(dt); }
 
 	std::erase_if(m_enemies, [](auto const& enemy) { return enemy->is_destroyed(); });
-	std::erase_if(m_death_particles, [](ParticleEmitter const& emitter) { return emitter.active_particles() == 0; });
+	std::erase_if(m_death_emitters, [](ParticleEmitter const& emitter) { return emitter.active_particles() == 0; });
 }
 
 void EnemySpawner::draw(Shader& shader) const {
 	for (auto const& enemy : m_enemies) { enemy->draw(shader); }
-	for (auto const& emitter : m_death_particles) { emitter.draw(shader); }
+	for (auto const& emitter : m_death_emitters) { emitter.draw(shader); }
 }
 
 void EnemySpawner::append_targets(std::vector<bave::NotNull<IDamageable*>>& out) const {
@@ -39,7 +39,7 @@ void EnemySpawner::append_targets(std::vector<bave::NotNull<IDamageable*>>& out)
 }
 
 void EnemySpawner::explode_at(glm::vec2 const position) {
-	auto& emitter = m_death_particles.emplace_back(m_factory->get_death_emitter());
+	auto& emitter = m_death_emitters.emplace_back(m_factory->get_death_emitter());
 	emitter.config.respawn = false;
 	emitter.set_position(position);
 }

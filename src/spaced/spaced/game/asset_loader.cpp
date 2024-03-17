@@ -50,7 +50,7 @@ auto AssetLoader::make_load_particle_emitter(std::string uri, bool const reload)
 		impl->log.info("loaded ParticleEmitter: '{}'", uri);
 		return ret;
 	};
-	return make_load_task(std::move(uri), reload, std::move(load));
+	return make_load_task(std::move(uri), reload, load);
 }
 
 template <typename FuncT>

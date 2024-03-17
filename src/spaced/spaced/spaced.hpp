@@ -5,7 +5,7 @@
 
 namespace spaced {
 class Serializer;
-class Resources;
+struct Resources;
 
 class Spaced : public bave::Driver {
   public:

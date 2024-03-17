@@ -1,5 +1,6 @@
 #include <spaced/async_exec.hpp>
 #include <cassert>
+#include <iterator>
 #include <numeric>
 
 namespace spaced {
