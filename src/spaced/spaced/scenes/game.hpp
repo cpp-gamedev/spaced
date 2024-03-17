@@ -1,5 +1,6 @@
 #pragma once
 #include <spaced/game/enemy_spawner.hpp>
+#include <spaced/game/hud.hpp>
 #include <spaced/game/player.hpp>
 #include <spaced/game/scorer.hpp>
 #include <spaced/game/target_provider.hpp>
@@ -24,7 +25,7 @@ class Game : public Scene, public ITargetProvider, public IScorer {
 	[[nodiscard]] auto get_targets() const -> std::span<bave::NotNull<IDamageable*> const> final { return m_targets; }
 
 	[[nodiscard]] auto get_score() const -> std::int64_t final { return m_score; }
-	void add_score(std::int64_t const score) final { m_score += score; }
+	void add_score(std::int64_t score) final;
 
 	void inspect(bave::Seconds dt, bave::Seconds frame_time);
 
@@ -32,6 +33,7 @@ class Game : public Scene, public ITargetProvider, public IScorer {
 	std::int64_t m_score{};
 	std::optional<EnemySpawner> m_enemy_spawner{};
 	std::vector<bave::NotNull<IDamageable*>> m_targets{};
+	bave::Ptr<Hud> m_hud{};
 
 	struct {
 		struct {

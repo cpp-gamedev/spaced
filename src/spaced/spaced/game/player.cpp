@@ -95,11 +95,11 @@ void Player::do_inspect() {
 }
 
 void Player::setup_ship() {
-	auto const x = m_services->get<ILayout>().get_player_x();
 	auto const& rgbas = m_services->get<Styles>().rgbas;
-	ship.transform.position.x = x;
+	auto const& layout = m_services->get<ILayout>();
+	ship.transform.position.x = layout.get_player_x();
 	auto rounded_quad = RoundedQuad{};
-	rounded_quad.size = glm::vec2{100.0f};
+	rounded_quad.size = layout.get_player_size();
 	rounded_quad.corner_radius = 20.0f;
 	ship.tint = rgbas["black"];
 	ship.set_shape(rounded_quad);

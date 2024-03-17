@@ -20,6 +20,7 @@ using bave::MouseScroll;
 using bave::NotNull;
 using bave::PointerMove;
 using bave::PointerTap;
+using bave::Rect;
 using bave::RenderDevice;
 using bave::RenderView;
 
@@ -48,12 +49,16 @@ struct Layout : ILayout {
 	NotNull<RenderDevice const*> render_device;
 	RenderView main_view{};
 	glm::vec2 framebuffer_size{};
+	Rect<> play_area{};
+	Rect<> hud_area{};
 
 	explicit Layout(NotNull<RenderDevice const*> render_device) : render_device(render_device) {}
 
 	[[nodiscard]] auto get_main_view() const -> RenderView const& final { return main_view; }
 	[[nodiscard]] auto get_framebuffer_size() const -> glm::vec2 final { return framebuffer_size; }
 	[[nodiscard]] auto get_world_space() const -> glm::vec2 final { return main_view.viewport; }
+	[[nodiscard]] auto get_play_area() const -> bave::Rect<> final { return play_area; }
+	[[nodiscard]] auto get_hud_area() const -> bave::Rect<> final { return hud_area; }
 
 	[[nodiscard]] auto project_to_world(glm::vec2 fb_point) const -> glm::vec2 final { return render_device->project_to(get_world_space(), fb_point); }
 
@@ -63,6 +68,7 @@ struct Layout : ILayout {
 	}
 
 	[[nodiscard]] auto get_player_x() const -> float final { return -700.0f; }
+	[[nodiscard]] auto get_player_size() const -> glm::vec2 final { return glm::vec2{100.0f}; }
 
 	void set_framebuffer_size(glm::vec2 const size) final { framebuffer_size = size; }
 };
@@ -136,6 +142,12 @@ void Spaced::set_layout() {
 	layout->main_view = app.get_render_device().get_default_view();
 	layout->main_view.viewport = app.get_render_device().get_viewport_scaler().match_height({1920.0f, 1080.0f});
 	layout->framebuffer_size = app.get_framebuffer_size();
+	auto const hud_size = glm::vec2{layout->main_view.viewport.x, 100.0f};
+	auto const hud_origin = glm::vec2{0.0f, 0.5f * (layout->main_view.viewport.y - hud_size.y)};
+	layout->hud_area = Rect<>::from_size(hud_size, hud_origin);
+	auto const play_size = glm::vec2{hud_size.x, layout->main_view.viewport.y - hud_size.y};
+	auto const play_origin = glm::vec2{0.0f, -0.5f * (layout->main_view.viewport.y - play_size.y)};
+	layout->play_area = Rect<>::from_size(play_size, play_origin);
 	m_services.bind<ILayout>(std::move(layout));
 }
 
