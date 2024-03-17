@@ -103,20 +103,12 @@ void Player::setup_ship() {
 	rounded_quad.corner_radius = 20.0f;
 	ship.tint = rgbas["black"];
 	ship.set_shape(rounded_quad);
+	ship.tint = m_services->get<Styles>().rgbas["black"];
 }
 
 void Player::setup_foam() {
-	using Modifier = ParticleEmitter::Modifier;
-	foam_particles.config.quad_size = glm::vec2{80.f};
-	foam_particles.config.velocity.linear.angle = {Degrees{80.0f}, Degrees{100.0f}};
-	foam_particles.config.velocity.linear.speed = {-360.0f, -270.0f};
-	foam_particles.config.ttl = {2s, 3s};
-	foam_particles.config.lerp.scale.hi = glm::vec2{0.5f};
-	foam_particles.config.count = 80;
-	auto const& rgbas = m_services->get<Styles>().rgbas;
-	foam_particles.config.lerp.tint = {rgbas["black"], rgbas["black"]};
-	foam_particles.config.lerp.tint.hi.channels.w = 0x0;
-	foam_particles.modifiers = {Modifier::eTranslate, Modifier::eTint, Modifier::eScale};
+	auto const& resources = m_services->get<Resources>();
+	if (auto const exhaust = resources.get<ParticleEmitter>("particles/exhaust.json")) { foam_particles = *exhaust; }
 	foam_particles.set_position(get_exhaust_position());
 	foam_particles.pre_warm();
 }

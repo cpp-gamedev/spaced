@@ -29,7 +29,7 @@ class Game : public Scene, public ITargetProvider, public IScorer {
 
 	void inspect(bave::Seconds dt, bave::Seconds frame_time);
 
-	Player m_player;
+	std::optional<Player> m_player{};
 	std::int64_t m_score{};
 	std::optional<EnemySpawner> m_enemy_spawner{};
 	std::vector<bave::NotNull<IDamageable*>> m_targets{};

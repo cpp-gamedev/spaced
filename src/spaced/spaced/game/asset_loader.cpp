@@ -31,6 +31,11 @@ auto AssetLoader::make_load_texture_atlas(std::string uri, bool mip_map, bool re
 	return make_load_task(std::move(uri), reload, load);
 }
 
+auto AssetLoader::make_load_particle_emitter(std::string uri, bool const reload) -> LoadTask {
+	auto const load = [](Loader const& loader, std::string_view const uri) { return loader.load_particle_emitter(uri); };
+	return make_load_task(std::move(uri), reload, std::move(load));
+}
+
 template <typename FuncT>
 auto AssetLoader::make_load_task(std::string uri, bool reload, FuncT load) const -> LoadTask {
 	return [impl = m_impl, uri = std::move(uri), reload, load] {

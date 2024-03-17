@@ -12,6 +12,7 @@
 namespace spaced {
 using bave::Action;
 using bave::App;
+using bave::FocusChange;
 using bave::im_text;
 using bave::Key;
 using bave::KeyInput;
@@ -41,19 +42,19 @@ namespace {
 }
 } // namespace
 
-Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_player(services, make_player_controller(services)) {
+Game::Game(App& app, Services const& services) : Scene(app, services, "Game") {
 	clear_colour = services.get<Styles>().rgbas["mocha"];
 	auto asset_loader = AssetLoader{make_loader(), &services.get<Resources>()};
 	auto tasks = std::array{
-		asset_loader.make_load_texture("images/foam_bubble.png"),
+		asset_loader.make_load_particle_emitter("particles/exhaust.json"),
+		asset_loader.make_load_particle_emitter("particles/explode.json"),
 	};
 	add_load_tasks(tasks);
 }
 
 void Game::on_loaded() {
 	auto const& resources = get_services().get<Resources>();
-	auto const foam_texture = resources.get<Texture>("images/foam_bubble.png");
-	m_player.foam_particles.set_texture(foam_texture);
+	m_player.emplace(get_services(), make_player_controller(get_services()));
 
 	auto const& rgbas = get_services().get<Styles>().rgbas;
 	auto spawn = [this, &rgbas] {
@@ -62,13 +63,7 @@ void Game::on_loaded() {
 		return ret;
 	};
 	auto emitter = bave::ParticleEmitter{};
-	emitter.config.velocity.linear.speed = {-360.0f, -80.0f};
-	emitter.config.ttl = {0.5s, 3s};
-	emitter.config.count = 40;
-	emitter.set_texture(foam_texture);
-	emitter.config.lerp.tint = {rgbas["orange"], rgbas["milk"]};
-	emitter.config.lerp.scale.hi = glm::vec2{0.7f};
-	emitter.config.lerp.tint.hi.channels.w = 0xff;
+	if (auto const& e = resources.get<bave::ParticleEmitter>("particles/explode.json")) { emitter = *e; }
 	m_enemy_spawner.emplace(spawn, std::move(emitter));
 
 	auto hud = std::make_unique<Hud>(get_services());
@@ -76,7 +71,7 @@ void Game::on_loaded() {
 	push_view(std::move(hud));
 }
 
-void Game::on_focus(bave::FocusChange const& focus_change) { m_player.on_focus(focus_change); }
+void Game::on_focus(FocusChange const& focus_change) { m_player->on_focus(focus_change); }
 
 void Game::on_key(KeyInput const& key_input) {
 	if (key_input.key == Key::eEscape && key_input.action == Action::eRelease && key_input.mods == KeyMods{}) {
@@ -84,9 +79,9 @@ void Game::on_key(KeyInput const& key_input) {
 	}
 }
 
-void Game::on_move(PointerMove const& pointer_move) { m_player.on_move(pointer_move); }
+void Game::on_move(PointerMove const& pointer_move) { m_player->on_move(pointer_move); }
 
-void Game::on_tap(PointerTap const& pointer_tap) { m_player.on_tap(pointer_tap); }
+void Game::on_tap(PointerTap const& pointer_tap) { m_player->on_tap(pointer_tap); }
 
 void Game::tick(Seconds const dt) {
 	auto ft = bave::DeltaTime{};
@@ -95,7 +90,7 @@ void Game::tick(Seconds const dt) {
 	m_targets.clear();
 	m_enemy_spawner->append_targets(m_targets);
 
-	m_player.tick(m_targets, dt);
+	m_player->tick(m_targets, dt);
 
 	if (m_debug.next_spawn > 0s) {
 		m_debug.next_spawn -= dt;
@@ -109,7 +104,7 @@ void Game::tick(Seconds const dt) {
 
 void Game::render(Shader& shader) const {
 	m_enemy_spawner->draw(shader);
-	m_player.draw(shader);
+	m_player->draw(shader);
 }
 
 void Game::add_score(std::int64_t const score) {
@@ -124,7 +119,7 @@ void Game::inspect(Seconds const dt, Seconds const frame_time) {
 		if (ImGui::Begin("Debug")) {
 			if (ImGui::BeginTabBar("Game")) {
 				if (ImGui::BeginTabItem("Player")) {
-					m_player.inspect();
+					m_player->inspect();
 					ImGui::Separator();
 					debug_controller_type();
 					ImGui::EndTabItem();
@@ -182,10 +177,10 @@ void Game::debug_controller_type() {
 			return make_player_controller(get_services());
 		};
 
-		auto const& controller = m_player.get_controller();
+		auto const& controller = m_player->get_controller();
 		if (ImGui::BeginCombo("controller", controller.get_type_name().data())) {
 			for (auto const type_name : type_names_v) {
-				if (ImGui::Selectable(type_name.data())) { m_player.set_controller(make_controller(type_name)); }
+				if (ImGui::Selectable(type_name.data())) { m_player->set_controller(make_controller(type_name)); }
 			}
 			ImGui::EndCombo();
 		}
