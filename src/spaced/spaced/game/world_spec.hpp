@@ -5,6 +5,7 @@
 namespace spaced {
 struct WorldSpec {
 	struct Player {
+		std::string tint{};
 		std::string exhaust_emitter{};
 	};
 

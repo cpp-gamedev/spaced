@@ -2,6 +2,7 @@
   "name": "Playground",
   "background_tint": "mocha",
   "player": {
+    "tint": "black",
     "exhaust_emitter": "particles/exhaust.json"
   },
   "enemy_factories": [
@@ -11,6 +12,7 @@
         "orange",
         "milk"
       ],
+      "spawn_rate": 2,
       "death_emitter": "particles/explode.json"
     }
   ]

@@ -1,7 +1,6 @@
 #include <bave/imgui/im_text.hpp>
 #include <spaced/game/enemy_factory_builder.hpp>
 #include <spaced/game/world.hpp>
-#include <spaced/services/resources.hpp>
 
 #include <spaced/game/controllers/auto_controller.hpp>
 #include <spaced/game/controllers/player_controller.hpp>
@@ -9,7 +8,6 @@
 namespace spaced {
 using bave::FixedString;
 using bave::NotNull;
-using bave::ParticleEmitter;
 using bave::Seconds;
 using bave::Shader;
 
@@ -52,7 +50,7 @@ void World::load(WorldSpec const& spec) {
 	auto const factory = EnemyFactoryBuilder{m_services, m_scorer};
 	for (auto const& factory_json : spec.enemy_factories) { m_enemy_spawners.emplace_back(factory.build(factory_json)); }
 
-	if (auto const exhaust = m_services->get<Resources>().get<ParticleEmitter>(spec.player.exhaust_emitter)) { player.setup_exhaust(*exhaust); }
+	player.setup(spec.player);
 }
 
 void World::do_inspect() {

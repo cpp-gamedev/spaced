@@ -63,8 +63,11 @@ void Player::draw(Shader& shader) const {
 	for (auto const& round : m_weapon_rounds) { round->draw(shader); }
 }
 
-void Player::setup_exhaust(ParticleEmitter emitter) {
-	m_exhaust = std::move(emitter);
+void Player::setup(WorldSpec::Player const& spec) {
+	auto const& rgbas = m_services->get<Styles>().rgbas;
+	auto const& resources = m_services->get<Resources>();
+	ship.tint = rgbas[spec.tint];
+	if (auto const exhaust = resources.get<ParticleEmitter>(spec.exhaust_emitter)) { m_exhaust = *exhaust; }
 	m_exhaust.set_position(get_exhaust_position());
 	m_exhaust.pre_warm();
 }
@@ -99,15 +102,12 @@ void Player::do_inspect() {
 }
 
 void Player::setup_ship() {
-	auto const& rgbas = m_services->get<Styles>().rgbas;
 	auto const& layout = m_services->get<ILayout>();
 	ship.transform.position.x = layout.get_player_x();
 	auto rounded_quad = RoundedQuad{};
 	rounded_quad.size = layout.get_player_size();
 	rounded_quad.corner_radius = 20.0f;
-	ship.tint = rgbas["black"];
 	ship.set_shape(rounded_quad);
-	ship.tint = m_services->get<Styles>().rgbas["black"];
 }
 
 void Player::debug_switch_weapon() {

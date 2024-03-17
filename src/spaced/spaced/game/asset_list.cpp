@@ -42,6 +42,7 @@ auto AssetList::read_world_spec(std::string_view const uri) -> WorldSpec {
 	ret.background_tint = json["background_tint"].as_string();
 
 	if (auto const& player = json["player"]) {
+		ret.player.tint = player["tint"].as_string();
 		ret.player.exhaust_emitter = player["exhaust_emitter"].as_string();
 		add_particle_emitter(ret.player.exhaust_emitter);
 	}
