@@ -1,11 +1,12 @@
 #include <bave/core/random.hpp>
 #include <bave/imgui/im_text.hpp>
-#include <spaced/game/asset_loader.hpp>
+#include <spaced/game/asset_list.hpp>
 #include <spaced/game/controllers/auto_controller.hpp>
 #include <spaced/game/controllers/player_controller.hpp>
 #include <spaced/game/enemies/creep.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/home.hpp>
+#include <spaced/services/resources.hpp>
 #include <spaced/services/scene_switcher.hpp>
 #include <spaced/services/styles.hpp>
 
@@ -44,19 +45,9 @@ namespace {
 
 Game::Game(App& app, Services const& services) : Scene(app, services, "Game") {
 	clear_colour = services.get<Styles>().rgbas["mocha"];
-	auto asset_loader = AssetLoader{make_loader(), &services.get<Resources>()};
-	using Stage = AsyncExec::Stage;
-	auto stages = std::array{
-		Stage{
-			asset_loader.make_load_texture("images/foam_bubble.png"),
-		},
-		Stage{
-			asset_loader.make_load_particle_emitter("particles/exhaust.json"),
-			asset_loader.make_load_particle_emitter("particles/explode.json"),
-		},
-	};
-	// add_load_tasks(tasks);
-	add_load_stages(stages);
+	auto asset_list = AssetList{make_loader(), get_services()};
+	asset_list.add_particle_emitter("particles/explode.json").add_particle_emitter("particles/exhaust.json");
+	add_load_stages(asset_list.build_task_stages());
 }
 
 void Game::on_loaded() {

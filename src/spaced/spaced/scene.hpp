@@ -48,7 +48,7 @@ class Scene : public bave::PolyPinned {
 	virtual void render(bave::Shader& /*shader*/) const {}
 
 	void add_load_tasks(std::span<AsyncExec::Task const> tasks);
-	void add_load_stages(std::span<AsyncExec::Stage> task_stages);
+	void add_load_stages(std::vector<AsyncExec::Stage> task_stages);
 
 	bave::Logger m_log{};
 

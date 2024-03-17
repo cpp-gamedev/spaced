@@ -71,7 +71,7 @@ void Scene::add_load_tasks(std::span<AsyncExec::Task const> tasks) {
 	m_loading_screen.emplace(m_services);
 }
 
-void Scene::add_load_stages(std::span<AsyncExec::Stage> task_stages) {
+void Scene::add_load_stages(std::vector<AsyncExec::Stage> task_stages) {
 	if (task_stages.empty()) { return; }
 
 	m_load.emplace(task_stages);
