@@ -4,7 +4,7 @@
 #include <spaced/game/player.hpp>
 #include <spaced/game/scorer.hpp>
 #include <spaced/game/target_provider.hpp>
-#include <spaced/game/world.hpp>
+#include <spaced/game/world_spec.hpp>
 #include <spaced/scene.hpp>
 
 namespace spaced {
@@ -31,7 +31,7 @@ class Game : public Scene, public ITargetProvider, public IScorer {
 	void inspect(bave::Seconds dt, bave::Seconds frame_time);
 	void inspect_enemy_spawners();
 
-	World m_world{};
+	WorldSpec m_world{};
 	std::optional<Player> m_player{};
 	std::int64_t m_score{};
 	std::vector<EnemySpawner> m_enemy_spawners{};

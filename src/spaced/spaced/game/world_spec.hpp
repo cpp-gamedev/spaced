@@ -3,7 +3,7 @@
 #include <vector>
 
 namespace spaced {
-struct World {
+struct WorldSpec {
 	struct Player {
 		std::string exhaust_emitter{};
 	};

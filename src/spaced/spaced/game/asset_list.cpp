@@ -31,13 +31,13 @@ auto AssetList::add_particle_emitter(std::string uri) -> AssetList& {
 	return *this;
 }
 
-auto AssetList::read_world(std::string_view const uri) -> World {
+auto AssetList::read_world_spec(std::string_view const uri) -> WorldSpec {
 	if (uri.empty()) { return {}; }
 
 	auto const json = m_loader.load_json(uri);
 	if (!json) { return {}; }
 
-	auto ret = World{};
+	auto ret = WorldSpec{};
 	ret.name = json["name"].as_string();
 	ret.background_tint = json["background_tint"].as_string();
 

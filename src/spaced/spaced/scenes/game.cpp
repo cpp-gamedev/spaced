@@ -43,7 +43,7 @@ namespace {
 
 Game::Game(App& app, Services const& services) : Scene(app, services, "Game") {
 	auto asset_list = AssetList{make_loader(), get_services()};
-	m_world = asset_list.read_world("worlds/playground.json");
+	m_world = asset_list.read_world_spec("worlds/playground.json");
 	clear_colour = services.get<Styles>().rgbas[m_world.background_tint];
 	add_load_stages(asset_list.build_task_stages());
 }

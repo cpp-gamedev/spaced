@@ -1,7 +1,7 @@
 #pragma once
 #include <bave/loader.hpp>
 #include <spaced/async_exec.hpp>
-#include <spaced/game/world.hpp>
+#include <spaced/game/world_spec.hpp>
 #include <spaced/services/services.hpp>
 #include <set>
 
@@ -17,7 +17,7 @@ class AssetList {
 	auto add_font(std::string uri) -> AssetList&;
 	auto add_particle_emitter(std::string uri) -> AssetList&;
 
-	auto read_world(std::string_view uri) -> World;
+	auto read_world_spec(std::string_view uri) -> WorldSpec;
 
 	[[nodiscard]] auto build_task_stages() const -> std::vector<AsyncExec::Stage>;
 
