@@ -45,11 +45,18 @@ namespace {
 Game::Game(App& app, Services const& services) : Scene(app, services, "Game") {
 	clear_colour = services.get<Styles>().rgbas["mocha"];
 	auto asset_loader = AssetLoader{make_loader(), &services.get<Resources>()};
-	auto tasks = std::array{
-		asset_loader.make_load_particle_emitter("particles/exhaust.json"),
-		asset_loader.make_load_particle_emitter("particles/explode.json"),
+	using Stage = AsyncExec::Stage;
+	auto stages = std::array{
+		Stage{
+			asset_loader.make_load_texture("images/foam_bubble.png"),
+		},
+		Stage{
+			asset_loader.make_load_particle_emitter("particles/exhaust.json"),
+			asset_loader.make_load_particle_emitter("particles/explode.json"),
+		},
 	};
-	add_load_tasks(tasks);
+	// add_load_tasks(tasks);
+	add_load_stages(stages);
 }
 
 void Game::on_loaded() {

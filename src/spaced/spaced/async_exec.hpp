@@ -1,5 +1,6 @@
 #pragma once
 #include <atomic>
+#include <deque>
 #include <functional>
 #include <future>
 #include <span>
@@ -8,14 +9,22 @@
 namespace spaced {
 class AsyncExec {
   public:
+	using Task = std::function<void()>;
+	using Stage = std::vector<Task>;
+
 	struct Status;
 
-	explicit AsyncExec(std::span<std::function<void()>> tasks);
+	explicit AsyncExec(std::span<Task const> tasks);
+	explicit AsyncExec(std::span<Stage> stages);
 
 	auto update() -> Status;
 
   private:
+	void start_next_stage();
+	void enqueue(std::span<Task const> tasks);
+
 	std::vector<std::future<void>> m_remain{};
+	std::deque<Stage> m_stages{};
 	std::atomic<int> m_completed{};
 	int m_total{};
 };
