@@ -38,7 +38,7 @@
     }
   },
   "loading_screen": {
-    "background_tint": "#1a1a1aff",
+    "background_tint": "#231d2aff",
     "spinner": {
       "size": [
         100.000000,
