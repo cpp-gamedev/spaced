@@ -3,10 +3,9 @@
 #include <spaced/game/asset_list.hpp>
 #include <spaced/game/controllers/auto_controller.hpp>
 #include <spaced/game/controllers/player_controller.hpp>
-#include <spaced/game/enemy_factory.hpp>
+#include <spaced/game/enemy_factory_builder.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/home.hpp>
-#include <spaced/services/resources.hpp>
 #include <spaced/services/scene_switcher.hpp>
 #include <spaced/services/styles.hpp>
 
@@ -42,20 +41,20 @@ namespace {
 } // namespace
 
 Game::Game(App& app, Services const& services) : Scene(app, services, "Game") {
-	clear_colour = services.get<Styles>().rgbas["mocha"];
 	auto asset_list = AssetList{make_loader(), get_services()};
-	asset_list.add_particle_emitter("particles/explode.json").add_particle_emitter("particles/exhaust.json");
+	m_world = asset_list.read_world("worlds/playground.json");
+	clear_colour = services.get<Styles>().rgbas[m_world.background_tint];
 	add_load_stages(asset_list.build_task_stages());
 }
 
 void Game::on_loaded() {
-	auto const& resources = get_services().get<Resources>();
 	m_player.emplace(get_services(), make_player_controller(get_services()));
 
 	auto emitter = bave::ParticleEmitter{};
-	if (auto const& e = resources.get<bave::ParticleEmitter>("particles/explode.json")) { emitter = *e; }
-	auto factory = EnemyFactory{&get_services(), this};
-	m_enemy_spawner.emplace(factory.build({}), std::move(emitter));
+	auto enemy_factory_json = dj::Json{};
+	if (!m_world.enemy_factories.empty()) { enemy_factory_json = m_world.enemy_factories.front(); }
+	auto factory = EnemyFactoryBuilder{&get_services(), this};
+	m_enemy_spawner.emplace(factory.build(enemy_factory_json));
 
 	auto hud = std::make_unique<Hud>(get_services());
 	m_hud = hud.get();

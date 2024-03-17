@@ -1,31 +1,12 @@
 #pragma once
-#include <djson/json.hpp>
+#include <bave/graphics/particle_system.hpp>
 #include <spaced/game/enemy.hpp>
-#include <functional>
 
 namespace spaced {
-class EnemyFactory {
+class IEnemyFactory : public bave::Polymorphic {
   public:
-	explicit EnemyFactory(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> scorer);
-
-	[[nodiscard]] auto build(dj::Json const& json) const -> std::function<std::unique_ptr<Enemy>()>;
-
-	[[nodiscard]] auto build_default() const -> std::function<std::unique_ptr<Enemy>()>;
-
-  private:
-	bave::NotNull<Services const*> m_services;
-	bave::NotNull<IScorer*> m_scorer;
-};
-
-struct BasicCreepFactory {
-	static constexpr std::string_view type_v{"BasicCreepFactory"};
-
-	bave::NotNull<Services const*> services;
-	bave::NotNull<IScorer*> scorer;
-	std::vector<std::string> tints{};
-
-	explicit BasicCreepFactory(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> scorer, dj::Json const& json);
-
-	[[nodiscard]] auto operator()() const -> std::unique_ptr<Enemy>;
+	[[nodiscard]] virtual auto get_type_name() const -> std::string_view = 0;
+	[[nodiscard]] virtual auto spawn_enemy() -> std::unique_ptr<Enemy> = 0;
+	[[nodiscard]] virtual auto get_death_emitter() const -> bave::ParticleEmitter const& = 0;
 };
 } // namespace spaced

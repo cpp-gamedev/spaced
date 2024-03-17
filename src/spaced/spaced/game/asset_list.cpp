@@ -8,16 +8,20 @@ using bave::Loader;
 AssetList::AssetList(Loader loader, Services const& services) : m_loader(std::move(loader)), m_resources(&services.get<Resources>()) {}
 
 auto AssetList::add_texture(std::string uri, bool const mip_map) -> AssetList& {
+	if (uri.empty()) { return *this; }
 	m_textures.insert(Tex{.uri = std::move(uri), .mip_map = mip_map});
 	return *this;
 }
 
 auto AssetList::add_font(std::string uri) -> AssetList& {
+	if (uri.empty()) { return *this; }
 	m_fonts.insert(std::move(uri));
 	return *this;
 }
 
 auto AssetList::add_particle_emitter(std::string uri) -> AssetList& {
+	if (uri.empty()) { return *this; }
+
 	auto const json = m_loader.load_json(uri);
 	if (!json) { return *this; }
 
@@ -25,6 +29,29 @@ auto AssetList::add_particle_emitter(std::string uri) -> AssetList& {
 	if (auto const& texture = json["texture"]) { add_texture(texture.as<std::string>()); }
 	m_emitters.insert(std::move(uri));
 	return *this;
+}
+
+auto AssetList::read_world(std::string_view const uri) -> World {
+	if (uri.empty()) { return {}; }
+
+	auto const json = m_loader.load_json(uri);
+	if (!json) { return {}; }
+
+	auto ret = World{};
+	ret.name = json["name"].as_string();
+	ret.background_tint = json["background_tint"].as_string();
+
+	if (auto const& player = json["player"]) {
+		ret.player.exhaust_emitter = player["exhaust_emitter"].as_string();
+		add_particle_emitter(ret.player.exhaust_emitter);
+	}
+
+	for (auto const& enemy_factory : json["enemy_factories"].array_view()) {
+		add_particle_emitter(enemy_factory["death_emitter"].as<std::string>());
+		ret.enemy_factories.push_back(enemy_factory);
+	}
+
+	return ret;
 }
 
 auto AssetList::build_task_stages() const -> std::vector<AsyncExec::Stage> {

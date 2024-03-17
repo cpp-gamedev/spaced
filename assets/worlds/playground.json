@@ -1,0 +1,17 @@
+{
+  "name": "Playground",
+  "background_tint": "mocha",
+  "player": {
+    "exhaust_emitter": "particles/exhaust.json"
+  },
+  "enemy_factories": [
+    {
+      "type": "BasicCreepFactory",
+      "tints": [
+        "orange",
+        "milk"
+      ],
+      "death_emitter": "particles/explode.json"
+    }
+  ]
+}

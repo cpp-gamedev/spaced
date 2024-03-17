@@ -1,6 +1,7 @@
 #include <imgui.h>
 #include <bave/core/fixed_string.hpp>
 #include <spaced/game/enemy_spawner.hpp>
+#include <spaced/services/resources.hpp>
 
 namespace spaced {
 using bave::FixedString;
@@ -8,9 +9,8 @@ using bave::ParticleEmitter;
 using bave::Seconds;
 using bave::Shader;
 
-EnemySpawner::EnemySpawner(Spawn spawn, ParticleEmitter explode) : m_spawn(std::move(spawn)), m_explode(std::move(explode)) {
-	if (!m_spawn) { throw std::runtime_error{"Null EnemyFactory passed to EnemySpawner"}; }
-	m_explode.config.respawn = false;
+EnemySpawner::EnemySpawner(std::unique_ptr<IEnemyFactory> factory) : m_factory(std::move(factory)) {
+	if (!m_factory) { throw std::runtime_error{"Null EnemyFactory passed to EnemySpawner"}; }
 }
 
 void EnemySpawner::tick(Seconds const dt) {
@@ -19,15 +19,15 @@ void EnemySpawner::tick(Seconds const dt) {
 		if (enemy->is_dead()) { explode_at(enemy->get_bounds().centre()); }
 	}
 
-	for (auto& emitter : m_explodes) { emitter.tick(dt); }
+	for (auto& emitter : m_death_particles) { emitter.tick(dt); }
 
 	std::erase_if(m_enemies, [](auto const& enemy) { return enemy->is_destroyed(); });
-	std::erase_if(m_explodes, [](ParticleEmitter const& emitter) { return emitter.active_particles() == 0; });
+	std::erase_if(m_death_particles, [](ParticleEmitter const& emitter) { return emitter.active_particles() == 0; });
 }
 
 void EnemySpawner::draw(Shader& shader) const {
 	for (auto const& enemy : m_enemies) { enemy->draw(shader); }
-	for (auto const& emitter : m_explodes) { emitter.draw(shader); }
+	for (auto const& emitter : m_death_particles) { emitter.draw(shader); }
 }
 
 void EnemySpawner::append_targets(std::vector<bave::NotNull<IDamageable*>>& out) const {
@@ -36,7 +36,8 @@ void EnemySpawner::append_targets(std::vector<bave::NotNull<IDamageable*>>& out)
 }
 
 void EnemySpawner::explode_at(glm::vec2 const position) {
-	auto& emitter = m_explodes.emplace_back(m_explode);
+	auto& emitter = m_death_particles.emplace_back(m_factory->get_death_emitter());
+	emitter.config.respawn = false;
 	emitter.set_position(position);
 }
 
