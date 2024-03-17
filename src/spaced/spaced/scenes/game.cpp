@@ -12,6 +12,7 @@
 namespace spaced {
 using bave::Action;
 using bave::App;
+using bave::FixedString;
 using bave::FocusChange;
 using bave::im_text;
 using bave::Key;
@@ -50,11 +51,8 @@ Game::Game(App& app, Services const& services) : Scene(app, services, "Game") {
 void Game::on_loaded() {
 	m_player.emplace(get_services(), make_player_controller(get_services()));
 
-	auto emitter = bave::ParticleEmitter{};
-	auto enemy_factory_json = dj::Json{};
-	if (!m_world.enemy_factories.empty()) { enemy_factory_json = m_world.enemy_factories.front(); }
-	auto factory = EnemyFactoryBuilder{&get_services(), this};
-	m_enemy_spawner.emplace(factory.build(enemy_factory_json));
+	auto const factory = EnemyFactoryBuilder{&get_services(), this};
+	for (auto const& factory_json : m_world.enemy_factories) { m_enemy_spawners.emplace_back(factory.build(factory_json)); }
 
 	auto hud = std::make_unique<Hud>(get_services());
 	m_hud = hud.get();
@@ -76,24 +74,19 @@ void Game::on_tap(PointerTap const& pointer_tap) { m_player->on_tap(pointer_tap)
 void Game::tick(Seconds const dt) {
 	auto ft = bave::DeltaTime{};
 
-	m_enemy_spawner->tick(dt);
 	m_targets.clear();
-	m_enemy_spawner->append_targets(m_targets);
+	for (auto& spawner : m_enemy_spawners) {
+		spawner.tick(dt);
+		spawner.append_targets(m_targets);
+	}
 
 	m_player->tick(m_targets, dt);
-
-	if (m_debug.next_spawn > 0s) {
-		m_debug.next_spawn -= dt;
-	} else {
-		debug_spawn_creep();
-		m_debug.next_spawn = m_debug.spawn_rate;
-	}
 
 	if constexpr (bave::debug_v) { inspect(dt, ft.update()); }
 }
 
 void Game::render(Shader& shader) const {
-	m_enemy_spawner->draw(shader);
+	for (auto const& spawner : m_enemy_spawners) { spawner.draw(shader); }
 	m_player->draw(shader);
 }
 
@@ -115,8 +108,8 @@ void Game::inspect(Seconds const dt, Seconds const frame_time) {
 					ImGui::EndTabItem();
 				}
 
-				if (ImGui::BeginTabItem("Enemies")) {
-					debug_inspect_enemies();
+				if (ImGui::BeginTabItem("Enemy Spawners")) {
+					inspect_enemy_spawners();
 					ImGui::EndTabItem();
 				}
 				ImGui::EndTabBar();
@@ -142,18 +135,16 @@ void Game::inspect(Seconds const dt, Seconds const frame_time) {
 	}
 }
 
-void Game::debug_inspect_enemies() {
+void Game::inspect_enemy_spawners() {
 	if constexpr (bave::imgui_v) {
-		if (ImGui::Button("spawn creep")) { debug_spawn_creep(); }
-		auto spawn_rate = m_debug.spawn_rate.count();
-		if (ImGui::DragFloat("spawn rate", &spawn_rate, 0.25f, 0.25f, 10.0f)) { m_debug.spawn_rate = Seconds{spawn_rate}; }
-
-		ImGui::Separator();
-		m_enemy_spawner->inspect();
+		for (std::size_t i = 0; i < m_enemy_spawners.size(); ++i) {
+			if (ImGui::TreeNode(FixedString{"[{}]", i}.c_str())) {
+				m_enemy_spawners.at(i).inspect();
+				ImGui::TreePop();
+			}
+		}
 	}
 }
-
-void Game::debug_spawn_creep() { m_enemy_spawner->spawn(); }
 
 void Game::debug_controller_type() {
 	if constexpr (bave::imgui_v) {

@@ -29,11 +29,12 @@ class Game : public Scene, public ITargetProvider, public IScorer {
 	void add_score(std::int64_t score) final;
 
 	void inspect(bave::Seconds dt, bave::Seconds frame_time);
+	void inspect_enemy_spawners();
 
 	World m_world{};
 	std::optional<Player> m_player{};
 	std::int64_t m_score{};
-	std::optional<EnemySpawner> m_enemy_spawner{};
+	std::vector<EnemySpawner> m_enemy_spawners{};
 	std::vector<bave::NotNull<IDamageable*>> m_targets{};
 	bave::Ptr<Hud> m_hud{};
 
@@ -56,13 +57,8 @@ class Game : public Scene, public ITargetProvider, public IScorer {
 				}
 			}
 		} fps{};
-
-		bave::Seconds spawn_rate{2s};
-		bave::Seconds next_spawn{spawn_rate};
 	} m_debug{};
 
-	void debug_inspect_enemies();
-	void debug_spawn_creep();
 	void debug_controller_type();
 };
 } // namespace spaced

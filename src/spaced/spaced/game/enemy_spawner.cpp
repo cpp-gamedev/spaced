@@ -1,10 +1,11 @@
-#include <imgui.h>
 #include <bave/core/fixed_string.hpp>
+#include <bave/imgui/im_text.hpp>
 #include <spaced/game/enemy_spawner.hpp>
 #include <spaced/services/resources.hpp>
 
 namespace spaced {
 using bave::FixedString;
+using bave::im_text;
 using bave::ParticleEmitter;
 using bave::Seconds;
 using bave::Shader;
@@ -14,6 +15,8 @@ EnemySpawner::EnemySpawner(std::unique_ptr<IEnemyFactory> factory) : m_factory(s
 }
 
 void EnemySpawner::tick(Seconds const dt) {
+	if (m_factory->tick(dt)) { spawn(); }
+
 	for (auto const& enemy : m_enemies) {
 		enemy->tick(dt);
 		if (enemy->is_dead()) { explode_at(enemy->get_bounds().centre()); }
@@ -43,6 +46,12 @@ void EnemySpawner::explode_at(glm::vec2 const position) {
 
 void EnemySpawner::do_inspect() {
 	if constexpr (bave::imgui_v) {
+		im_text("{}", m_factory->get_type_name());
+		if (ImGui::Button("spawn")) { spawn(); }
+
+		ImGui::Separator();
+		m_factory->inspect();
+
 		for (std::size_t i = 0; i < m_enemies.size(); ++i) {
 			if (ImGui::TreeNode(FixedString{"{}", i}.c_str())) {
 				m_enemies.at(i)->inspect();
