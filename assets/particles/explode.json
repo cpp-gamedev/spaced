@@ -1,0 +1,61 @@
+{
+  "asset_type": "ParticleEmitter",
+  "texture": "images/foam_bubble.png",
+  "config": {
+    "initial": {
+      "position": {
+        "lo": [
+          0.000000,
+          0.000000
+        ],
+        "hi": [
+          0.000000,
+          0.000000
+        ]
+      },
+      "rotation": 0.000000
+    },
+    "velocity": {
+      "linear": {
+        "angle": {
+          "lo": -180.000000,
+          "hi": 180.000000
+        },
+        "speed": {
+          "lo": -360.000000,
+          "hi": -80.000000
+        }
+      },
+      "angular": {
+        "lo": -90.000000,
+        "hi": 90.000000
+      }
+    },
+    "lerp": {
+      "tint": {
+        "lo": "#f75c03ff",
+        "hi": "#e5cdaeff"
+      },
+      "scale": {
+        "lo": [
+          1.000000,
+          1.000000
+        ],
+        "hi": [
+          0.700000,
+          0.700000
+        ]
+      }
+    },
+    "ttl": {
+      "lo": 0.500000,
+      "hi": 3.000000
+    },
+    "quad_size": [
+      50.000000,
+      50.000000
+    ],
+    "count": 40,
+    "respawn": true
+  }
+}

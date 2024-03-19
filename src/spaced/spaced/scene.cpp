@@ -64,10 +64,17 @@ void Scene::render_frame() const {
 	for (auto const& view : m_views) { view->render(*shader); }
 }
 
-void Scene::add_load_tasks(std::span<std::function<void()>> tasks) {
+void Scene::add_load_tasks(std::span<AsyncExec::Task const> tasks) {
 	if (tasks.empty()) { return; }
 
 	m_load.emplace(tasks);
+	m_loading_screen.emplace(m_services);
+}
+
+void Scene::add_load_stages(std::vector<AsyncExec::Stage> task_stages) {
+	if (task_stages.empty()) { return; }
+
+	m_load.emplace(task_stages);
 	m_loading_screen.emplace(m_services);
 }
 

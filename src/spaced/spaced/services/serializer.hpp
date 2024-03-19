@@ -28,7 +28,8 @@ class Serializer : public IService {
 
 	[[nodiscard]] auto get_type_name(dj::Json const& json) const -> std::string_view;
 
-	void bind(Factory factory, std::string_view type_name = {});
+	void bind(std::string_view type_name, Factory factory);
+	void bind(Factory factory);
 
 	template <SerializableT Type>
 		requires(std::is_default_constructible_v<Type>)

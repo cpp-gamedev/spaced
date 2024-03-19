@@ -11,7 +11,7 @@ include(FetchContent)
 FetchContent_Declare(
   bave
   GIT_REPOSITORY https://github.com/karnkaul/bave
-  GIT_TAG 13ef94fe81e8914335b903c37c58bb2207fd786d # v0.4.7
+  GIT_TAG 8717d1eafd2ac581c7b90fa3af384eb66cd7896a # v0.4.8
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ext/bave"
 )
 
