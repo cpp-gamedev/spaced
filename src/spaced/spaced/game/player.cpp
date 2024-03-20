@@ -7,7 +7,6 @@
 
 // temp for testing
 #include <spaced/game/weapons/gun_beam.hpp>
-#include <spaced/game/weapons/gun_kinetic.hpp>
 
 namespace spaced {
 using bave::im_text;
@@ -19,11 +18,7 @@ using bave::RoundedQuad;
 using bave::Seconds;
 using bave::Shader;
 
-Player::Player(Services const& services, std::unique_ptr<IController> controller) : m_services(&services), m_controller(std::move(controller)) {
-	setup_ship();
-
-	debug_switch_weapon();
-}
+Player::Player(Services const& services, std::unique_ptr<IController> controller) : m_services(&services), m_controller(std::move(controller)) { setup_ship(); }
 
 void Player::on_focus(bave::FocusChange const& /*focus_changed*/) { m_controller->untap(); }
 
@@ -35,32 +30,17 @@ void Player::tick(std::span<NotNull<IDamageable*> const> targets, Seconds const 
 	auto const y_position = m_controller->tick(dt);
 	set_y(y_position);
 
-	auto const muzzle_position = get_muzzle_position();
-	if (m_controller->is_firing() && m_debug.shots_remaining > 0) {
-		if (auto round = m_weapon->fire(muzzle_position)) {
-			m_weapon_rounds.push_back(std::move(round));
-			--m_debug.shots_remaining;
-		}
-	}
-
-	auto const round_state = IWeaponRound::State{.targets = targets, .muzzle_position = muzzle_position};
-	for (auto const& round : m_weapon_rounds) { round->tick(round_state, dt); }
-	std::erase_if(m_weapon_rounds, [](auto const& charge) { return charge->is_destroyed(); });
-
-	m_weapon->tick(dt);
+	auto const round_state = IWeaponRound::State{.targets = targets, .muzzle_position = get_muzzle_position()};
+	m_arsenal.tick(round_state, m_controller->is_firing(), dt);
 
 	m_exhaust.set_position(get_exhaust_position());
-
 	m_exhaust.tick(dt);
-
-	if (m_debug.shots_remaining <= 0) { debug_switch_weapon(); }
 }
 
 void Player::draw(Shader& shader) const {
 	m_exhaust.draw(shader);
 	ship.draw(shader);
-
-	for (auto const& round : m_weapon_rounds) { round->draw(shader); }
+	m_arsenal.draw(shader);
 }
 
 void Player::setup(WorldSpec::Player const& spec) {
@@ -83,24 +63,6 @@ void Player::set_controller(std::unique_ptr<IController> controller) {
 	m_controller = std::move(controller);
 }
 
-void Player::do_inspect() {
-	if constexpr (bave::imgui_v) {
-		if (ImGui::TreeNodeEx("Controller", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
-			m_controller->inspect();
-			ImGui::TreePop();
-		}
-		if (ImGui::TreeNodeEx("Weapon", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
-			m_weapon->inspect();
-			im_text("shots remaining: {}", m_debug.shots_remaining);
-			ImGui::TreePop();
-		}
-		if (ImGui::TreeNodeEx("Status", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
-			health.inspect();
-			ImGui::TreePop();
-		}
-	}
-}
-
 void Player::setup_ship() {
 	auto const& layout = m_services->get<ILayout>();
 	ship.transform.position.x = layout.get_player_x();
@@ -110,16 +72,25 @@ void Player::setup_ship() {
 	ship.set_shape(rounded_quad);
 }
 
-void Player::debug_switch_weapon() {
-	if (m_weapon && !m_weapon->is_idle()) { return; }
-
-	if (dynamic_cast<GunKinetic const*>(m_weapon.get()) != nullptr) {
-		m_weapon = std::make_unique<GunBeam>(*m_services);
-		m_debug.shots_remaining = 2;
-		return;
+void Player::do_inspect() {
+	if constexpr (bave::imgui_v) {
+		if (ImGui::TreeNodeEx("Controller", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
+			m_controller->inspect();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNodeEx("Weapon", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
+			if (ImGui::Button("Switch to Beam")) {
+				auto beam = std::make_unique<GunBeam>(*m_services);
+				beam->rounds = 2;
+				m_arsenal.set_special(std::move(beam));
+			}
+			m_arsenal.get_weapon().inspect();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNodeEx("Status", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
+			health.inspect();
+			ImGui::TreePop();
+		}
 	}
-
-	m_weapon = std::make_unique<GunKinetic>(*m_services);
-	m_debug.shots_remaining = 10;
 }
 } // namespace spaced

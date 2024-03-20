@@ -12,6 +12,8 @@ class Weapon : public bave::Polymorphic {
 
 	explicit Weapon(Services const& services, std::string name) : m_log{std::move(name)}, m_layout(&services.get<ILayout>()) {}
 
+	[[nodiscard]] auto get_rounds_remaining() const -> int { return rounds < 0 ? 1 : rounds; }
+
 	virtual auto fire(glm::vec2 muzzle_position) -> std::unique_ptr<Round> = 0;
 	[[nodiscard]] virtual auto is_idle() const -> bool = 0;
 
@@ -21,9 +23,12 @@ class Weapon : public bave::Polymorphic {
 		if constexpr (bave::debug_v) { do_inspect(); }
 	}
 
+	int rounds{-1};
+
   protected:
 	[[nodiscard]] auto get_layout() const -> ILayout const& { return *m_layout; }
-	virtual void do_inspect() {}
+
+	virtual void do_inspect();
 
 	bave::Logger m_log{};
 
