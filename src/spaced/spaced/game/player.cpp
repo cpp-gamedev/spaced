@@ -9,8 +9,6 @@
 #include <spaced/game/weapons/gun_beam.hpp>
 
 namespace spaced {
-using bave::im_text;
-using bave::NotNull;
 using bave::ParticleEmitter;
 using bave::PointerMove;
 using bave::PointerTap;
@@ -26,15 +24,19 @@ void Player::on_move(PointerMove const& pointer_move) { m_controller->on_move(po
 
 void Player::on_tap(PointerTap const& pointer_tap) { m_controller->on_tap(pointer_tap); }
 
-void Player::tick(std::span<NotNull<IDamageable*> const> targets, Seconds const dt) {
+void Player::tick(State const& state, Seconds const dt) {
 	auto const y_position = m_controller->tick(dt);
 	set_y(y_position);
 
-	auto const round_state = IWeaponRound::State{.targets = targets, .muzzle_position = get_muzzle_position()};
+	auto const round_state = IWeaponRound::State{.targets = state.targets, .muzzle_position = get_muzzle_position()};
 	m_arsenal.tick(round_state, m_controller->is_firing(), dt);
 
 	m_exhaust.set_position(get_exhaust_position());
 	m_exhaust.tick(dt);
+
+	for (auto const& powerup : state.powerups) {
+		if (is_intersecting(powerup->get_bounds(), ship.get_bounds())) { powerup->activate(*this); }
+	}
 }
 
 void Player::draw(Shader& shader) const {

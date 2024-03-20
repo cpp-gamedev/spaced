@@ -37,7 +37,9 @@ void World::tick(Seconds const dt) {
 		spawner.tick(dt);
 		spawner.append_targets(m_targets);
 	}
-	player.tick(m_targets, dt);
+
+	auto const player_state = Player::State{.targets = m_targets};
+	player.tick(player_state, dt);
 }
 
 void World::draw(Shader& shader) const {
