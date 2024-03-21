@@ -5,7 +5,7 @@
 namespace spaced {
 class EnemyFactoryBuilder {
   public:
-	explicit EnemyFactoryBuilder(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> scorer);
+	explicit EnemyFactoryBuilder(bave::NotNull<Services const*> services, bave::NotNull<IEnemyDeathListener*> listener);
 
 	[[nodiscard]] auto build(dj::Json const& json) const -> std::unique_ptr<IEnemyFactory>;
 
@@ -13,6 +13,6 @@ class EnemyFactoryBuilder {
 
   private:
 	bave::NotNull<Services const*> m_services;
-	bave::NotNull<IScorer*> m_scorer;
+	bave::NotNull<IEnemyDeathListener*> m_listener;
 };
 } // namespace spaced

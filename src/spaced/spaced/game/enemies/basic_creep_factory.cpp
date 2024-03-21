@@ -12,15 +12,15 @@ using bave::ParticleEmitter;
 using bave::random_in_range;
 using bave::Seconds;
 
-BasicCreepFactory::BasicCreepFactory(NotNull<Services const*> services, NotNull<IScorer*> scorer, dj::Json const& json)
-	: m_services(services), m_scorer(scorer) {
+BasicCreepFactory::BasicCreepFactory(NotNull<Services const*> services, NotNull<IEnemyDeathListener*> listener, dj::Json const& json)
+	: m_services(services), m_listener(listener) {
 	for (auto const& tint : json["tints"].array_view()) { tints.push_back(tint.as<std::string>()); }
 	if (auto const in_death_emitter = services->get<Resources>().get<ParticleEmitter>(json["death_emitter"].as_string())) { death_emitter = *in_death_emitter; }
 	spawn_rate = Seconds{json["spawn_rate"].as<float>(spawn_rate.count())};
 }
 
 auto BasicCreepFactory::spawn_enemy() -> std::unique_ptr<Enemy> {
-	auto ret = std::make_unique<Creep>(*m_services, m_scorer);
+	auto ret = std::make_unique<Creep>(*m_services, m_listener);
 	if (!tints.empty()) {
 		auto const& rgbas = m_services->get<Styles>().rgbas;
 		auto const tint_index = random_in_range(std::size_t{}, tints.size() - 1);

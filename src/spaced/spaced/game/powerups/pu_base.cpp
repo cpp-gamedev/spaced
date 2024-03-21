@@ -1,10 +1,14 @@
 #include <spaced/game/powerups/pu_base.hpp>
 
 namespace spaced {
+using bave::Circle;
 using bave::Seconds;
 using bave::Shader;
 
-PUBase::PUBase(Services const& services, std::string_view const name) : m_services(&services), m_layout(&services.get<ILayout>()), m_name(name) {}
+PUBase::PUBase(Services const& services, std::string_view const name) : m_services(&services), m_layout(&services.get<ILayout>()), m_name(name) {
+	auto circle = Circle{.diameter = 50.0f};
+	shape.set_shape(circle);
+}
 
 void PUBase::tick(Seconds const dt) {
 	shape.transform.position.x -= speed * dt.count();

@@ -7,8 +7,8 @@ using bave::im_text;
 using bave::random_in_range;
 using bave::RoundedQuad;
 
-Enemy::Enemy(Services const& services, bave::NotNull<IScorer*> scorer, std::string_view const type)
-	: m_layout(&services.get<ILayout>()), m_scorer(scorer), m_type(type) {
+Enemy::Enemy(Services const& services, bave::NotNull<IEnemyDeathListener*> listener, std::string_view const type)
+	: m_layout(&services.get<ILayout>()), m_listener(listener), m_type(type) {
 	static constexpr auto init_size_v = glm::vec2{100.0f};
 	auto const play_area = m_layout->get_play_area();
 	auto const y_min = play_area.rb.y + 0.5f * init_size_v.y;
@@ -19,7 +19,7 @@ Enemy::Enemy(Services const& services, bave::NotNull<IScorer*> scorer, std::stri
 auto Enemy::take_damage(float const damage) -> bool {
 	if (is_destroyed()) { return false; }
 	health.inflict_damage(damage);
-	if (health.is_dead()) { m_scorer->add_score(points); }
+	if (health.is_dead()) { m_listener->on_death(EnemyDeath{.position = shape.transform.position, .points = points}); }
 	return true;
 }
 

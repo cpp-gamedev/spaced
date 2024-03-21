@@ -10,15 +10,15 @@ class PUBase : public IPowerup {
   public:
 	explicit PUBase(Services const& services, std::string_view name);
 
-	void tick(bave::Seconds dt);
-	void draw(bave::Shader& shader) const;
+	void tick(bave::Seconds dt) final;
+	void draw(bave::Shader& shader) const final;
 
 	[[nodiscard]] auto get_bounds() const -> bave::Rect<> final { return shape.get_bounds(); }
 	void activate(Player& player) final;
 
-	[[nodiscard]] auto is_destroyed() const -> bool { return m_destroyed; }
+	[[nodiscard]] auto is_destroyed() const -> bool final { return m_destroyed; }
 
-	float speed{100.0f};
+	float speed{300.0f};
 	bave::CircleShape shape{};
 
   protected:
