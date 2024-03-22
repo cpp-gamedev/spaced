@@ -36,10 +36,7 @@ void Arsenal::tick_weapons(Seconds const dt) {
 
 void Arsenal::check_switch_weapon() {
 	// if there is a next weapon on standby and the current weapon is idle, switch to the next weapon.
-	if (m_next && get_weapon().is_idle()) {
-		m_special = std::move(m_next);
-		//
-	}
+	if (m_next && get_weapon().is_idle()) { m_special = std::move(m_next); }
 }
 
 void Arsenal::fire_weapon(glm::vec2 const muzzle_position) {
