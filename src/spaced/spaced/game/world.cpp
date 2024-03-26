@@ -2,12 +2,15 @@
 #include <spaced/game/enemy_factory_builder.hpp>
 #include <spaced/game/world.hpp>
 
+#include <bave/core/random.hpp>
 #include <spaced/game/controllers/auto_controller.hpp>
 #include <spaced/game/controllers/player_controller.hpp>
+#include <spaced/game/powerups/pu_beam.hpp>
 
 namespace spaced {
 using bave::FixedString;
 using bave::NotNull;
+using bave::random_in_range;
 using bave::Seconds;
 using bave::Shader;
 
@@ -31,23 +34,40 @@ namespace {
 World::World(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> scorer)
 	: player(*services, make_player_controller(*services)), m_services(services), m_scorer(scorer) {}
 
+void World::on_death(EnemyDeath const& death) {
+	m_scorer->add_score(death.points);
+
+	// temp
+	if (random_in_range(0, 10) < 3) { debug_spawn_powerup(death.position); }
+	// temp
+}
+
 void World::tick(Seconds const dt) {
 	m_targets.clear();
 	for (auto& spawner : m_enemy_spawners) {
 		spawner.tick(dt);
 		spawner.append_targets(m_targets);
 	}
-	player.tick(m_targets, dt);
+
+	for (auto const& powerup : m_powerups) { powerup->tick(dt); }
+	std::erase_if(m_powerups, [](auto const& powerup) { return powerup->is_destroyed(); });
+
+	m_powerups_view.clear();
+	for (auto const& powerup : m_powerups) { m_powerups_view.emplace_back(powerup.get()); }
+
+	auto const player_state = Player::State{.targets = m_targets, .powerups = m_powerups_view};
+	player.tick(player_state, dt);
 }
 
 void World::draw(Shader& shader) const {
 	for (auto const& spawner : m_enemy_spawners) { spawner.draw(shader); }
+	for (auto const& powerup : m_powerups) { powerup->draw(shader); }
 	player.draw(shader);
 }
 
 void World::load(WorldSpec const& spec) {
 	m_enemy_spawners.clear();
-	auto const factory = EnemyFactoryBuilder{m_services, m_scorer};
+	auto const factory = EnemyFactoryBuilder{m_services, this};
 	for (auto const& factory_json : spec.enemy_factories) { m_enemy_spawners.emplace_back(factory.build(factory_json)); }
 
 	player.setup(spec.player);
@@ -100,5 +120,11 @@ void World::debug_controller_type() {
 			ImGui::EndCombo();
 		}
 	}
+}
+
+void World::debug_spawn_powerup(glm::vec2 const position) {
+	auto powerup = std::make_unique<PUBeam>(*m_services);
+	powerup->shape.transform.position = position;
+	m_powerups.push_back(std::move(powerup));
 }
 } // namespace spaced

@@ -8,7 +8,7 @@ class GunKinetic final : public Weapon {
 	explicit GunKinetic(Services const& services);
 
 	auto fire(glm::vec2 muzzle_position) -> std::unique_ptr<Round> final;
-	[[nodiscard]] auto is_idle() const -> bool final { return m_reload_remain >= 0s; }
+	[[nodiscard]] auto is_idle() const -> bool final { return m_reload_remain <= 0s; }
 
 	void tick(bave::Seconds dt) final;
 

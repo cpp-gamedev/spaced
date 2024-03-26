@@ -3,15 +3,15 @@
 #include <bave/graphics/shape.hpp>
 #include <bave/platform.hpp>
 #include <spaced/game/damageable.hpp>
+#include <spaced/game/enemy_death.hpp>
 #include <spaced/game/health.hpp>
-#include <spaced/game/scorer.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/services.hpp>
 
 namespace spaced {
 class Enemy : public IDamageable, public bave::IDrawable {
   public:
-	explicit Enemy(Services const& services, bave::NotNull<IScorer*> scorer, std::string_view type);
+	explicit Enemy(Services const& services, bave::NotNull<IEnemyDeathListener*> listener, std::string_view type);
 
 	[[nodiscard]] auto get_bounds() const -> bave::Rect<> override { return shape.get_bounds(); }
 	auto take_damage(float damage) -> bool override;
@@ -26,7 +26,7 @@ class Enemy : public IDamageable, public bave::IDrawable {
 	void setup(glm::vec2 max_size, float y_position);
 
 	[[nodiscard]] auto get_layout() const -> ILayout const& { return *m_layout; }
-	[[nodiscard]] auto get_scorer() const -> IScorer& { return *m_scorer; }
+	[[nodiscard]] auto get_death_listener() const -> IEnemyDeathListener& { return *m_listener; }
 
 	void inspect() {
 		if constexpr (bave::debug_v) { do_inspect(); }
@@ -40,7 +40,7 @@ class Enemy : public IDamageable, public bave::IDrawable {
 	virtual void do_inspect();
 
 	bave::NotNull<ILayout const*> m_layout;
-	bave::NotNull<IScorer*> m_scorer;
+	bave::NotNull<IEnemyDeathListener*> m_listener;
 	std::string_view m_type{};
 	bool m_destroyed{};
 };
