@@ -13,7 +13,7 @@ class GunKinetic final : public Weapon {
 	void tick(bave::Seconds dt) final;
 
 	Projectile::Config projectile_config{};
-	bave::Seconds reload_delay{0.2s};
+	bave::Seconds reload_delay{0.25s};
 
   private:
 	void do_inspect() final;
