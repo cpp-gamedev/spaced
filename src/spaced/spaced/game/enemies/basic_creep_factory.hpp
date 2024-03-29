@@ -18,6 +18,7 @@ class BasicCreepFactory : public IEnemyFactory {
 	std::vector<std::string> tints{};
 	bave::ParticleEmitter death_emitter{};
 	bave::Seconds spawn_rate{2s};
+	float initial_health{1.0f};
 
   private:
 	void do_inspect() final;
