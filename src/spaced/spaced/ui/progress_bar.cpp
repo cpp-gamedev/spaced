@@ -8,26 +8,27 @@ ProgressBar::ProgressBar(Services const& services) : m_style(services.get<Styles
 
 void ProgressBar::set_progress(float const progress) {
 	m_progress = progress;
-	auto const width = progress * size.x;
+	auto const width = (1.0f - progress) * size.x;
 
-	m_background.set_size(size);
-	m_background.set_corner_ratio(0.0f);
-
+	auto bg_size = size;
+	bg_size.x += m_style.corner_ratio * bg_size.y;
 	auto quad = bave::RoundedQuad{};
-	quad.size = size;
+	quad.size = bg_size;
+	quad.corner_radius = m_style.corner_ratio * std::min(bg_size.x, bg_size.y);
+	m_background.set_shape(quad);
+
+	quad.size = size - m_style.padding;
 	quad.corner_radius = 0.0f;
 	quad.size.x = width;
 	m_fill.set_shape(quad);
 
-	m_background.set_tint(m_style.background);
-	m_background.set_outline_tint(m_style.outline);
+	m_background.tint = m_style.background;
 	m_fill.tint = m_style.fill;
 
 	m_fill.tint.channels.w = 0xff;
 
-	m_background.set_position(position);
-	m_fill.transform.position = position;
-	m_fill.transform.position.x += 0.5f * (-size.x + width);
+	m_background.transform.position = m_fill.transform.position = position;
+	m_fill.transform.position.x += 0.5f * (size.x - width);
 }
 
 void ProgressBar::set_style(Style style) {

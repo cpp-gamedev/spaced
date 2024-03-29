@@ -18,7 +18,7 @@ struct LoadingScreenStyle {
 		float n_width{0.9f};
 		float height{50.0f};
 		float bottom_offset{200.0f};
-		float outline_width{10.0f};
+		float padding{30.0f};
 	} progress_bar{};
 };
 
@@ -35,7 +35,7 @@ struct ButtonStyle {
 struct ProgressBarStyle {
 	bave::Rgba background{bave::white_v};
 	bave::Rgba fill{bave::yellow_v};
-	bave::Rgba outline{bave::red_v};
-	float outline_width{5.0f};
+	float corner_ratio{0.5f};
+	float padding{10.0f};
 };
 } // namespace spaced::ui

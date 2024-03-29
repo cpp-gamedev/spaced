@@ -19,7 +19,7 @@ LoadingScreen::LoadingScreen(Services const& services)
 	m_progress_bar.size = {m_style.progress_bar.n_width * world_space.x, m_style.progress_bar.height};
 	m_progress_bar.position.y = -0.5f * world_space.y + m_style.progress_bar.bottom_offset;
 	auto style = m_progress_bar.get_style();
-	style.outline_width = m_style.progress_bar.outline_width;
+	style.padding = m_style.progress_bar.padding;
 	m_progress_bar.set_style(style);
 }
 

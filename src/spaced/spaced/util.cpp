@@ -12,7 +12,7 @@ void util::to_json(dj::Json& out, ui::LoadingScreenStyle const& loading_screen_s
 	progress_bar["n_width"] = loading_screen_style.progress_bar.n_width;
 	progress_bar["height"] = loading_screen_style.progress_bar.height;
 	progress_bar["bottom_offset"] = loading_screen_style.progress_bar.bottom_offset;
-	progress_bar["outline_width"] = loading_screen_style.progress_bar.outline_width;
+	progress_bar["padding"] = loading_screen_style.progress_bar.padding;
 }
 
 void util::from_json(dj::Json const& json, ui::LoadingScreenStyle& out) {
@@ -20,12 +20,12 @@ void util::from_json(dj::Json const& json, ui::LoadingScreenStyle& out) {
 	from_json(json["background_tint"], out.background_tint);
 	auto const& spinner = json["spinner"];
 	from_json(spinner["size"], out.spinner.size);
-	out.spinner.spin_rate.value = spinner["spin_rate"].as<float>();
+	out.spinner.spin_rate.value = spinner["spin_rate"].as<float>(out.spinner.spin_rate.value);
 	auto const& progress_bar = json["progress_bar"];
-	out.progress_bar.n_width = progress_bar["n_width"].as<float>();
-	out.progress_bar.height = progress_bar["height"].as<float>();
-	out.progress_bar.bottom_offset = progress_bar["bottom_offset"].as<float>();
-	out.progress_bar.outline_width = progress_bar["outline_width"].as<float>();
+	out.progress_bar.n_width = progress_bar["n_width"].as<float>(out.progress_bar.n_width);
+	out.progress_bar.height = progress_bar["height"].as<float>(out.progress_bar.height);
+	out.progress_bar.bottom_offset = progress_bar["bottom_offset"].as<float>(out.progress_bar.bottom_offset);
+	out.progress_bar.padding = progress_bar["padding"].as<float>(out.progress_bar.padding);
 }
 
 void util::to_json(dj::Json& out, ui::ButtonStyle::Tint const& button_tint) {
@@ -60,15 +60,15 @@ void util::from_json(dj::Json const& json, ui::ButtonStyle& out) {
 void util::to_json(dj::Json& out, ui::ProgressBarStyle const& progress_bar_style) {
 	to_json(out["background"], progress_bar_style.background);
 	to_json(out["fill"], progress_bar_style.fill);
-	to_json(out["outline"], progress_bar_style.outline);
-	out["outline_width"] = progress_bar_style.outline_width;
+	out["corner_ratio"] = progress_bar_style.corner_ratio;
+	out["padding"] = progress_bar_style.padding;
 }
 
 void util::from_json(dj::Json const& json, ui::ProgressBarStyle& out) {
 	from_json(json["background"], out.background);
 	from_json(json["fill"], out.fill);
-	from_json(json["outline"], out.outline);
-	out.outline_width = json["outline_width"].as<float>();
+	out.corner_ratio = json["corner_ratio"].as<float>(out.corner_ratio);
+	out.padding = json["padding"].as<float>(out.padding);
 }
 
 auto util::create_font_atlas_task(std::shared_ptr<bave::Font> font, std::vector<bave::TextHeight> heights) -> std::function<void()> {
