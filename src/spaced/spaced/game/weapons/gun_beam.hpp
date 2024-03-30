@@ -9,7 +9,7 @@ class GunBeam final : public Weapon {
 		bave::Seconds fire_duration{2s};
 		bave::Seconds reload_delay{1s};
 		bave::Rgba beam_tint{bave::red_v};
-		float dps{1.0f};
+		float dps{10.0f};
 	};
 
 	explicit GunBeam(Services const& services);

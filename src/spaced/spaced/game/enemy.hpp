@@ -7,6 +7,7 @@
 #include <spaced/game/health.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/services.hpp>
+#include <spaced/ui/progress_bar.hpp>
 
 namespace spaced {
 class Enemy : public IDamageable, public bave::IDrawable {
@@ -20,8 +21,8 @@ class Enemy : public IDamageable, public bave::IDrawable {
 	[[nodiscard]] auto is_destroyed() const -> bool { return is_dead() || m_destroyed; }
 	void set_destroyed() { m_destroyed = true; }
 
-	virtual void tick(bave::Seconds dt) = 0;
-	void draw(bave::Shader& shader) const override { shape.draw(shader); }
+	virtual void tick(bave::Seconds dt);
+	void draw(bave::Shader& shader) const override;
 
 	void setup(glm::vec2 max_size, float y_position);
 
@@ -33,6 +34,7 @@ class Enemy : public IDamageable, public bave::IDrawable {
 	}
 
 	bave::RoundedQuadShape shape{};
+	ui::ProgressBar health_bar;
 	Health health{};
 	std::int64_t points{10};
 

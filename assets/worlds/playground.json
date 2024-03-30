@@ -13,6 +13,7 @@
         "milk"
       ],
       "spawn_rate": 2,
+      "initial_health": 2,
       "death_emitter": "particles/explode.json"
     }
   ]

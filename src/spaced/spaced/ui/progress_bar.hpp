@@ -22,14 +22,14 @@ class ProgressBar : public IWidget {
 	[[nodiscard]] auto get_style() const -> Style const& { return m_style; }
 	void set_style(Style style);
 
-	[[nodiscard]] auto get_size() const -> glm::vec2 final { return m_background.get_size(); }
+	[[nodiscard]] auto get_size() const -> glm::vec2 final { return size; }
 	[[nodiscard]] auto get_position() const -> glm::vec2 final { return position; }
 	void set_position(glm::vec2 position) final { this->position = position; }
 
   private:
 	Style m_style{};
 
-	OutlineQuad m_background{};
+	bave::RoundedQuadShape m_background{};
 	bave::QuadShape m_fill{};
 
 	float m_progress{};

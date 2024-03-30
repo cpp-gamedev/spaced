@@ -31,10 +31,16 @@
   },
   "progress_bars": {
     "default": {
-      "background": "#ffffffff",
-      "fill": "#9f2b68ff",
-      "outline": "#702963ff",
-      "outline_width": 5
+      "background": "#9f2b68ff",
+      "fill": "#ffffffff",
+      "corner_ratio": 0.5,
+      "padding": 10
+    },
+    "enemy": {
+      "background": "#f75c03ff",
+      "fill": "#ffffffff",
+      "corner_ratio": 0.5,
+      "padding": 5
     }
   },
   "loading_screen": {
@@ -50,7 +56,7 @@
       "n_width": 0.800000,
       "height": 50.000000,
       "bottom_offset": 300.000000,
-      "outline_width": 10
+      "padding": 20
     }
   }
 }
