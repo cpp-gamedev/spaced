@@ -7,8 +7,6 @@
 #include <spaced/ui/text.hpp>
 #include <spaced/util.hpp>
 
-#include <thread>
-
 namespace spaced {
 using bave::Seconds;
 using bave::TextHeight;
@@ -17,9 +15,6 @@ Home::Home(bave::App& app, Services const& services) : Scene(app, services, "Hom
 	auto const& resources = services.get<Resources>();
 	auto const tasks = std::array{
 		util::create_font_atlas_task(resources.main_font, {TextHeight{100}, TextHeight{60}}),
-		std::function<void()>{[] { std::this_thread::sleep_for(1s); }},
-		std::function<void()>{[] { std::this_thread::sleep_for(2s); }},
-		std::function<void()>{[] { std::this_thread::sleep_for(1s); }},
 	};
 	add_load_tasks(tasks);
 }
