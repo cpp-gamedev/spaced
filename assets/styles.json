@@ -37,7 +37,7 @@
       "padding": 10
     },
     "enemy": {
-      "background": "#9f2b68ff",
+      "background": "#f75c03ff",
       "fill": "#ffffffff",
       "corner_ratio": 0.5,
       "padding": 5
