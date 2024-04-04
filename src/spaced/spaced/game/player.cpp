@@ -25,8 +25,23 @@ void Player::on_move(PointerMove const& pointer_move) { m_controller->on_move(po
 void Player::on_tap(PointerTap const& pointer_tap) { m_controller->on_tap(pointer_tap); }
 
 void Player::tick(State const& state, Seconds const dt) {
+	if (m_death) {
+		m_death->tick(dt);
+		if (m_death->active_particles() == 0) { m_death.reset(); }
+	}
+
+	if (health.is_dead()) { return; }
+
 	auto const y_position = m_controller->tick(dt);
 	set_y(y_position);
+
+	for (auto const& target : state.targets) {
+		if (is_intersecting(target->get_bounds(), ship.get_bounds())) {
+			on_death();
+			target->force_death();
+			return;
+		}
+	}
 
 	auto const round_state = IWeaponRound::State{.targets = state.targets, .muzzle_position = get_muzzle_position()};
 	m_arsenal.tick(round_state, m_controller->is_firing(), dt);
@@ -40,18 +55,24 @@ void Player::tick(State const& state, Seconds const dt) {
 }
 
 void Player::draw(Shader& shader) const {
-	m_exhaust.draw(shader);
-	ship.draw(shader);
+	if (!health.is_dead()) {
+		m_exhaust.draw(shader);
+		ship.draw(shader);
+	}
 	m_arsenal.draw(shader);
+	if (m_death) { m_death->draw(shader); }
 }
 
 void Player::setup(WorldSpec::Player const& spec) {
 	auto const& rgbas = m_services->get<Styles>().rgbas;
 	auto const& resources = m_services->get<Resources>();
 	ship.tint = rgbas[spec.tint];
+
 	if (auto const exhaust = resources.get<ParticleEmitter>(spec.exhaust_emitter)) { m_exhaust = *exhaust; }
 	m_exhaust.set_position(get_exhaust_position());
 	m_exhaust.pre_warm();
+
+	if (auto const death = resources.get<ParticleEmitter>(spec.death_emitter)) { m_death_source = *death; }
 }
 
 void Player::set_y(float const y) { ship.transform.position.y = y; }
@@ -72,6 +93,13 @@ void Player::setup_ship() {
 	rounded_quad.size = layout.get_player_size();
 	rounded_quad.corner_radius = 20.0f;
 	ship.set_shape(rounded_quad);
+}
+
+void Player::on_death() {
+	health = 0.0f;
+	m_death = m_death_source;
+	m_death->set_position(ship.transform.position);
+	m_death->config.respawn = false;
 }
 
 void Player::do_inspect() {

@@ -43,9 +43,11 @@ void World::on_death(EnemyDeath const& death) {
 }
 
 void World::tick(Seconds const dt) {
+	bool const in_play = !player.health.is_dead();
+
 	m_targets.clear();
 	for (auto& spawner : m_enemy_spawners) {
-		spawner.tick(dt);
+		spawner.tick(dt, in_play);
 		spawner.append_targets(m_targets);
 	}
 

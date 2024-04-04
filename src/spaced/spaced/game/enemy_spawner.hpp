@@ -7,7 +7,7 @@ class EnemySpawner {
   public:
 	explicit EnemySpawner(std::unique_ptr<IEnemyFactory> factory);
 
-	void tick(bave::Seconds dt);
+	void tick(bave::Seconds dt, bool in_play);
 	void draw(bave::Shader& shader) const;
 
 	void spawn() { m_enemies.push_back(m_factory->spawn_enemy()); }

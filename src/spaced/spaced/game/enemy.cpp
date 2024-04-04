@@ -16,7 +16,7 @@ Enemy::Enemy(Services const& services, bave::NotNull<IEnemyDeathListener*> liste
 	static constexpr auto init_size_v = glm::vec2{100.0f};
 	auto const play_area = m_layout->get_play_area();
 	auto const y_min = play_area.rb.y + 0.5f * init_size_v.y;
-	auto const y_max = play_area.lt.y - 0.5f * init_size_v.y;
+	auto const y_max = play_area.lt.y - 0.5f * init_size_v.y - 50.0f;
 	setup(init_size_v, random_in_range(y_min, y_max));
 
 	health_bar.set_style(services.get<Styles>().progress_bars["enemy"]);
@@ -29,7 +29,13 @@ auto Enemy::take_damage(float const damage) -> bool {
 	return true;
 }
 
-void Enemy::tick(Seconds const dt) {
+void Enemy::force_death() {
+	health = 0.0f;
+	health_bar.set_progress(0.0f);
+	m_listener->on_death(EnemyDeath{.position = shape.transform.position});
+}
+
+void Enemy::tick(Seconds const dt, bool const /*in_play*/) {
 	health_bar.position = shape.transform.position;
 	health_bar.position.y += 0.5f * shape.get_shape().size.y + 20.0f;
 	health_bar.size = {shape.get_shape().size.x, 10.0f};

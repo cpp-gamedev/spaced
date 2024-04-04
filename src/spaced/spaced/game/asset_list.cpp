@@ -44,7 +44,9 @@ auto AssetList::read_world_spec(std::string_view const uri) -> WorldSpec {
 	if (auto const& player = json["player"]) {
 		ret.player.tint = player["tint"].as_string();
 		ret.player.exhaust_emitter = player["exhaust_emitter"].as_string();
+		ret.player.death_emitter = player["death_emitter"].as_string();
 		add_particle_emitter(ret.player.exhaust_emitter);
+		add_particle_emitter(ret.player.death_emitter);
 	}
 
 	for (auto const& enemy_factory : json["enemy_factories"].array_view()) {

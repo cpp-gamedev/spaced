@@ -14,11 +14,11 @@ EnemySpawner::EnemySpawner(std::unique_ptr<IEnemyFactory> factory) : m_factory(s
 	if (!m_factory) { throw std::runtime_error{"Null EnemyFactory passed to EnemySpawner"}; }
 }
 
-void EnemySpawner::tick(Seconds const dt) {
+void EnemySpawner::tick(Seconds const dt, bool const in_play) {
 	if (m_factory->tick(dt)) { spawn(); }
 
 	for (auto const& enemy : m_enemies) {
-		enemy->tick(dt);
+		enemy->tick(dt, in_play);
 		if (enemy->is_dead()) { explode_at(enemy->get_bounds().centre()); }
 	}
 
