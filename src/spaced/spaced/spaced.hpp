@@ -6,6 +6,8 @@
 namespace spaced {
 class Serializer;
 struct Resources;
+class IAudio;
+struct SceneSwitcher;
 
 class Spaced : public bave::Driver {
   public:
@@ -31,7 +33,9 @@ class Spaced : public bave::Driver {
 	bave::Logger m_log{"Spaced"};
 	Services m_services{};
 	bave::Ptr<ILayout> m_layout{};
+	bave::Ptr<SceneSwitcher> m_scene_switcher{};
 	bave::Ptr<Resources> m_resources{};
+	bave::Ptr<IAudio> m_audio{};
 	std::unique_ptr<Scene> m_scene{};
 };
 } // namespace spaced

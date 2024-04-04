@@ -73,6 +73,7 @@ void Player::setup(WorldSpec::Player const& spec) {
 	m_exhaust.pre_warm();
 
 	if (auto const death = resources.get<ParticleEmitter>(spec.death_emitter)) { m_death_source = *death; }
+	m_death_source.config.respawn = false;
 }
 
 void Player::set_y(float const y) { ship.transform.position.y = y; }
@@ -99,7 +100,6 @@ void Player::on_death() {
 	health = 0.0f;
 	m_death = m_death_source;
 	m_death->set_position(ship.transform.position);
-	m_death->config.respawn = false;
 }
 
 void Player::do_inspect() {

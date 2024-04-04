@@ -2,6 +2,7 @@
 #include <bave/json_io.hpp>
 #include <bave/loader.hpp>
 #include <spaced/scenes/home.hpp>
+#include <spaced/services/audio.hpp>
 #include <spaced/services/gamepad_provider.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/resources.hpp>
@@ -13,6 +14,9 @@
 namespace spaced {
 namespace {
 using bave::App;
+using bave::AudioClip;
+using bave::AudioDevice;
+using bave::AudioStreamer;
 using bave::Gamepad;
 using bave::KeyInput;
 using bave::Loader;
@@ -23,19 +27,7 @@ using bave::PointerTap;
 using bave::Rect;
 using bave::RenderDevice;
 using bave::RenderView;
-
-struct SceneSwitcherImpl : ISceneSwitcher {
-	App& app;				  // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
-	Services const& services; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
-	std::unique_ptr<Scene> next_scene{};
-
-	explicit SceneSwitcherImpl(App& app, Services const& services) : app(app), services(services) {}
-
-	void switch_to_scene(std::unique_ptr<Scene> new_scene) final { next_scene = std::move(new_scene); }
-
-	[[nodiscard]] auto get_app() const -> App& final { return app; }
-	[[nodiscard]] auto get_services() const -> Services const& final { return services; }
-};
+using bave::Seconds;
 
 struct GamepadProvider : IGamepadProvider {
 	bave::App& app; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
@@ -72,7 +64,49 @@ struct Layout : ILayout {
 
 	void set_framebuffer_size(glm::vec2 const size) final { framebuffer_size = size; }
 };
+
+struct Audio : IAudio {
+	NotNull<AudioDevice*> audio_device;
+	NotNull<AudioStreamer*> audio_streamer;
+	NotNull<Resources const*> resources;
+
+	explicit Audio(NotNull<AudioDevice*> audio_device, NotNull<AudioStreamer*> audio_streamer, NotNull<Resources const*> resources)
+		: audio_device(audio_device), audio_streamer(audio_streamer), resources(resources) {}
+
+	[[nodiscard]] auto get_sfx_gain() const -> float final { return audio_device->sfx_gain; }
+	void set_sfx_gain(float const gain) final { audio_device->sfx_gain = gain; }
+
+	[[nodiscard]] auto get_music_gain() const -> float final { return audio_streamer->gain; }
+	void set_music_gain(float const gain) final { audio_streamer->gain = gain; }
+
+	void play_sfx(std::string_view const uri) final {
+		auto const clip = resources->get<AudioClip>(uri);
+		if (!clip) { return; }
+		audio_device->play_once(*clip);
+	}
+
+	void play_music(std::string_view const uri, Seconds const crossfade) final {
+		auto const clip = resources->get<AudioClip>(uri);
+		if (!clip) { return; }
+		audio_streamer->play(clip, crossfade);
+	}
+
+	void stop_music() final { audio_streamer->stop(); }
+};
 } // namespace
+
+struct SceneSwitcher : ISceneSwitcher {
+	App& app;				  // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
+	Services const& services; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
+	std::unique_ptr<Scene> next_scene{};
+
+	explicit SceneSwitcher(App& app, Services const& services) : app(app), services(services) {}
+
+	void switch_to_scene(std::unique_ptr<Scene> new_scene) final { next_scene = std::move(new_scene); }
+
+	[[nodiscard]] auto get_app() const -> App& final { return app; }
+	[[nodiscard]] auto get_services() const -> Services const& final { return services; }
+};
 
 void Spaced::set_bindings([[maybe_unused]] Serializer& serializer) {}
 
@@ -99,9 +133,10 @@ void Spaced::tick() {
 	m_layout->set_framebuffer_size(get_app().get_framebuffer_size());
 
 	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
-	if (auto& switcher = static_cast<SceneSwitcherImpl&>(m_services.get<ISceneSwitcher>()); switcher.next_scene) {
+	if (m_scene_switcher->next_scene) {
 		m_resources->clear();
-		m_scene = std::move(switcher.next_scene);
+		m_audio->stop_music();
+		m_scene = std::move(m_scene_switcher->next_scene);
 	}
 
 	m_scene->tick_frame(dt);
@@ -156,12 +191,16 @@ void Spaced::create_services() {
 	set_bindings(*serializer);
 	m_services.bind<Serializer>(std::move(serializer));
 
-	auto gamepad_provider = std::make_unique<GamepadProvider>(get_app());
-	m_services.bind<IGamepadProvider>(std::move(gamepad_provider));
+	m_services.bind<IGamepadProvider>(std::make_unique<GamepadProvider>(get_app()));
+
+	auto audio = std::make_unique<Audio>(&get_app().get_audio_device(), &get_app().get_audio_streamer(), m_resources);
+	m_audio = audio.get();
+	m_services.bind<IAudio>(std::move(audio));
 }
 
 void Spaced::set_scene() {
-	auto switcher = std::make_unique<SceneSwitcherImpl>(get_app(), m_services);
+	auto switcher = std::make_unique<SceneSwitcher>(get_app(), m_services);
+	m_scene_switcher = switcher.get();
 	switcher->switch_to<Home>();
 	m_services.bind<ISceneSwitcher>(std::move(switcher));
 }
