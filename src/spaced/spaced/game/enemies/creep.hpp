@@ -6,7 +6,7 @@ class Creep : public Enemy {
   public:
 	explicit Creep(Services const& services, bave::NotNull<IEnemyDeathListener*> listener) : Enemy(services, listener, "Creep") {}
 
-	void tick(bave::Seconds dt) override;
+	void tick(bave::Seconds dt, bool in_play) override;
 
 	float x_speed{100.0f};
 };

@@ -3,7 +3,8 @@
   "background_tint": "mocha",
   "player": {
     "tint": "black",
-    "exhaust_emitter": "particles/exhaust.json"
+    "exhaust_emitter": "particles/exhaust.json",
+    "death_emitter": "particles/explode.json"
   },
   "enemy_factories": [
     {

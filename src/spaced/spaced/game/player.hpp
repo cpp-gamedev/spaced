@@ -47,6 +47,7 @@ class Player : public bave::IDrawable {
 
   private:
 	void setup_ship();
+	void on_death();
 
 	void do_inspect();
 
@@ -54,6 +55,8 @@ class Player : public bave::IDrawable {
 	bave::NotNull<Services const*> m_services;
 	std::unique_ptr<IController> m_controller;
 	bave::ParticleEmitter m_exhaust{};
+	bave::ParticleEmitter m_death_source{};
+	std::optional<bave::ParticleEmitter> m_death{};
 
 	Arsenal m_arsenal{*m_services};
 };

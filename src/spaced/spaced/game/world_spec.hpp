@@ -7,6 +7,7 @@ struct WorldSpec {
 	struct Player {
 		std::string tint{};
 		std::string exhaust_emitter{};
+		std::string death_emitter{};
 	};
 
 	std::string name{};
