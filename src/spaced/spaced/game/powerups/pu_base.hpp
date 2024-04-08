@@ -1,8 +1,8 @@
 #pragma once
 #include <bave/core/time.hpp>
 #include <bave/graphics/shape.hpp>
-#include <spaced/game/powerup.hpp>
 #include <spaced/game/motion.hpp>
+#include <spaced/game/powerup.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/services.hpp>
 
