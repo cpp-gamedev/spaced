@@ -1,5 +1,5 @@
 #include <glm/gtx/norm.hpp>
-#include <spaced/game/Gravitator.hpp>
+#include <spaced/game/gravitator.hpp>
 
 namespace spaced {
 void Gravitator::tick(bave::Seconds dt) {
