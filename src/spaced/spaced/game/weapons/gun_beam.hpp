@@ -5,7 +5,7 @@ namespace spaced {
 class GunBeam final : public Weapon {
   public:
 	struct Config {
-		float beam_height{5.0f};
+		float beam_height{12.0f};
 		bave::Seconds fire_duration{2s};
 		bave::Seconds reload_delay{1s};
 		bave::Rgba beam_tint{bave::red_v};

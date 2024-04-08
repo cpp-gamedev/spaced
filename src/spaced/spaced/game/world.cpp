@@ -62,9 +62,9 @@ void World::tick(Seconds const dt) {
 }
 
 void World::draw(Shader& shader) const {
+	player.draw(shader);
 	for (auto const& spawner : m_enemy_spawners) { spawner.draw(shader); }
 	for (auto const& powerup : m_powerups) { powerup->draw(shader); }
-	player.draw(shader);
 }
 
 void World::load(WorldSpec const& spec) {

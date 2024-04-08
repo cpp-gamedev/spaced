@@ -35,7 +35,7 @@ class LaserCharge : public IWeaponRound {
 		auto right_x = 0.5f * world_space.x;
 		for (auto const& entry : m_entries) {
 			if (entry.target->take_damage(m_config.dps * dt.count())) {
-				right_x = entry.target->get_bounds().top_left().x;
+				right_x = entry.target->get_bounds().centre().x;
 				break;
 			}
 		}
