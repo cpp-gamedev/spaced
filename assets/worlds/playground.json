@@ -1,8 +1,8 @@
 {
   "name": "Playground",
-  "background_tint": "mocha",
+  "background_tint": "black",
   "player": {
-    "tint": "black",
+    "tint": "periwinkle",
     "exhaust_emitter": "particles/exhaust.json",
     "death_emitter": "particles/explode.json"
   },

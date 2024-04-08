@@ -99,7 +99,7 @@ class LaserCharge : public IWeaponRound {
 
 GunBeam::GunBeam(Services const& services) : Weapon(services, "GunBeam") {
 	auto const& rgbas = services.get<Styles>().rgbas;
-	config.beam_tint = rgbas.get_or("gun_beam", rgbas["grey"]);
+	config.beam_tint = rgbas.get_or("periwinkle", rgbas["grey"]);
 }
 
 auto GunBeam::fire(glm::vec2 const muzzle_position) -> std::unique_ptr<Round> {

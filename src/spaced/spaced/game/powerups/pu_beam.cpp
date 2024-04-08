@@ -4,7 +4,7 @@
 #include <spaced/services/styles.hpp>
 
 namespace spaced {
-PUBeam::PUBeam(Services const& services, int rounds) : PUBase(services, "Beam"), m_rounds(rounds) { shape.tint = services.get<Styles>().rgbas["gun_beam"]; }
+PUBeam::PUBeam(Services const& services, int rounds) : PUBase(services, "Beam"), m_rounds(rounds) { shape.tint = services.get<Styles>().rgbas["periwinkle"]; }
 
 void PUBeam::do_activate(Player& player) {
 	auto beam = std::make_unique<GunBeam>(*m_services);

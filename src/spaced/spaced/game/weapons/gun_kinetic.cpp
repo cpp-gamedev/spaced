@@ -7,7 +7,7 @@ using bave::im_text;
 using bave::Rgba;
 using bave::Seconds;
 
-GunKinetic::GunKinetic(Services const& services) : Weapon(services, "GunKinetic") { projectile_config.tint = services.get<Styles>().rgbas["black"]; }
+GunKinetic::GunKinetic(Services const& services) : Weapon(services, "GunKinetic") { projectile_config.tint = services.get<Styles>().rgbas["periwinkle"]; }
 
 auto GunKinetic::fire(glm::vec2 const muzzle_position) -> std::unique_ptr<Round> {
 	if (m_reload_remain > 0s || rounds == 0) { return {}; }
