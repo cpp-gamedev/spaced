@@ -127,6 +127,7 @@ void World::debug_controller_type() {
 void World::debug_spawn_powerup(glm::vec2 const position) {
 	auto powerup = std::make_unique<PUBeam>(*m_services);
 	powerup->shape.transform.position = position;
+	powerup->motion.apply_force({-powerup->speed, 0.f});
 	m_powerups.push_back(std::move(powerup));
 }
 } // namespace spaced

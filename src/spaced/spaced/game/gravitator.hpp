@@ -1,6 +1,7 @@
 #pragma once
 #include <bave/core/time.hpp>
 #include <glm/vec2.hpp>
+#include <spaced/game/motion.hpp>
 
 namespace spaced {
 float const tiny_value{0.001f};
@@ -17,10 +18,11 @@ class Gravitator {
 
 	void tick(bave::Seconds dt);
 
+	Motion motion{};
+
   private:
 	void integrate();
 
-	glm::vec2 m_velocity{};
 	bave::Seconds m_residue{};
 };
 } // namespace spaced

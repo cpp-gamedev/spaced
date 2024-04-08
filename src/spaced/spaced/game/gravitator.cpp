@@ -29,11 +29,8 @@ void Gravitator::integrate() {
 	auto strength = force / mag * mag;
 	force_x *= strength;
 	force_y *= strength;
-	auto const acceleration = glm::vec2{force_x, force_y};
-
-	auto const dv = acceleration * time_slice.count();
-	m_velocity += dv;
-	m_velocity *= (1.0f - dampen);
-	position += m_velocity * time_slice.count();
+	motion.apply_force({force_x, force_y});
+	motion.dampen(1.0f - dampen);
+	position += motion.velocity() * time_slice.count();
 }
 } // namespace spaced

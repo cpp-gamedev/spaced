@@ -2,6 +2,7 @@
 #include <bave/core/time.hpp>
 #include <bave/graphics/shape.hpp>
 #include <spaced/game/powerup.hpp>
+#include <spaced/game/motion.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/services.hpp>
 
@@ -18,7 +19,8 @@ class PUBase : public IPowerup {
 
 	[[nodiscard]] auto is_destroyed() const -> bool final { return m_destroyed; }
 
-	float speed{300.0f};
+	float speed{100.0f};
+	Motion motion{};
 	bave::CircleShape shape{};
 
   protected:

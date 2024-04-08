@@ -11,7 +11,8 @@ PUBase::PUBase(Services const& services, std::string_view const name) : m_servic
 }
 
 void PUBase::tick(Seconds const dt) {
-	shape.transform.position.x -= speed * dt.count();
+	motion.tick(dt);
+	shape.transform.position.x += motion.velocity().x * dt.count();
 	if (shape.transform.position.x < m_layout->get_play_area().lt.x - 0.5f * shape.get_shape().diameter) { m_destroyed = true; }
 }
 
