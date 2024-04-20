@@ -16,6 +16,7 @@ class AssetLoader {
 	[[nodiscard]] auto make_load_texture(std::string uri, bool mip_map = false, bool reload = false) -> LoadTask;
 	[[nodiscard]] auto make_load_texture_atlas(std::string uri, bool mip_map = false, bool reload = false) -> LoadTask;
 	[[nodiscard]] auto make_load_particle_emitter(std::string uri, bool reload = false) -> LoadTask;
+	[[nodiscard]] auto make_load_audio_clip(std::string uri, bool reload = false) -> LoadTask;
 
   private:
 	template <typename FuncT>

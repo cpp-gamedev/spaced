@@ -16,6 +16,7 @@ class AssetList {
 	auto add_texture(std::string uri, bool mip_map = false) -> AssetList&;
 	auto add_font(std::string uri) -> AssetList&;
 	auto add_particle_emitter(std::string uri) -> AssetList&;
+	auto add_audio_clip(std::string uri) -> AssetList&;
 
 	auto read_world_spec(std::string_view uri) -> WorldSpec;
 
@@ -40,5 +41,6 @@ class AssetList {
 	std::set<Tex> m_textures{};
 	std::set<std::string> m_fonts{};
 	std::set<std::string> m_emitters{};
+	std::set<std::string> m_audio_clips{};
 };
 } // namespace spaced

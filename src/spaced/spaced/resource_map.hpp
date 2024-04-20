@@ -17,6 +17,7 @@ class ResourceMap {
 
 	template <typename Type>
 	[[nodiscard]] auto contains(std::string_view const uri) const -> bool {
+		if (uri.empty()) { return false; }
 		auto const it = m_resources.find(uri);
 		if (it == m_resources.end()) { return false; }
 		return it->second->type_index == typeid(Type);
@@ -24,6 +25,7 @@ class ResourceMap {
 
 	template <typename Type>
 	[[nodiscard]] auto get(std::string_view const uri, std::shared_ptr<Type> const& fallback = {}) const -> std::shared_ptr<Type> {
+		if (uri.empty()) { return fallback; }
 		auto const it = m_resources.find(uri);
 		if (it == m_resources.end()) { return fallback; }
 		auto const& resource = it->second;
