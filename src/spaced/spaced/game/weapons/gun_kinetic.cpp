@@ -7,18 +7,20 @@ using bave::im_text;
 using bave::Rgba;
 using bave::Seconds;
 
-GunKinetic::GunKinetic(Services const& services) : Weapon(services, "GunKinetic") { projectile_config.tint = services.get<Styles>().rgbas["black"]; }
+GunKinetic::GunKinetic(Services const& services) : Weapon(services, "GunKinetic"), m_audio(&services.get<IAudio>()) {
+	projectile_config.tint = services.get<Styles>().rgbas["black"];
+}
 
-auto GunKinetic::fire(glm::vec2 const muzzle_position) -> std::unique_ptr<Round> {
+void GunKinetic::tick(Seconds const dt) {
+	if (m_reload_remain > 0s) { m_reload_remain -= dt; }
+}
+
+auto GunKinetic::do_fire(glm::vec2 const muzzle_position) -> std::unique_ptr<Round> {
 	if (m_reload_remain > 0s || rounds == 0) { return {}; }
 
 	if (rounds > 0) { --rounds; }
 	m_reload_remain = reload_delay;
 	return std::make_unique<Projectile>(&get_layout(), projectile_config, muzzle_position);
-}
-
-void GunKinetic::tick(Seconds const dt) {
-	if (m_reload_remain > 0s) { m_reload_remain -= dt; }
 }
 
 void GunKinetic::do_inspect() {

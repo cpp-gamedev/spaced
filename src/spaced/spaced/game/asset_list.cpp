@@ -31,6 +31,12 @@ auto AssetList::add_particle_emitter(std::string uri) -> AssetList& {
 	return *this;
 }
 
+auto AssetList::add_audio_clip(std::string uri) -> AssetList& {
+	if (uri.empty()) { return *this; }
+	m_audio_clips.insert(std::move(uri));
+	return *this;
+}
+
 auto AssetList::read_world_spec(std::string_view const uri) -> WorldSpec {
 	if (uri.empty()) { return {}; }
 
@@ -51,6 +57,7 @@ auto AssetList::read_world_spec(std::string_view const uri) -> WorldSpec {
 
 	for (auto const& enemy_factory : json["enemy_factories"].array_view()) {
 		add_particle_emitter(enemy_factory["death_emitter"].as<std::string>());
+		for (auto const& death_sfx : enemy_factory["death_sfx"].array_view()) { add_audio_clip(death_sfx.as<std::string>()); }
 		ret.enemy_factories.push_back(enemy_factory);
 	}
 
@@ -70,6 +77,7 @@ auto AssetList::build_stage_0(AssetLoader& asset_loader) const -> AsyncExec::Sta
 	auto ret = AsyncExec::Stage{};
 	for (auto const& texture : m_textures) { ret.push_back(asset_loader.make_load_texture(texture.uri, texture.mip_map)); }
 	for (auto const& font : m_fonts) { ret.push_back(asset_loader.make_load_font(font)); }
+	for (auto const& audio_clip : m_audio_clips) { ret.push_back(asset_loader.make_load_audio_clip(audio_clip)); }
 	return ret;
 }
 

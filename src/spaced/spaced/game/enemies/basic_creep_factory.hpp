@@ -23,7 +23,6 @@ class BasicCreepFactory : public IEnemyFactory {
   private:
 	void do_inspect() final;
 
-	bave::NotNull<Services const*> m_services;
 	bave::NotNull<IEnemyDeathListener*> m_listener;
 	bave::Seconds m_elapsed{};
 };

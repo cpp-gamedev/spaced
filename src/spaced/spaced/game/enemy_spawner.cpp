@@ -42,6 +42,7 @@ void EnemySpawner::explode_at(glm::vec2 const position) {
 	auto& emitter = m_death_emitters.emplace_back(m_factory->get_death_emitter());
 	emitter.config.respawn = false;
 	emitter.set_position(position);
+	m_factory->play_death_sfx();
 }
 
 void EnemySpawner::do_inspect() {

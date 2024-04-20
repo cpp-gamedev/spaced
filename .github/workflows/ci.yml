@@ -57,6 +57,6 @@ jobs:
             tar xvzf jdk-17_linux-x64_bin.tar.gz -C /opt
       - name: build
         run: |
-            export JAVA_HOME=/opt/jdk-17.0.10
+            export JAVA_HOME=$(find /opt -name "jdk-17.*")
             cd src/android
             ./gradlew assembleDebug

@@ -14,13 +14,13 @@ class GunBeam final : public Weapon {
 
 	explicit GunBeam(Services const& services);
 
-	auto fire(glm::vec2 muzzle_position) -> std::unique_ptr<Round> final;
 	[[nodiscard]] auto is_idle() const -> bool final { return m_fire_remain <= 0s; }
 	void tick(bave::Seconds dt) final;
 
 	Config config{};
 
   private:
+	auto do_fire(glm::vec2 muzzle_position) -> std::unique_ptr<Round> final;
 	void do_inspect() final;
 
 	bave::Seconds m_fire_remain{};

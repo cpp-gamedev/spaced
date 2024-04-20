@@ -13,17 +13,18 @@ using bave::random_in_range;
 using bave::Seconds;
 
 BasicCreepFactory::BasicCreepFactory(NotNull<Services const*> services, NotNull<IEnemyDeathListener*> listener, dj::Json const& json)
-	: m_services(services), m_listener(listener) {
+	: IEnemyFactory(services), m_listener(listener) {
 	for (auto const& tint : json["tints"].array_view()) { tints.push_back(tint.as<std::string>()); }
 	if (auto const in_death_emitter = services->get<Resources>().get<ParticleEmitter>(json["death_emitter"].as_string())) { death_emitter = *in_death_emitter; }
 	spawn_rate = Seconds{json["spawn_rate"].as<float>(spawn_rate.count())};
 	initial_health = json["initial_health"].as<float>(initial_health);
+	for (auto const& death_sfx : json["death_sfx"].array_view()) { m_death_sfx.push_back(death_sfx.as<std::string>()); }
 }
 
 auto BasicCreepFactory::spawn_enemy() -> std::unique_ptr<Enemy> {
-	auto ret = std::make_unique<Creep>(*m_services, m_listener);
+	auto ret = std::make_unique<Creep>(get_services(), m_listener);
 	if (!tints.empty()) {
-		auto const& rgbas = m_services->get<Styles>().rgbas;
+		auto const& rgbas = get_services().get<Styles>().rgbas;
 		auto const tint_index = random_in_range(std::size_t{}, tints.size() - 1);
 		ret->shape.tint = rgbas[tints.at(tint_index)];
 		ret->health = initial_health;

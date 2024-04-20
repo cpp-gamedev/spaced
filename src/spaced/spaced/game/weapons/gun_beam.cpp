@@ -102,15 +102,6 @@ GunBeam::GunBeam(Services const& services) : Weapon(services, "GunBeam") {
 	config.beam_tint = rgbas.get_or("gun_beam", rgbas["grey"]);
 }
 
-auto GunBeam::fire(glm::vec2 const muzzle_position) -> std::unique_ptr<Round> {
-	if (!is_idle() || m_reload_remain > 0s || rounds == 0) { return {}; }
-
-	if (rounds > 0) { --rounds; }
-	m_fire_remain = config.fire_duration;
-	m_reload_remain = 0s;
-	return std::make_unique<LaserCharge>(&get_layout(), config, muzzle_position);
-}
-
 void GunBeam::tick(Seconds const dt) {
 	if (m_fire_remain > 0s) {
 		m_fire_remain -= dt;
@@ -120,6 +111,15 @@ void GunBeam::tick(Seconds const dt) {
 		}
 	}
 	if (m_reload_remain > 0s) { m_reload_remain -= dt; }
+}
+
+auto GunBeam::do_fire(glm::vec2 const muzzle_position) -> std::unique_ptr<Round> {
+	if (!is_idle() || m_reload_remain > 0s || rounds == 0) { return {}; }
+
+	if (rounds > 0) { --rounds; }
+	m_fire_remain = config.fire_duration;
+	m_reload_remain = 0s;
+	return std::make_unique<LaserCharge>(&get_layout(), config, muzzle_position);
 }
 
 void GunBeam::do_inspect() {

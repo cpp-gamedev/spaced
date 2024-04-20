@@ -15,7 +15,10 @@
       ],
       "spawn_rate": 2,
       "initial_health": 2,
-      "death_emitter": "particles/explode.json"
+      "death_emitter": "particles/explode.json",
+      "death_sfx": [
+        "sfx/bubble.wav"
+      ]
     }
   ]
 }
