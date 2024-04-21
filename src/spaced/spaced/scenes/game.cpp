@@ -21,10 +21,12 @@ using bave::Ptr;
 using bave::Seconds;
 using bave::Shader;
 
-Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_world(&services, this) {
+Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_world(&services, this) {}
+
+void Game::start_loads() {
 	auto asset_list = AssetList{make_loader(), get_services()};
 	m_world_spec = asset_list.read_world_spec("worlds/playground.json");
-	clear_colour = services.get<Styles>().rgbas[m_world_spec.background_tint];
+	clear_colour = get_services().get<Styles>().rgbas[m_world_spec.background_tint];
 	add_load_stages(asset_list.build_task_stages());
 }
 

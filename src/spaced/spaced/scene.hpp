@@ -30,6 +30,8 @@ class Scene : public bave::PolyPinned {
 
 	void push_view(std::unique_ptr<ui::View> view);
 
+	virtual void start_loads() {}
+
 	bave::Rgba clear_colour{bave::black_v};
 
   protected:

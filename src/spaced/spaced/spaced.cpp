@@ -137,6 +137,7 @@ void Spaced::tick() {
 		m_resources->clear();
 		m_audio->stop_music();
 		m_scene = std::move(m_scene_switcher->next_scene);
+		m_scene->start_loads();
 	}
 
 	m_scene->tick_frame(dt);

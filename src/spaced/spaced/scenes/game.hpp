@@ -12,6 +12,7 @@ class Game : public Scene, public IScorer {
 	Game(bave::App& app, Services const& services);
 
   private:
+	void start_loads() final;
 	void on_loaded() final;
 
 	void on_focus(bave::FocusChange const& focus_change) final;

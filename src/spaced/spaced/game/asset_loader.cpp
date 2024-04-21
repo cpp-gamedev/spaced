@@ -18,7 +18,9 @@ struct AssetLoader::Impl {
 	std::mutex mutex{};
 };
 
-AssetLoader::AssetLoader(Loader loader, NotNull<Resources*> resources) : m_impl(new Impl{.loader = std::move(loader), .resources = resources}) {}
+AssetLoader::AssetLoader(Loader loader, NotNull<Resources*> resources) : m_impl(new Impl{.loader = std::move(loader), .resources = resources}) {
+	m_impl->log.debug("resources size: {}", resources->size());
+}
 
 auto AssetLoader::make_load_font(std::string uri, bool reload) -> LoadTask {
 	auto const load = [](Loader const& loader, std::string_view const uri) { return loader.load_font(uri); };
@@ -70,6 +72,7 @@ auto AssetLoader::make_load_task(std::string uri, bool reload, FuncT load) const
 
 		lock.lock();
 		impl->resources->add(uri, std::move(asset));
+		lock.unlock();
 	};
 }
 } // namespace spaced

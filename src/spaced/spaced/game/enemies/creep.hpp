@@ -10,4 +10,13 @@ class Creep : public Enemy {
 
 	float x_speed{100.0f};
 };
+
+class Creep2 : public Enemy2 {
+  public:
+	explicit Creep2(Services const& services) : Enemy2(services, "Creep") {}
+
+	void tick(bave::Seconds dt, bool in_play) override;
+
+	float x_speed{100.0f};
+};
 } // namespace spaced

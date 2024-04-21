@@ -35,6 +35,8 @@ class ResourceMap {
 
 	void clear() { m_resources.clear(); }
 
+	[[nodiscard]] auto size() const -> std::size_t { return m_resources.size(); }
+
   private:
 	struct Base : bave::Polymorphic {
 		std::type_index type_index;

@@ -7,6 +7,7 @@ class Home : public Scene {
 	explicit Home(bave::App& app, Services const& services);
 
   private:
+	void start_loads() final;
 	void on_loaded() final;
 
 	void create_ui();
