@@ -19,7 +19,7 @@ class World : public ITargetProvider, public IEnemyDeathListener {
 	void tick(bave::Seconds dt);
 	void draw(bave::Shader& shader) const;
 
-	void on_death(Enemy2 const& enemy, bool add_score);
+	void on_death(Enemy const& enemy, bool add_score);
 
 	void load(WorldSpec const& spec);
 
@@ -43,7 +43,7 @@ class World : public ITargetProvider, public IEnemyDeathListener {
 
 	std::unordered_map<std::string, std::unique_ptr<EnemyFactory>> m_enemy_factories{};
 
-	std::vector<std::unique_ptr<Enemy2>> m_active_enemies{};
+	std::vector<std::unique_ptr<Enemy>> m_active_enemies{};
 	std::vector<bave::ParticleEmitter> m_enemy_death_emitters{};
 	std::vector<std::unique_ptr<IPowerup>> m_active_powerups{};
 

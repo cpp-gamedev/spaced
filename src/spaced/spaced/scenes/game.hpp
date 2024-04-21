@@ -1,5 +1,4 @@
 #pragma once
-#include <spaced/game/enemy_spawner.hpp>
 #include <spaced/game/hud.hpp>
 #include <spaced/game/scorer.hpp>
 #include <spaced/game/target_provider.hpp>

@@ -7,7 +7,7 @@ class CreepFactory : public EnemyFactory {
   public:
 	using EnemyFactory::EnemyFactory;
 
-	[[nodiscard]] auto spawn_enemy() -> std::unique_ptr<Enemy2> final;
+	[[nodiscard]] auto spawn_enemy() -> std::unique_ptr<Enemy> final;
 
   private:
 	std::array<std::string_view, 2> m_tints{"orange", "milk"};

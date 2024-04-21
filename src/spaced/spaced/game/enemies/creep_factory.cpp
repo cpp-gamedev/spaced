@@ -8,8 +8,8 @@ namespace spaced {
 using bave::random_in_range;
 using bave::Seconds;
 
-auto CreepFactory::spawn_enemy() -> std::unique_ptr<Enemy2> {
-	auto ret = std::make_unique<Creep2>(get_services());
+auto CreepFactory::spawn_enemy() -> std::unique_ptr<Enemy> {
+	auto ret = std::make_unique<Creep>(get_services());
 	if (!m_tints.empty()) {
 		auto const& rgbas = get_services().get<Styles>().rgbas;
 		auto const tint_index = random_in_range(std::size_t{}, m_tints.size() - 1);

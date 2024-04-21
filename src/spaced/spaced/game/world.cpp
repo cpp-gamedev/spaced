@@ -1,6 +1,5 @@
 #include <bave/imgui/im_text.hpp>
 #include <spaced/game/enemies/creep_factory.hpp>
-#include <spaced/game/enemy_factory_builder.hpp>
 #include <spaced/game/world.hpp>
 #include <spaced/services/resources.hpp>
 
@@ -85,7 +84,7 @@ void World::draw(Shader& shader) const {
 	player.draw(shader);
 }
 
-void World::on_death(Enemy2 const& enemy, bool const add_score) {
+void World::on_death(Enemy const& enemy, bool const add_score) {
 	if (auto source = m_resources->get<ParticleEmitter>(enemy.death_emitter)) {
 		auto& emitter = m_enemy_death_emitters.emplace_back(*source);
 		emitter.config.respawn = false;

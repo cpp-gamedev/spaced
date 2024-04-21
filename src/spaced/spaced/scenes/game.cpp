@@ -1,7 +1,6 @@
 #include <bave/core/random.hpp>
 #include <bave/imgui/im_text.hpp>
 #include <spaced/game/asset_list.hpp>
-#include <spaced/game/enemy_factory_builder.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/home.hpp>
 #include <spaced/services/scene_switcher.hpp>
