@@ -1,6 +1,6 @@
 #include <bave/core/random.hpp>
 #include <bave/imgui/im_text.hpp>
-#include <spaced/game/asset_list.hpp>
+#include <spaced/assets/asset_list.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/home.hpp>
 #include <spaced/services/scene_switcher.hpp>
@@ -20,17 +20,36 @@ using bave::Ptr;
 using bave::Seconds;
 using bave::Shader;
 
-Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_world(&services, this) {}
+namespace {
+auto const asset_manifest = AssetManifest{
+	.textures =
+		{
+			"images/foam_bubble.png",
+		},
+	.audio_clips =
+		{
+			"sfx/bubble.wav",
+		},
+	.particle_emitters =
+		{
+			"particles/exhaust.json",
+			"particles/explode.json",
+		},
+};
+} // namespace
+
+Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_world(&services, this) {
+	clear_colour = services.get<Styles>().rgbas["mocha"];
+}
 
 void Game::start_loads() {
 	auto asset_list = AssetList{make_loader(), get_services()};
-	m_world_spec = asset_list.read_world_spec("worlds/playground.json");
-	clear_colour = get_services().get<Styles>().rgbas[m_world_spec.background_tint];
+	asset_list.add_manifest(asset_manifest);
 	add_load_stages(asset_list.build_task_stages());
 }
 
 void Game::on_loaded() {
-	m_world.load(m_world_spec);
+	m_world.setup();
 
 	auto hud = std::make_unique<Hud>(get_services());
 	m_hud = hud.get();

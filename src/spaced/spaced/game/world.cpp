@@ -39,6 +39,8 @@ World::World(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> sc
 	m_enemy_factories["CreepFactory"] = std::make_unique<CreepFactory>(services);
 }
 
+void World::setup() { player.setup(); }
+
 void World::on_death(EnemyDeath const& death) {
 	m_scorer->add_score(death.points);
 
@@ -100,14 +102,6 @@ void World::on_death(Enemy const& enemy, bool const add_score) {
 		if (random_in_range(0, 10) < 3) { debug_spawn_powerup(enemy.shape.transform.position); }
 		// temp
 	}
-}
-
-void World::load(WorldSpec const& spec) {
-	// m_enemy_spawners.clear();
-	// auto const factory = EnemyFactoryBuilder{m_services, this};
-	// for (auto const& factory_json : spec.enemy_factories) { m_enemy_spawners.emplace_back(factory.build(factory_json)); }
-
-	player.setup(spec.player);
 }
 
 void World::do_inspect() {

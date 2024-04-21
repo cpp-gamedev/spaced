@@ -28,7 +28,6 @@ class Game : public Scene, public IScorer {
 	void inspect(bave::Seconds dt, bave::Seconds frame_time);
 
 	World m_world;
-	WorldSpec m_world_spec{};
 	std::int64_t m_score{};
 	bave::Ptr<Hud> m_hud{};
 

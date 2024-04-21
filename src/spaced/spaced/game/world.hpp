@@ -3,7 +3,6 @@
 #include <spaced/game/player.hpp>
 #include <spaced/game/scorer.hpp>
 #include <spaced/game/target_provider.hpp>
-#include <spaced/game/world_spec.hpp>
 
 namespace spaced {
 class Resources;
@@ -11,6 +10,8 @@ class Resources;
 class World : public ITargetProvider, public IEnemyDeathListener {
   public:
 	explicit World(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> scorer);
+
+	void setup();
 
 	[[nodiscard]] auto get_targets() const -> std::span<bave::NotNull<IDamageable*> const> final { return m_targets; }
 
@@ -20,8 +21,6 @@ class World : public ITargetProvider, public IEnemyDeathListener {
 	void draw(bave::Shader& shader) const;
 
 	void on_death(Enemy const& enemy, bool add_score);
-
-	void load(WorldSpec const& spec);
 
 	void inspect() {
 		if constexpr (bave::debug_v) { do_inspect(); }

@@ -1,5 +1,5 @@
-#include <spaced/game/asset_list.hpp>
-#include <spaced/game/asset_loader.hpp>
+#include <spaced/assets/asset_list.hpp>
+#include <spaced/assets/asset_loader.hpp>
 #include <spaced/services/resources.hpp>
 
 namespace spaced {
@@ -37,31 +37,12 @@ auto AssetList::add_audio_clip(std::string uri) -> AssetList& {
 	return *this;
 }
 
-auto AssetList::read_world_spec(std::string_view const uri) -> WorldSpec {
-	if (uri.empty()) { return {}; }
-
-	auto const json = m_loader.load_json(uri);
-	if (!json) { return {}; }
-
-	auto ret = WorldSpec{};
-	ret.name = json["name"].as_string();
-	ret.background_tint = json["background_tint"].as_string();
-
-	if (auto const& player = json["player"]) {
-		ret.player.tint = player["tint"].as_string();
-		ret.player.exhaust_emitter = player["exhaust_emitter"].as_string();
-		ret.player.death_emitter = player["death_emitter"].as_string();
-		add_particle_emitter(ret.player.exhaust_emitter);
-		add_particle_emitter(ret.player.death_emitter);
-	}
-
-	for (auto const& enemy_factory : json["enemy_factories"].array_view()) {
-		add_particle_emitter(enemy_factory["death_emitter"].as<std::string>());
-		for (auto const& death_sfx : enemy_factory["death_sfx"].array_view()) { add_audio_clip(death_sfx.as<std::string>()); }
-		ret.enemy_factories.push_back(enemy_factory);
-	}
-
-	return ret;
+void AssetList::add_manifest(AssetManifest manifest) {
+	for (auto& uri : manifest.textures) { add_texture(std::move(uri), false); }
+	for (auto& uri : manifest.mip_mapped_textures) { add_texture(std::move(uri), true); }
+	for (auto& uri : manifest.fonts) { add_font(std::move(uri)); }
+	for (auto& uri : manifest.audio_clips) { add_audio_clip(std::move(uri)); }
+	for (auto& uri : manifest.particle_emitters) { add_particle_emitter(std::move(uri)); }
 }
 
 auto AssetList::build_task_stages() const -> std::vector<AsyncExec::Stage> {

@@ -1,7 +1,7 @@
 #include <bave/graphics/particle_system.hpp>
 #include <bave/json_io.hpp>
 #include <bave/logger.hpp>
-#include <spaced/game/asset_loader.hpp>
+#include <spaced/assets/asset_loader.hpp>
 #include <mutex>
 
 namespace spaced {
