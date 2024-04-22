@@ -8,12 +8,13 @@
 #include <spaced/util.hpp>
 
 namespace spaced {
+using bave::App;
 using bave::Seconds;
 using bave::TextHeight;
 
 auto Home::get_text_heights() -> std::vector<TextHeight> { return {TextHeight{100}, TextHeight{60}}; }
 
-Home::Home(bave::App& app, Services const& services) : Scene(app, services, "Home") { create_ui(); }
+Home::Home(App& app, Services const& services) : Scene(app, services, "Home") { create_ui(); }
 
 void Home::create_ui() {
 	auto m_header = std::make_unique<ui::Text>(get_services());
