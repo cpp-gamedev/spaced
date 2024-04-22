@@ -17,8 +17,6 @@ class Player : public bave::IDrawable {
 
 	explicit Player(Services const& services, std::unique_ptr<IController> controller);
 
-	void setup();
-
 	void on_focus(bave::FocusChange const& focus_change);
 	void on_move(bave::PointerMove const& pointer_move);
 	void on_tap(bave::PointerTap const& pointer_tap);

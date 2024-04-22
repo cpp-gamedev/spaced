@@ -41,8 +41,6 @@ auto Game::get_manifest() -> AssetManifest {
 Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_world(&services, this) {
 	clear_colour = services.get<Styles>().rgbas["mocha"];
 
-	m_world.setup();
-
 	auto hud = std::make_unique<Hud>(services);
 	m_hud = hud.get();
 	push_view(std::move(hud));

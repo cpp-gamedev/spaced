@@ -70,7 +70,6 @@ auto AssetLoader::make_load_task(std::string uri, bool reload, FuncT load) const
 
 		lock.lock();
 		impl->resources->add(uri, std::move(asset));
-		lock.unlock();
 	};
 }
 } // namespace spaced

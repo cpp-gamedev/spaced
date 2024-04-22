@@ -16,20 +16,18 @@ using bave::RoundedQuad;
 using bave::Seconds;
 using bave::Shader;
 
-Player::Player(Services const& services, std::unique_ptr<IController> controller) : m_services(&services), m_controller(std::move(controller)) {}
-
-void Player::setup() {
-	auto const& layout = m_services->get<ILayout>();
+Player::Player(Services const& services, std::unique_ptr<IController> controller) : m_services(&services), m_controller(std::move(controller)) {
+	auto const& layout = services.get<ILayout>();
 	ship.transform.position.x = layout.get_player_x();
 	auto rounded_quad = RoundedQuad{};
 	rounded_quad.size = layout.get_player_size();
 	rounded_quad.corner_radius = 20.0f;
 	ship.set_shape(rounded_quad);
 
-	auto const& rgbas = m_services->get<Styles>().rgbas;
+	auto const& rgbas = services.get<Styles>().rgbas;
 	ship.tint = rgbas["black"];
 
-	auto const& resources = m_services->get<Resources>();
+	auto const& resources = services.get<Resources>();
 	if (auto const exhaust = resources.get<ParticleEmitter>("particles/exhaust.json")) { m_exhaust = *exhaust; }
 	m_exhaust.set_position(get_exhaust_position());
 	m_exhaust.pre_warm();

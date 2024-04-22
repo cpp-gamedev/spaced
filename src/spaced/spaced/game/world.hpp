@@ -11,8 +11,6 @@ class World : public ITargetProvider, public IEnemyDeathListener {
   public:
 	explicit World(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> scorer);
 
-	void setup();
-
 	[[nodiscard]] auto get_targets() const -> std::span<bave::NotNull<IDamageable*> const> final { return m_targets; }
 
 	void on_death(EnemyDeath const& death) final;

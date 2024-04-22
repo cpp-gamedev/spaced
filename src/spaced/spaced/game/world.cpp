@@ -39,8 +39,6 @@ World::World(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> sc
 	m_enemy_factories["CreepFactory"] = std::make_unique<CreepFactory>(services);
 }
 
-void World::setup() { player.setup(); }
-
 void World::on_death(EnemyDeath const& death) {
 	m_scorer->add_score(death.points);
 
