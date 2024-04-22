@@ -1,7 +1,7 @@
 #pragma once
 #include <bave/loader.hpp>
+#include <spaced/assets/asset_manifest.hpp>
 #include <spaced/async_exec.hpp>
-#include <spaced/game/world_spec.hpp>
 #include <spaced/services/services.hpp>
 #include <set>
 
@@ -18,7 +18,7 @@ class AssetList {
 	auto add_particle_emitter(std::string uri) -> AssetList&;
 	auto add_audio_clip(std::string uri) -> AssetList&;
 
-	auto read_world_spec(std::string_view uri) -> WorldSpec;
+	void add_manifest(AssetManifest manifest);
 
 	[[nodiscard]] auto build_task_stages() const -> std::vector<AsyncExec::Stage>;
 

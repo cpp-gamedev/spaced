@@ -6,7 +6,6 @@
 #include <spaced/game/controller.hpp>
 #include <spaced/game/health.hpp>
 #include <spaced/game/powerup.hpp>
-#include <spaced/game/world_spec.hpp>
 
 namespace spaced {
 class Player : public bave::IDrawable {
@@ -24,8 +23,6 @@ class Player : public bave::IDrawable {
 
 	void tick(State const& state, bave::Seconds dt);
 	void draw(bave::Shader& shader) const final;
-
-	void setup(WorldSpec::Player const& spec);
 
 	void set_y(float y);
 	[[nodiscard]] auto get_y() const -> float { return ship.transform.position.y; }
@@ -46,7 +43,6 @@ class Player : public bave::IDrawable {
 	Health health{};
 
   private:
-	void setup_ship();
 	void on_death();
 
 	void do_inspect();

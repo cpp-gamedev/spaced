@@ -4,7 +4,7 @@
 namespace spaced {
 class Creep : public Enemy {
   public:
-	explicit Creep(Services const& services, bave::NotNull<IEnemyDeathListener*> listener) : Enemy(services, listener, "Creep") {}
+	explicit Creep(Services const& services) : Enemy(services, "Creep") {}
 
 	void tick(bave::Seconds dt, bool in_play) override;
 

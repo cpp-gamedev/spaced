@@ -1,7 +1,7 @@
 #include <bave/core/is_positive.hpp>
 #include <bave/json_io.hpp>
 #include <bave/loader.hpp>
-#include <spaced/scenes/home.hpp>
+#include <spaced/scenes/load_assets.hpp>
 #include <spaced/services/audio.hpp>
 #include <spaced/services/gamepad_provider.hpp>
 #include <spaced/services/layout.hpp>
@@ -132,9 +132,7 @@ void Spaced::tick() {
 	auto const dt = get_app().get_dt();
 	m_layout->set_framebuffer_size(get_app().get_framebuffer_size());
 
-	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
 	if (m_scene_switcher->next_scene) {
-		m_resources->clear();
 		m_audio->stop_music();
 		m_scene = std::move(m_scene_switcher->next_scene);
 	}
@@ -201,7 +199,7 @@ void Spaced::create_services() {
 void Spaced::set_scene() {
 	auto switcher = std::make_unique<SceneSwitcher>(get_app(), m_services);
 	m_scene_switcher = switcher.get();
-	switcher->switch_to<Home>();
+	switcher->switch_to<LoadAssets>();
 	m_services.bind<ISceneSwitcher>(std::move(switcher));
 }
 } // namespace spaced

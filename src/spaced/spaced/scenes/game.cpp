@@ -1,7 +1,6 @@
 #include <bave/core/random.hpp>
 #include <bave/imgui/im_text.hpp>
-#include <spaced/game/asset_list.hpp>
-#include <spaced/game/enemy_factory_builder.hpp>
+#include <spaced/assets/asset_list.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/home.hpp>
 #include <spaced/services/scene_switcher.hpp>
@@ -21,17 +20,24 @@ using bave::Ptr;
 using bave::Seconds;
 using bave::Shader;
 
-Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_world(&services, this) {
-	auto asset_list = AssetList{make_loader(), get_services()};
-	m_world_spec = asset_list.read_world_spec("worlds/playground.json");
-	clear_colour = services.get<Styles>().rgbas[m_world_spec.background_tint];
-	add_load_stages(asset_list.build_task_stages());
+auto Game::get_manifest() -> AssetManifest {
+	return AssetManifest{
+		.audio_clips =
+			{
+				"sfx/bubble.wav",
+			},
+		.particle_emitters =
+			{
+				"particles/exhaust.json",
+				"particles/explode.json",
+			},
+	};
 }
 
-void Game::on_loaded() {
-	m_world.load(m_world_spec);
+Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_world(&services, this) {
+	clear_colour = services.get<Styles>().rgbas["mocha"];
 
-	auto hud = std::make_unique<Hud>(get_services());
+	auto hud = std::make_unique<Hud>(services);
 	m_hud = hud.get();
 	push_view(std::move(hud));
 }

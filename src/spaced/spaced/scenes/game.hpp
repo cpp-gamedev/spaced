@@ -1,5 +1,5 @@
 #pragma once
-#include <spaced/game/enemy_spawner.hpp>
+#include <spaced/assets/asset_manifest.hpp>
 #include <spaced/game/hud.hpp>
 #include <spaced/game/scorer.hpp>
 #include <spaced/game/target_provider.hpp>
@@ -9,11 +9,11 @@
 namespace spaced {
 class Game : public Scene, public IScorer {
   public:
+	static auto get_manifest() -> AssetManifest;
+
 	Game(bave::App& app, Services const& services);
 
   private:
-	void on_loaded() final;
-
 	void on_focus(bave::FocusChange const& focus_change) final;
 	void on_key(bave::KeyInput const& key_input) final;
 	void on_move(bave::PointerMove const& pointer_move) final;
@@ -28,7 +28,6 @@ class Game : public Scene, public IScorer {
 	void inspect(bave::Seconds dt, bave::Seconds frame_time);
 
 	World m_world;
-	WorldSpec m_world_spec{};
 	std::int64_t m_score{};
 	bave::Ptr<Hud> m_hud{};
 

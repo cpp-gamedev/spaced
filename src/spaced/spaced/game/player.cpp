@@ -16,7 +16,25 @@ using bave::RoundedQuad;
 using bave::Seconds;
 using bave::Shader;
 
-Player::Player(Services const& services, std::unique_ptr<IController> controller) : m_services(&services), m_controller(std::move(controller)) { setup_ship(); }
+Player::Player(Services const& services, std::unique_ptr<IController> controller) : m_services(&services), m_controller(std::move(controller)) {
+	auto const& layout = services.get<ILayout>();
+	ship.transform.position.x = layout.get_player_x();
+	auto rounded_quad = RoundedQuad{};
+	rounded_quad.size = layout.get_player_size();
+	rounded_quad.corner_radius = 20.0f;
+	ship.set_shape(rounded_quad);
+
+	auto const& rgbas = services.get<Styles>().rgbas;
+	ship.tint = rgbas["black"];
+
+	auto const& resources = services.get<Resources>();
+	if (auto const exhaust = resources.get<ParticleEmitter>("particles/exhaust.json")) { m_exhaust = *exhaust; }
+	m_exhaust.set_position(get_exhaust_position());
+	m_exhaust.pre_warm();
+
+	if (auto const death = resources.get<ParticleEmitter>("particles/explode.json")) { m_death_source = *death; }
+	m_death_source.config.respawn = false;
+}
 
 void Player::on_focus(bave::FocusChange const& /*focus_changed*/) { m_controller->untap(); }
 
@@ -63,19 +81,6 @@ void Player::draw(Shader& shader) const {
 	if (m_death) { m_death->draw(shader); }
 }
 
-void Player::setup(WorldSpec::Player const& spec) {
-	auto const& rgbas = m_services->get<Styles>().rgbas;
-	auto const& resources = m_services->get<Resources>();
-	ship.tint = rgbas[spec.tint];
-
-	if (auto const exhaust = resources.get<ParticleEmitter>(spec.exhaust_emitter)) { m_exhaust = *exhaust; }
-	m_exhaust.set_position(get_exhaust_position());
-	m_exhaust.pre_warm();
-
-	if (auto const death = resources.get<ParticleEmitter>(spec.death_emitter)) { m_death_source = *death; }
-	m_death_source.config.respawn = false;
-}
-
 void Player::set_y(float const y) { ship.transform.position.y = y; }
 
 auto Player::get_muzzle_position() const -> glm::vec2 { return ship.transform.position + 0.5f * glm::vec2{ship.get_shape().size.x, 0.0f}; }
@@ -85,15 +90,6 @@ auto Player::get_exhaust_position() const -> glm::vec2 { return ship.transform.p
 void Player::set_controller(std::unique_ptr<IController> controller) {
 	if (!controller) { return; }
 	m_controller = std::move(controller);
-}
-
-void Player::setup_ship() {
-	auto const& layout = m_services->get<ILayout>();
-	ship.transform.position.x = layout.get_player_x();
-	auto rounded_quad = RoundedQuad{};
-	rounded_quad.size = layout.get_player_size();
-	rounded_quad.corner_radius = 20.0f;
-	ship.set_shape(rounded_quad);
 }
 
 void Player::on_death() {
