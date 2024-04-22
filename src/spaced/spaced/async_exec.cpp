@@ -6,14 +6,14 @@
 namespace spaced {
 using namespace std::chrono_literals;
 
-AsyncExec::AsyncExec(std::span<Task const> tasks) {
+AsyncExec::AsyncExec(std::vector<Task> tasks) {
 	if (tasks.empty()) { return; }
 
 	m_total = static_cast<int>(tasks.size());
 	enqueue(tasks);
 }
 
-AsyncExec::AsyncExec(std::span<Stage> stages) {
+AsyncExec::AsyncExec(std::vector<Stage> stages) {
 	if (stages.empty()) { return; }
 	std::move(stages.begin(), stages.end(), std::back_inserter(m_stages));
 	m_total = std::accumulate(m_stages.begin(), m_stages.end(), 0, [](int count, auto const& tasks) { return static_cast<int>(tasks.size()) + count; });

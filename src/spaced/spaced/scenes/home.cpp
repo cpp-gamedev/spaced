@@ -11,17 +11,9 @@ namespace spaced {
 using bave::Seconds;
 using bave::TextHeight;
 
-Home::Home(bave::App& app, Services const& services) : Scene(app, services, "Home") {}
+auto Home::get_text_heights() -> std::vector<TextHeight> { return {TextHeight{100}, TextHeight{60}}; }
 
-void Home::start_loads() {
-	auto const& resources = get_services().get<Resources>();
-	auto const tasks = std::array{
-		util::create_font_atlas_task(resources.main_font, {TextHeight{100}, TextHeight{60}}),
-	};
-	add_load_tasks(tasks);
-}
-
-void Home::on_loaded() { create_ui(); }
+Home::Home(bave::App& app, Services const& services) : Scene(app, services, "Home") { create_ui(); }
 
 void Home::create_ui() {
 	auto m_header = std::make_unique<ui::Text>(get_services());

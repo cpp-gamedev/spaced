@@ -14,8 +14,8 @@ class AsyncExec {
 
 	struct Status;
 
-	explicit AsyncExec(std::span<Task const> tasks);
-	explicit AsyncExec(std::span<Stage> stages);
+	explicit AsyncExec(std::vector<Task> tasks);
+	explicit AsyncExec(std::vector<Stage> stages);
 
 	auto update() -> Status;
 

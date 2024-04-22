@@ -20,38 +20,30 @@ using bave::Ptr;
 using bave::Seconds;
 using bave::Shader;
 
-namespace {
-auto const asset_manifest = AssetManifest{
-	.textures =
-		{
-			"images/foam_bubble.png",
-		},
-	.audio_clips =
-		{
-			"sfx/bubble.wav",
-		},
-	.particle_emitters =
-		{
-			"particles/exhaust.json",
-			"particles/explode.json",
-		},
-};
-} // namespace
+auto Game::get_manifest() -> AssetManifest {
+	return AssetManifest{
+		.textures =
+			{
+				"images/foam_bubble.png",
+			},
+		.audio_clips =
+			{
+				"sfx/bubble.wav",
+			},
+		.particle_emitters =
+			{
+				"particles/exhaust.json",
+				"particles/explode.json",
+			},
+	};
+}
 
 Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_world(&services, this) {
 	clear_colour = services.get<Styles>().rgbas["mocha"];
-}
 
-void Game::start_loads() {
-	auto asset_list = AssetList{make_loader(), get_services()};
-	asset_list.add_manifest(asset_manifest);
-	add_load_stages(asset_list.build_task_stages());
-}
-
-void Game::on_loaded() {
 	m_world.setup();
 
-	auto hud = std::make_unique<Hud>(get_services());
+	auto hud = std::make_unique<Hud>(services);
 	m_hud = hud.get();
 	push_view(std::move(hud));
 }
