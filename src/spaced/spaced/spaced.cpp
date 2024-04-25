@@ -1,5 +1,5 @@
 #include <bave/core/is_positive.hpp>
-#include <bave/json_io.hpp>
+#include <bave/io/json_io.hpp>
 #include <bave/loader.hpp>
 #include <spaced/scenes/load_assets.hpp>
 #include <spaced/services/audio.hpp>

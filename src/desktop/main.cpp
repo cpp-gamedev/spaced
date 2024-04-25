@@ -40,17 +40,17 @@ void set_log_max_levels() {
 }
 
 auto run(int const argc, char const* const* argv) -> int {
+	auto data_loader = bave::DataLoaderBuilder{argc, argv}.add_zip("assets.zip").add_dir("assets").build();
 	auto create_info = bave::DesktopApp::CreateInfo{
-		.args = bave::make_args(argc, argv),
 		.title = "Spaced",
 		.mode = bave::Windowed{.extent = {1920, 1080}},
 		.msaa = vk::SampleCountFlagBits::e4,
-		.assets_patterns = "assets",
+		.data_loader = std::move(data_loader),
 	};
 
 	set_log_max_levels();
 
-	auto app = bave::DesktopApp{create_info};
+	auto app = bave::DesktopApp{std::move(create_info)};
 	app.set_bootloader([](bave::App& app) { return std::make_unique<spaced::Spaced>(app); });
 	return static_cast<int>(app.run());
 }

@@ -1,5 +1,5 @@
 #include <bave/graphics/particle_system.hpp>
-#include <bave/json_io.hpp>
+#include <bave/io/json_io.hpp>
 #include <bave/logger.hpp>
 #include <spaced/assets/asset_loader.hpp>
 #include <mutex>
