@@ -30,6 +30,7 @@ auto Game::get_manifest() -> AssetManifest {
 			{
 				"particles/exhaust.json",
 				"particles/explode.json",
+				"particles/powerup.json",
 			},
 	};
 }
