@@ -1,5 +1,6 @@
 #pragma once
 #include <bave/core/time.hpp>
+#include <bave/graphics/particle_system.hpp>
 #include <bave/graphics/shape.hpp>
 #include <spaced/game/powerup.hpp>
 #include <spaced/services/layout.hpp>
@@ -19,7 +20,8 @@ class PUBase : public IPowerup {
 	[[nodiscard]] auto is_destroyed() const -> bool final { return m_destroyed; }
 
 	float speed{300.0f};
-	bave::CircleShape shape{};
+	bave::RoundedQuadShape shape{};
+	bave::ParticleEmitter emitter{};
 
   protected:
 	virtual void do_activate(Player& player) = 0;
@@ -27,6 +29,7 @@ class PUBase : public IPowerup {
 	bave::NotNull<Services const*> m_services;
 	bave::NotNull<ILayout const*> m_layout;
 	std::string_view m_name{};
+	bool m_emitter_ticked{};
 	bool m_destroyed{};
 };
 } // namespace spaced
