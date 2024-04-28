@@ -5,7 +5,7 @@
 #include <spaced/game/target_provider.hpp>
 
 namespace spaced {
-class Resources;
+struct Resources;
 
 class World : public ITargetProvider, public IEnemyDeathListener {
   public:
