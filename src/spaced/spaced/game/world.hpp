@@ -7,13 +7,11 @@
 namespace spaced {
 struct Resources;
 
-class World : public ITargetProvider, public IEnemyDeathListener {
+class World : public ITargetProvider {
   public:
 	explicit World(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> scorer);
 
 	[[nodiscard]] auto get_targets() const -> std::span<bave::NotNull<IDamageable*> const> final { return m_targets; }
-
-	void on_death(EnemyDeath const& death) final;
 
 	void tick(bave::Seconds dt);
 	void draw(bave::Shader& shader) const;

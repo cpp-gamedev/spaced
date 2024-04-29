@@ -39,14 +39,6 @@ World::World(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> sc
 	m_enemy_factories["CreepFactory"] = std::make_unique<CreepFactory>(services);
 }
 
-void World::on_death(EnemyDeath const& death) {
-	m_scorer->add_score(death.points);
-
-	// temp
-	if (random_in_range(0, 10) < 3) { debug_spawn_powerup(death.position); }
-	// temp
-}
-
 void World::tick(Seconds const dt) {
 	bool const in_play = !player.health.is_dead();
 
