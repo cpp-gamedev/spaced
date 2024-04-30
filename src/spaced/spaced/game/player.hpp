@@ -35,6 +35,8 @@ class Player : public bave::IDrawable {
 
 	void set_special_weapon(std::unique_ptr<Weapon> weapon) { m_arsenal.set_special(std::move(weapon)); }
 
+	void on_death(bave::Seconds dt);
+
 	void inspect() {
 		if constexpr (bave::debug_v) { do_inspect(); }
 	}
@@ -43,8 +45,6 @@ class Player : public bave::IDrawable {
 	Health health{};
 
   private:
-	void on_death();
-
 	void do_inspect();
 
 	bave::Logger m_log{"Player"};

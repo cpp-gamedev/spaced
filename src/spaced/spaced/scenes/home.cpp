@@ -4,6 +4,7 @@
 #include <spaced/services/resources.hpp>
 #include <spaced/services/scene_switcher.hpp>
 #include <spaced/ui/button.hpp>
+#include <spaced/ui/dialog.hpp>
 #include <spaced/ui/text.hpp>
 #include <spaced/util.hpp>
 
@@ -12,7 +13,7 @@ using bave::App;
 using bave::Seconds;
 using bave::TextHeight;
 
-auto Home::get_text_heights() -> std::vector<TextHeight> { return {TextHeight{100}, TextHeight{60}}; }
+auto Home::get_text_heights() -> std::vector<TextHeight> { return {TextHeight{100}, TextHeight{60}, ui::Dialog::text_height_v}; }
 
 Home::Home(App& app, Services const& services) : Scene(app, services, "Home") { create_ui(); }
 

@@ -43,6 +43,17 @@
       "padding": 5
     }
   },
+  "dialogs": {
+    "default": {
+      "footer_padding": [
+        20.000000,
+        10.000000
+      ],
+      "background_tint": "#ffff00ff",
+      "outline_tint": "#00ffffff",
+      "content_text_tint": "#000000ff"
+    }
+  },
   "loading_screen": {
     "background_tint": "#231d2aff",
     "spinner": {
