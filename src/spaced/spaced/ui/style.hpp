@@ -41,6 +41,7 @@ struct ProgressBarStyle {
 
 struct DialogStyle {
 	glm::vec2 footer_padding{20.0f, 10.0f};
+	float corner_ratio{0.25f};
 	bave::Rgba background_tint{bave::yellow_v};
 	bave::Rgba outline_tint{bave::cyan_v};
 	bave::Rgba content_text_tint{bave::black_v};

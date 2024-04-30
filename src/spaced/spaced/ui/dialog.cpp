@@ -11,6 +11,7 @@ Dialog::Dialog(Services const& services, CreateInfo create_info) : View(services
 	background->set_size({create_info.size.x, create_info.size.y + footer_height});
 	background->set_tint(m_style.background_tint);
 	background->set_outline_tint(m_style.outline_tint);
+	background->set_corner_ratio(0.25f);
 	push(std::move(background));
 
 	auto content_text = std::make_unique<Text>(services);
@@ -19,7 +20,6 @@ Dialog::Dialog(Services const& services, CreateInfo create_info) : View(services
 	content_text->text.tint = m_style.content_text_tint;
 	push(std::move(content_text));
 
-	auto const button_x_offset = create_info.second_button.text.empty() ? 0.0f : 0.25f * create_info.size.x;
 	main_button->set_text(std::move(create_info.main_button.text));
 	main_button->callback = [this, f = std::move(create_info.main_button.callback)] {
 		if (f) { f(); }
