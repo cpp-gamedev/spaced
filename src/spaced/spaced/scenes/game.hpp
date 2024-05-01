@@ -24,12 +24,14 @@ class Game : public Scene, public IScorer {
 
 	[[nodiscard]] auto get_score() const -> std::int64_t final { return m_score; }
 	void add_score(std::int64_t score) final;
+	void on_game_over();
 
 	void inspect(bave::Seconds dt, bave::Seconds frame_time);
 
 	World m_world;
 	std::int64_t m_score{};
 	bave::Ptr<Hud> m_hud{};
+	bool m_game_over_dialog_pushed{};
 
 	struct {
 		struct {

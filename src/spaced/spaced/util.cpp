@@ -71,6 +71,24 @@ void util::from_json(dj::Json const& json, ui::ProgressBarStyle& out) {
 	out.padding = json["padding"].as<float>(out.padding);
 }
 
+void util::to_json(dj::Json& out, ui::DialogStyle const& dialog_style) {
+	using bave::to_json;
+	to_json(out["footer_padding"], dialog_style.footer_padding);
+	to_json(out["corner_ratio"], dialog_style.corner_ratio);
+	to_json(out["background_tint"], dialog_style.background_tint);
+	to_json(out["outline_tint"], dialog_style.outline_tint);
+	to_json(out["content_text_tint"], dialog_style.content_text_tint);
+}
+
+void util::from_json(dj::Json const& json, ui::DialogStyle& out) {
+	using bave::from_json;
+	from_json(json["footer_padding"], out.footer_padding);
+	from_json(json["corner_ratio"], out.corner_ratio);
+	from_json(json["background_tint"], out.background_tint);
+	from_json(json["outline_tint"], out.outline_tint);
+	from_json(json["content_text_tint"], out.content_text_tint);
+}
+
 auto util::create_font_atlas_task(std::shared_ptr<bave::Font> font, std::vector<bave::TextHeight> heights) -> std::function<void()> {
 	if (!font || heights.empty()) { return {}; }
 	return [font = std::move(font), heights = std::move(heights)] {

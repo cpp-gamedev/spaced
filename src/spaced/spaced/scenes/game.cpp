@@ -5,6 +5,8 @@
 #include <spaced/scenes/home.hpp>
 #include <spaced/services/scene_switcher.hpp>
 #include <spaced/services/styles.hpp>
+#include <spaced/ui/button.hpp>
+#include <spaced/ui/dialog.hpp>
 
 namespace spaced {
 using bave::Action;
@@ -59,6 +61,7 @@ void Game::tick(Seconds const dt) {
 	auto ft = bave::DeltaTime{};
 
 	m_world.tick(dt);
+	if (m_world.player.health.is_dead() && !m_game_over_dialog_pushed) { on_game_over(); }
 
 	if constexpr (bave::debug_v) { inspect(dt, ft.update()); }
 }
@@ -68,6 +71,19 @@ void Game::render(Shader& shader) const { m_world.draw(shader); }
 void Game::add_score(std::int64_t const score) {
 	m_score += score;
 	m_hud->set_score(m_score);
+}
+
+void Game::on_game_over() {
+	auto dci = ui::DialogCreateInfo{
+		.size = {600.0f, 200.0f},
+		.content_text = "GAME OVER",
+		.main_button = {.text = "RESTART", .callback = [this] { get_services().get<ISceneSwitcher>().switch_to<Game>(); }},
+		.second_button = {.text = "QUIT", .callback = [this] { get_app().shutdown(); }},
+	};
+
+	auto dialog = std::make_unique<ui::Dialog>(get_services(), std::move(dci));
+	m_game_over_dialog_pushed = true;
+	push_view(std::move(dialog));
 }
 
 void Game::inspect(Seconds const dt, Seconds const frame_time) {
@@ -82,6 +98,9 @@ void Game::inspect(Seconds const dt, Seconds const frame_time) {
 
 			ImGui::Separator();
 			im_text("score: {}", get_score());
+
+			ImGui::Separator();
+			if (ImGui::Button("end game")) { m_world.player.on_death({}); }
 
 			ImGui::Separator();
 			im_text("dt: {:05.2f}", std::chrono::duration<float, std::milli>(dt).count());

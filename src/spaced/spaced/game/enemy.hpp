@@ -3,7 +3,6 @@
 #include <bave/graphics/shape.hpp>
 #include <bave/platform.hpp>
 #include <spaced/game/damageable.hpp>
-#include <spaced/game/enemy_death.hpp>
 #include <spaced/game/health.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/services.hpp>

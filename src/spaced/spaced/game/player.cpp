@@ -55,7 +55,7 @@ void Player::tick(State const& state, Seconds const dt) {
 
 	for (auto const& target : state.targets) {
 		if (is_intersecting(target->get_bounds(), ship.get_bounds())) {
-			on_death();
+			on_death(dt);
 			target->force_death();
 			return;
 		}
@@ -92,10 +92,11 @@ void Player::set_controller(std::unique_ptr<IController> controller) {
 	m_controller = std::move(controller);
 }
 
-void Player::on_death() {
+void Player::on_death(Seconds const dt) {
 	health = 0.0f;
 	m_death = m_death_source;
 	m_death->set_position(ship.transform.position);
+	m_death->tick(dt);
 }
 
 void Player::do_inspect() {

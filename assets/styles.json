@@ -4,7 +4,7 @@
     "grey": "#535151ff",
     "mocha": "#6f5a48ff",
     "milk": "#e5cdaeff",
-    "ice": "#0xd6dbe1e1",
+    "ice": "#d6dbe1e1",
     "orange": "#f75c03ff",
     "gun_beam": "#bc96e6ff"
   },
@@ -41,6 +41,18 @@
       "fill": "#ffffffff",
       "corner_ratio": 0.5,
       "padding": 5
+    }
+  },
+  "dialogs": {
+    "default": {
+      "footer_padding": [
+        20.000000,
+        10.000000
+      ],
+      "corner_ratio": 0.25,
+      "background_tint": "#e5cdaeff",
+      "outline_tint": "#231d2aff",
+      "content_text_tint": "#231d2aff"
     }
   },
   "loading_screen": {
