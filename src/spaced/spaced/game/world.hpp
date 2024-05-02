@@ -6,6 +6,7 @@
 
 namespace spaced {
 struct Resources;
+struct Stats;
 
 class World : public ITargetProvider {
   public:
@@ -34,6 +35,7 @@ class World : public ITargetProvider {
 	bave::NotNull<Services const*> m_services;
 	bave::NotNull<Resources const*> m_resources;
 	bave::NotNull<IAudio*> m_audio;
+	bave::NotNull<Stats*> m_stats;
 	bave::NotNull<IScorer*> m_scorer;
 
 	std::unordered_map<std::string, std::unique_ptr<EnemyFactory>> m_enemy_factories{};

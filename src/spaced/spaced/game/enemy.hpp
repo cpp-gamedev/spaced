@@ -13,6 +13,7 @@ class Enemy : public IDamageable, public bave::IDrawable {
   public:
 	explicit Enemy(Services const& services, std::string_view type);
 
+	[[nodiscard]] auto get_instigator() const -> Instigator final { return Instigator::eEnemy; }
 	[[nodiscard]] auto get_bounds() const -> bave::Rect<> override { return shape.get_bounds(); }
 	auto take_damage(float damage) -> bool override;
 	void force_death() override;

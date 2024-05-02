@@ -8,6 +8,8 @@
 #include <spaced/game/powerup.hpp>
 
 namespace spaced {
+struct Stats;
+
 class Player : public bave::IDrawable {
   public:
 	struct State {
@@ -49,6 +51,7 @@ class Player : public bave::IDrawable {
 
 	bave::Logger m_log{"Player"};
 	bave::NotNull<Services const*> m_services;
+	bave::NotNull<Stats*> m_stats;
 	std::unique_ptr<IController> m_controller;
 	bave::ParticleEmitter m_exhaust{};
 	bave::ParticleEmitter m_death_source{};
