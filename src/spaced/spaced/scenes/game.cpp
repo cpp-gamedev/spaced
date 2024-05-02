@@ -37,11 +37,12 @@ auto Game::get_manifest() -> AssetManifest {
 	};
 }
 
-Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_world(&services, this) {
+Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m_save(&app), m_world(&services, this) {
 	clear_colour = services.get<Styles>().rgbas["mocha"];
 
 	auto hud = std::make_unique<Hud>(services);
 	m_hud = hud.get();
+	m_hud->set_hi_score(m_save.get_hi_score());
 	push_view(std::move(hud));
 }
 
@@ -71,6 +72,7 @@ void Game::render(Shader& shader) const { m_world.draw(shader); }
 void Game::add_score(std::int64_t const score) {
 	m_score += score;
 	m_hud->set_score(m_score);
+	update_hi_score();
 }
 
 void Game::on_game_over() {
@@ -84,6 +86,12 @@ void Game::on_game_over() {
 	auto dialog = std::make_unique<ui::Dialog>(get_services(), std::move(dci));
 	m_game_over_dialog_pushed = true;
 	push_view(std::move(dialog));
+}
+
+void Game::update_hi_score() {
+	if (m_score <= m_save.get_hi_score()) { return; }
+	m_save.set_hi_score(m_score);
+	m_hud->set_hi_score(m_save.get_hi_score());
 }
 
 void Game::inspect(Seconds const dt, Seconds const frame_time) {

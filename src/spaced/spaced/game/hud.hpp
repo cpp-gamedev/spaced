@@ -10,6 +10,7 @@ class Hud : public ui::View {
 	explicit Hud(Services const& services);
 
 	void set_score(std::int64_t score);
+	void set_hi_score(std::int64_t score);
 
   private:
 	void create_background();
@@ -20,5 +21,6 @@ class Hud : public ui::View {
 
 	bave::Ptr<ui::OutlineQuad> m_background{};
 	bave::Ptr<ui::Text> m_score{};
+	bave::Ptr<ui::Text> m_hi_score{};
 };
 } // namespace spaced
