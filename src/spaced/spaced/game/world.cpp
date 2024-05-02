@@ -36,7 +36,7 @@ namespace {
 
 World::World(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> scorer)
 	: player(*services, make_player_controller(*services)), m_services(services), m_resources(&services->get<Resources>()), m_audio(&services->get<IAudio>()),
-	  m_scorer(scorer) {
+	  m_stats(&services->get<Stats>()), m_scorer(scorer) {
 	m_enemy_factories["CreepFactory"] = std::make_unique<CreepFactory>(services);
 }
 
@@ -88,7 +88,7 @@ void World::on_death(Enemy const& enemy, bool const add_score) {
 
 	if (add_score) {
 		m_scorer->add_score(enemy.points);
-		++m_services->get<Stats>().player.enemies_poofed;
+		++m_stats->player.enemies_poofed;
 
 		// temp
 		if (random_in_range(0, 10) < 3) { debug_spawn_powerup(enemy.shape.transform.position); }
