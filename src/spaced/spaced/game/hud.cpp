@@ -14,6 +14,8 @@ Hud::Hud(Services const& services) : ui::View(services), m_styles(&services.get<
 
 void Hud::set_score(std::int64_t const score) { m_score->text.set_string(fmt::format("{}", score)); }
 
+void Hud::set_hi_score(std::int64_t const score) { m_hi_score->text.set_string(fmt::format("HI {}", score)); }
+
 void Hud::create_background() {
 	auto background = std::make_unique<ui::OutlineQuad>();
 	m_background = background.get();
@@ -27,16 +29,29 @@ void Hud::create_background() {
 void Hud::create_score(Services const& services) {
 	auto const& rgbas = m_styles->rgbas;
 
-	auto text = std::make_unique<ui::Text>(services);
+	auto make_text = [&] {
+		auto text = std::make_unique<ui::Text>(services);
+		text->text.set_height(TextHeight{60});
+		text->text.transform.position = m_area.centre();
+		text->text.tint = rgbas["grey"];
+		return text;
+	};
+
+	auto text = make_text();
 	m_score = text.get();
-	text->text.set_height(TextHeight{60});
 	text->text.set_string("9999999999");
-	auto const text_bounds = text->text.get_bounds();
-	auto const text_bounds_size = text_bounds.size();
-	text->text.transform.position = m_area.centre();
+	auto const text_bounds_size = text->text.get_bounds().size();
 	text->text.transform.position.y -= 0.5f * text_bounds_size.y;
-	text->text.set_string("0");
-	text->text.tint = rgbas["grey"];
+	set_score(0);
+
+	push(std::move(text));
+
+	text = make_text();
+	m_hi_score = text.get();
+	text->text.transform.position.x = m_area.rb.x - 50.0f;
+	text->text.transform.position.y -= 0.5f * text_bounds_size.y;
+	text->text.set_align(bave::Text::Align::eLeft);
+	set_hi_score(0);
 
 	push(std::move(text));
 }

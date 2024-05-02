@@ -1,5 +1,6 @@
 #pragma once
 #include <spaced/assets/asset_manifest.hpp>
+#include <spaced/game/game_save.hpp>
 #include <spaced/game/hud.hpp>
 #include <spaced/game/scorer.hpp>
 #include <spaced/game/target_provider.hpp>
@@ -26,8 +27,11 @@ class Game : public Scene, public IScorer {
 	void add_score(std::int64_t score) final;
 	void on_game_over();
 
+	void update_hi_score();
+
 	void inspect(bave::Seconds dt, bave::Seconds frame_time);
 
+	GameSave m_save;
 	World m_world;
 	std::int64_t m_score{};
 	bave::Ptr<Hud> m_hud{};
