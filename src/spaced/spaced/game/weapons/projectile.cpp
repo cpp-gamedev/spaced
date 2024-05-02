@@ -33,6 +33,7 @@ void Projectile::tick(State const& state, Seconds const dt) {
 	m_shape.transform.position.x += dx;
 
 	for (auto target : state.targets) {
+		if (target->get_instigator() == m_config.instigator) { continue; }
 		if (check_hit(m_shape.transform.position, m_config.size, dx, target->get_bounds())) {
 			if (target->take_damage(m_config.damage)) {
 				m_destroyed = true;

@@ -1,6 +1,7 @@
 #include <bave/core/is_positive.hpp>
 #include <bave/io/json_io.hpp>
 #include <bave/loader.hpp>
+#include <bave/persistor.hpp>
 #include <spaced/scenes/load_assets.hpp>
 #include <spaced/services/audio.hpp>
 #include <spaced/services/gamepad_provider.hpp>
@@ -8,6 +9,7 @@
 #include <spaced/services/resources.hpp>
 #include <spaced/services/scene_switcher.hpp>
 #include <spaced/services/serializer.hpp>
+#include <spaced/services/stats.hpp>
 #include <spaced/services/styles.hpp>
 #include <spaced/spaced.hpp>
 
@@ -22,6 +24,7 @@ using bave::KeyInput;
 using bave::Loader;
 using bave::MouseScroll;
 using bave::NotNull;
+using bave::Persistor;
 using bave::PointerMove;
 using bave::PointerTap;
 using bave::Rect;
@@ -92,6 +95,31 @@ struct Audio : IAudio {
 	}
 
 	void stop_music() final { audio_streamer->stop(); }
+};
+
+struct PersistentStats : Stats {
+	static constexpr std::string_view uri_v{"spaced/stats.json"};
+
+	NotNull<App const*> app;
+
+	PersistentStats(PersistentStats const&) = delete;
+	PersistentStats(PersistentStats&&) = delete;
+	auto operator=(PersistentStats const&) = delete;
+	auto operator=(PersistentStats&&) = delete;
+
+	PersistentStats(NotNull<App const*> app) : app(app) {
+		auto const persistor = Persistor{*app};
+		if (!persistor.exists(uri_v)) { return; }
+		auto const json = persistor.read_json(uri_v);
+		from(json);
+	}
+
+	~PersistentStats() override {
+		auto json = dj::Json{};
+		to(json);
+		auto const persistor = Persistor{*app};
+		persistor.write_json(uri_v, json);
+	}
 };
 } // namespace
 
@@ -194,6 +222,10 @@ void Spaced::create_services() {
 	auto audio = std::make_unique<Audio>(&get_app().get_audio_device(), &get_app().get_audio_streamer(), m_resources);
 	m_audio = audio.get();
 	m_services.bind<IAudio>(std::move(audio));
+
+	auto stats = std::make_unique<PersistentStats>(&get_app());
+	++stats->run_count;
+	m_services.bind<Stats>(std::move(stats));
 }
 
 void Spaced::set_scene() {

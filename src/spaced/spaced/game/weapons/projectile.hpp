@@ -1,5 +1,6 @@
 #pragma once
 #include <bave/graphics/shape.hpp>
+#include <spaced/game/instigator.hpp>
 #include <spaced/game/weapon_round.hpp>
 #include <spaced/services/layout.hpp>
 
@@ -13,6 +14,7 @@ class Projectile : public IWeaponRound {
 		float x_speed{1500.0f};
 		bave::Rgba tint{bave::black_v};
 		float damage{1.0f};
+		Instigator instigator{Instigator::ePlayer};
 	};
 
 	explicit Projectile(bave::NotNull<ILayout const*> layout, Config config, glm::vec2 muzzle_position);

@@ -2,6 +2,7 @@
 #include <spaced/game/enemies/creep_factory.hpp>
 #include <spaced/game/world.hpp>
 #include <spaced/services/resources.hpp>
+#include <spaced/services/stats.hpp>
 
 #include <bave/core/random.hpp>
 #include <spaced/game/controllers/auto_controller.hpp>
@@ -87,6 +88,7 @@ void World::on_death(Enemy const& enemy, bool const add_score) {
 
 	if (add_score) {
 		m_scorer->add_score(enemy.points);
+		++m_services->get<Stats>().player.enemies_poofed;
 
 		// temp
 		if (random_in_range(0, 10) < 3) { debug_spawn_powerup(enemy.shape.transform.position); }

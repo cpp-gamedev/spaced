@@ -2,11 +2,13 @@
 #include <spaced/game/weapons/gun_kinetic.hpp>
 
 namespace spaced {
+struct Stats;
+
 // Arsenal models a main/primary weapon, and an possible special weapon.
 // Weapons only switch when they are idle.
 class Arsenal {
   public:
-	explicit Arsenal(Services const& services) : m_primary(services) {}
+	explicit Arsenal(Services const& services);
 
 	[[nodiscard]] auto get_weapon() const -> Weapon const&;
 	[[nodiscard]] auto get_weapon() -> Weapon&;
@@ -24,7 +26,8 @@ class Arsenal {
 	void fire_weapon(glm::vec2 muzzle_position);
 	void tick_rounds(IWeaponRound::State const& round_state, bave::Seconds dt);
 
-	GunKinetic m_primary;				 // main weapon
+	GunKinetic m_primary; // main weapon
+	bave::NotNull<Stats*> m_stats;
 	std::unique_ptr<Weapon> m_special{}; // special weapon
 	std::unique_ptr<Weapon> m_next{};	 // next special weapon (on standby until current weapon is idle)
 	std::vector<std::unique_ptr<Weapon::Round>> m_rounds{};

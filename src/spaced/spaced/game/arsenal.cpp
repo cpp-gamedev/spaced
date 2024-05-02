@@ -1,8 +1,11 @@
 #include <spaced/game/arsenal.hpp>
+#include <spaced/services/stats.hpp>
 
 namespace spaced {
 using bave::Seconds;
 using bave::Shader;
+
+Arsenal::Arsenal(Services const& services) : m_primary(services), m_stats(&services.get<Stats>()) {}
 
 auto Arsenal::get_weapon() const -> Weapon const& {
 	if (m_special) { return *m_special; }
@@ -40,7 +43,10 @@ void Arsenal::check_switch_weapon() {
 }
 
 void Arsenal::fire_weapon(glm::vec2 const muzzle_position) {
-	if (auto round = get_weapon().fire(muzzle_position)) { m_rounds.push_back(std::move(round)); }
+	if (auto round = get_weapon().fire(muzzle_position)) {
+		m_rounds.push_back(std::move(round));
+		++m_stats->player.shots_fired;
+	}
 }
 
 void Arsenal::tick_rounds(IWeaponRound::State const& round_state, Seconds const dt) {

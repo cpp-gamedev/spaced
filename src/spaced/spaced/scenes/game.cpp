@@ -4,6 +4,7 @@
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/home.hpp>
 #include <spaced/services/scene_switcher.hpp>
+#include <spaced/services/stats.hpp>
 #include <spaced/services/styles.hpp>
 #include <spaced/ui/button.hpp>
 #include <spaced/ui/dialog.hpp>
@@ -44,6 +45,8 @@ Game::Game(App& app, Services const& services) : Scene(app, services, "Game"), m
 	m_hud = hud.get();
 	m_hud->set_hi_score(m_save.get_hi_score());
 	push_view(std::move(hud));
+
+	++services.get<Stats>().game.play_count;
 }
 
 void Game::on_focus(FocusChange const& focus_change) { m_world.player.on_focus(focus_change); }

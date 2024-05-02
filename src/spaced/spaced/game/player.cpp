@@ -3,6 +3,7 @@
 #include <bave/platform.hpp>
 #include <spaced/game/player.hpp>
 #include <spaced/services/resources.hpp>
+#include <spaced/services/stats.hpp>
 #include <spaced/services/styles.hpp>
 
 // temp for testing
@@ -16,7 +17,8 @@ using bave::RoundedQuad;
 using bave::Seconds;
 using bave::Shader;
 
-Player::Player(Services const& services, std::unique_ptr<IController> controller) : m_services(&services), m_controller(std::move(controller)) {
+Player::Player(Services const& services, std::unique_ptr<IController> controller)
+	: m_services(&services), m_stats(&services.get<Stats>()), m_controller(std::move(controller)) {
 	auto const& layout = services.get<ILayout>();
 	ship.transform.position.x = layout.get_player_x();
 	auto rounded_quad = RoundedQuad{};
@@ -68,7 +70,10 @@ void Player::tick(State const& state, Seconds const dt) {
 	m_exhaust.tick(dt);
 
 	for (auto const& powerup : state.powerups) {
-		if (is_intersecting(powerup->get_bounds(), ship.get_bounds())) { powerup->activate(*this); }
+		if (is_intersecting(powerup->get_bounds(), ship.get_bounds())) {
+			powerup->activate(*this);
+			++m_stats->player.powerups_collected;
+		}
 	}
 }
 
@@ -97,6 +102,7 @@ void Player::on_death(Seconds const dt) {
 	m_death = m_death_source;
 	m_death->set_position(ship.transform.position);
 	m_death->tick(dt);
+	++m_stats->player.death_count;
 }
 
 void Player::do_inspect() {
