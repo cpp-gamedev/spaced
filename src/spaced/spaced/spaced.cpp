@@ -161,7 +161,7 @@ void Spaced::tick() {
 	m_layout->set_framebuffer_size(get_app().get_framebuffer_size());
 
 	if (m_scene_switcher->next_scene) {
-		m_audio->stop_music();
+		switch_track(m_scene->get_music_uri(), m_scene_switcher->next_scene->get_music_uri());
 		m_scene = std::move(m_scene_switcher->next_scene);
 	}
 
@@ -233,5 +233,13 @@ void Spaced::set_scene() {
 	m_scene_switcher = switcher.get();
 	switcher->switch_to<LoadAssets>();
 	m_services.bind<ISceneSwitcher>(std::move(switcher));
+}
+
+void Spaced::switch_track(std::string_view const from, std::string_view const to) const {
+	if (to.empty()) {
+		m_audio->stop_music();
+	} else if (from != to) {
+		m_audio->play_music(to);
+	}
 }
 } // namespace spaced

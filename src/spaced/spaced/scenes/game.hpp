@@ -8,11 +8,11 @@
 #include <spaced/scene.hpp>
 
 namespace spaced {
-class Game : public Scene, public IScorer {
+class GameScene : public Scene, public IScorer {
   public:
 	static auto get_manifest() -> AssetManifest;
 
-	Game(bave::App& app, Services const& services);
+	GameScene(bave::App& app, Services const& services);
 
   private:
 	void on_focus(bave::FocusChange const& focus_change) final;
@@ -22,6 +22,8 @@ class Game : public Scene, public IScorer {
 
 	void tick(bave::Seconds dt) final;
 	void render(bave::Shader& shader) const final;
+
+	[[nodiscard]] auto get_music_uri() const -> std::string_view final { return "music/game.mp3"; }
 
 	[[nodiscard]] auto get_score() const -> std::int64_t final { return m_score; }
 	void add_score(std::int64_t score) final;

@@ -30,6 +30,8 @@ class Spaced : public bave::Driver {
 	void set_layout();
 	void set_scene();
 
+	void switch_track(std::string_view from, std::string_view to) const;
+
 	bave::Logger m_log{"Spaced"};
 	Services m_services{};
 	bave::Ptr<ILayout> m_layout{};

@@ -18,6 +18,8 @@ class Scene : public bave::PolyPinned {
 	void tick_frame(bave::Seconds dt);
 	void render_frame() const;
 
+	[[nodiscard]] virtual auto get_music_uri() const -> std::string_view { return {}; }
+
 	[[nodiscard]] auto get_app() const -> bave::App& { return m_app; }
 	[[nodiscard]] auto get_services() const -> Services const& { return m_services; }
 

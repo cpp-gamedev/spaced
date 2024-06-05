@@ -1,5 +1,5 @@
 #include <spaced/scenes/game.hpp>
-#include <spaced/scenes/home.hpp>
+#include <spaced/scenes/menu.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/resources.hpp>
 #include <spaced/services/scene_switcher.hpp>
@@ -13,11 +13,11 @@ using bave::App;
 using bave::Seconds;
 using bave::TextHeight;
 
-auto Home::get_text_heights() -> std::vector<TextHeight> { return {TextHeight{100}, TextHeight{60}, ui::Dialog::text_height_v}; }
+auto MenuScene::get_text_heights() -> std::vector<TextHeight> { return {TextHeight{100}, TextHeight{60}, ui::Dialog::text_height_v}; }
 
-Home::Home(App& app, Services const& services) : Scene(app, services, "Home") { create_ui(); }
+MenuScene::MenuScene(App& app, Services const& services) : Scene(app, services, "Home") { create_ui(); }
 
-void Home::create_ui() {
+void MenuScene::create_ui() {
 	auto m_header = std::make_unique<ui::Text>(get_services());
 	m_header->text.set_height(TextHeight{100}).set_string("Home");
 	m_header->text.tint = bave::white_v;
@@ -25,7 +25,7 @@ void Home::create_ui() {
 	auto start = std::make_unique<ui::Button>(get_services());
 	start->set_text("start");
 	start->set_position({0.0f, -200.0f});
-	start->callback = [this]() { get_services().get<ISceneSwitcher>().switch_to<Game>(); };
+	start->callback = [this]() { get_services().get<ISceneSwitcher>().switch_to<GameScene>(); };
 
 	auto quit = std::make_unique<ui::Button>(get_services());
 	quit->set_text("quit");
