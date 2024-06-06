@@ -89,6 +89,20 @@ void util::from_json(dj::Json const& json, ui::DialogStyle& out) {
 	from_json(json["content_text_tint"], out.content_text_tint);
 }
 
+void util::to_json(dj::Json& out, ui::SliderStyle const& slider_style) {
+	using bave::to_json;
+	to_json(out["progress_bar"], slider_style.progress_bar);
+	to_json(out["knob_diameter"], slider_style.knob_diameter);
+	to_json(out["knob_tint"], slider_style.knob_tint);
+}
+
+void util::from_json(dj::Json const& json, ui::SliderStyle& out) {
+	using bave::from_json;
+	from_json(json["progress_bar"], out.progress_bar);
+	from_json(json["knob_diameter"], out.knob_diameter);
+	from_json(json["knob_tint"], out.knob_tint);
+}
+
 auto util::create_font_atlas_task(std::shared_ptr<bave::Font> font, std::vector<bave::TextHeight> heights) -> std::function<void()> {
 	if (!font || heights.empty()) { return {}; }
 	return [font = std::move(font), heights = std::move(heights)] {

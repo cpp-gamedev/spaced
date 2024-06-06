@@ -36,6 +36,7 @@ auto Styles::load(dj::Json const& json) -> Styles {
 	load_styles(ret.buttons, json["buttons"]);
 	load_styles(ret.progress_bars, json["progress_bars"]);
 	load_styles(ret.dialogs, json["dialogs"]);
+	load_styles(ret.sliders, json["sliders"]);
 	if (auto const& loading_screen = json["loading_screen"]) { from_json(loading_screen, ret.loading_screen); }
 	return ret;
 }
@@ -46,6 +47,7 @@ auto Styles::save() const -> dj::Json {
 	save_styles(buttons, ret, "buttons");
 	save_styles(progress_bars, ret, "progress_bars");
 	save_styles(dialogs, ret, "dialogs");
+	save_styles(sliders, ret, "sliders");
 	to_json(ret["loading_screen"], loading_screen);
 	return ret;
 }

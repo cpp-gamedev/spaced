@@ -55,6 +55,13 @@
       "content_text_tint": "#231d2aff"
     }
   },
+  "sliders": {
+    "default": {
+      "progress_bar": "default",
+      "knob_diameter": 30,
+      "knob_tint": "#9f2b68ff"
+    }
+  },
   "loading_screen": {
     "background_tint": "#231d2aff",
     "spinner": {

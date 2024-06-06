@@ -46,4 +46,10 @@ struct DialogStyle {
 	bave::Rgba outline_tint{bave::cyan_v};
 	bave::Rgba content_text_tint{bave::black_v};
 };
+
+struct SliderStyle {
+	std::string progress_bar{};
+	float knob_diameter{30.0f};
+	bave::Rgba knob_tint{bave::white_v};
+};
 } // namespace spaced::ui

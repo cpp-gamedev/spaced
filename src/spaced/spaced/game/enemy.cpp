@@ -32,12 +32,11 @@ void Enemy::force_death() {
 	m_health_bar.set_progress(0.0f);
 }
 
-void Enemy::tick(Seconds const dt, bool const /*in_play*/) {
+void Enemy::tick(Seconds const /*dt*/, bool const /*in_play*/) {
 	m_health_bar.position = shape.transform.position;
 	m_health_bar.position.y += 0.5f * shape.get_shape().size.y + 20.0f;
 	m_health_bar.size = {shape.get_shape().size.x, 10.0f};
 	m_health_bar.set_progress(health.get_hit_points() / health.get_total_hit_points());
-	m_health_bar.tick(dt);
 }
 
 void Enemy::draw(Shader& shader) const {

@@ -1,11 +1,11 @@
 #pragma once
 #include <spaced/services/services.hpp>
+#include <spaced/ui/element.hpp>
 #include <spaced/ui/outline_quad.hpp>
 #include <spaced/ui/style.hpp>
-#include <spaced/ui/widget.hpp>
 
 namespace spaced::ui {
-class ProgressBar : public IWidget {
+class ProgressBar : public IElement {
   public:
 	using Style = ProgressBarStyle;
 
@@ -25,6 +25,8 @@ class ProgressBar : public IWidget {
 	[[nodiscard]] auto get_size() const -> glm::vec2 final { return size; }
 	[[nodiscard]] auto get_position() const -> glm::vec2 final { return position; }
 	void set_position(glm::vec2 position) final { this->position = position; }
+
+	[[nodiscard]] auto get_bounds() const -> bave::Rect<> { return m_background.get_bounds(); }
 
   private:
 	Style m_style{};

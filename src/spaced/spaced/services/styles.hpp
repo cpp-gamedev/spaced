@@ -13,6 +13,7 @@ struct Styles : IService {
 	StringMap<ui::ButtonStyle> buttons{};
 	StringMap<ui::ProgressBarStyle> progress_bars{};
 	StringMap<ui::DialogStyle> dialogs{};
+	StringMap<ui::SliderStyle> sliders{};
 	ui::LoadingScreenStyle loading_screen{};
 
 	static auto load(dj::Json const& json) -> Styles;
