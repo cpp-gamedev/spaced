@@ -28,7 +28,10 @@ class Spaced : public bave::Driver {
 	void load_resources();
 	void create_services();
 	void set_layout();
+	void set_prefs();
 	void set_scene();
+
+	void switch_track(std::string_view from, std::string_view to) const;
 
 	bave::Logger m_log{"Spaced"};
 	Services m_services{};

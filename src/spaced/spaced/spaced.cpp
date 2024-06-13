@@ -2,6 +2,7 @@
 #include <bave/io/json_io.hpp>
 #include <bave/loader.hpp>
 #include <bave/persistor.hpp>
+#include <spaced/prefs.hpp>
 #include <spaced/scenes/load_assets.hpp>
 #include <spaced/services/audio.hpp>
 #include <spaced/services/gamepad_provider.hpp>
@@ -143,6 +144,7 @@ Spaced::Spaced(App& app) : Driver(app), m_scene(std::make_unique<Scene>(app, m_s
 	load_resources();
 	set_layout();
 	create_services();
+	set_prefs();
 	set_scene();
 }
 
@@ -161,7 +163,7 @@ void Spaced::tick() {
 	m_layout->set_framebuffer_size(get_app().get_framebuffer_size());
 
 	if (m_scene_switcher->next_scene) {
-		m_audio->stop_music();
+		switch_track(m_scene->get_music_uri(), m_scene_switcher->next_scene->get_music_uri());
 		m_scene = std::move(m_scene_switcher->next_scene);
 	}
 
@@ -228,10 +230,24 @@ void Spaced::create_services() {
 	m_services.bind<Stats>(std::move(stats));
 }
 
+void Spaced::set_prefs() {
+	auto const prefs = Prefs::load(get_app());
+	m_audio->set_music_gain(prefs.music_gain);
+	m_audio->set_sfx_gain(prefs.sfx_gain);
+}
+
 void Spaced::set_scene() {
 	auto switcher = std::make_unique<SceneSwitcher>(get_app(), m_services);
 	m_scene_switcher = switcher.get();
 	switcher->switch_to<LoadAssets>();
 	m_services.bind<ISceneSwitcher>(std::move(switcher));
+}
+
+void Spaced::switch_track(std::string_view const from, std::string_view const to) const {
+	if (to.empty()) {
+		m_audio->stop_music();
+	} else if (from != to) {
+		m_audio->play_music(to);
+	}
 }
 } // namespace spaced

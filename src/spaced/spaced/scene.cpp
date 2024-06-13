@@ -38,7 +38,7 @@ void Scene::push_view(std::unique_ptr<ui::View> view) {
 
 void Scene::tick_frame(Seconds const dt) {
 	tick(dt);
-	for (auto const& view : m_views) { view->tick(dt); }
+	for (auto const& view : cache_views()) { view->tick(dt); }
 	std::erase_if(m_views, [](auto const& view) { return view->is_destroyed(); });
 }
 
@@ -51,11 +51,19 @@ void Scene::render_frame() const {
 
 template <typename F>
 auto Scene::on_ui_event(F per_view) -> bool {
-	for (auto it = m_views.rbegin(); it != m_views.rend(); ++it) {
+	auto const cached_views = cache_views();
+	for (auto it = cached_views.rbegin(); it != cached_views.rend(); ++it) {
 		auto const& view = *it;
 		per_view(*view);
 		if (view->block_input_events) { return true; }
 	}
 	return false;
+}
+
+auto Scene::cache_views() -> std::span<bave::Ptr<ui::View> const> {
+	m_cached_views.clear();
+	m_cached_views.reserve(m_views.size());
+	for (auto const& view : m_views) { m_cached_views.push_back(view.get()); }
+	return m_cached_views;
 }
 } // namespace spaced

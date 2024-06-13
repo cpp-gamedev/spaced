@@ -1,7 +1,7 @@
 #include <spaced/assets/asset_list.hpp>
 #include <spaced/scenes/game.hpp>
-#include <spaced/scenes/home.hpp>
 #include <spaced/scenes/load_assets.hpp>
+#include <spaced/scenes/menu.hpp>
 #include <spaced/services/resources.hpp>
 #include <spaced/services/scene_switcher.hpp>
 #include <spaced/util.hpp>
@@ -15,11 +15,11 @@ using bave::Shader;
 namespace {
 auto make_load_stages(Loader loader, Services const& services) -> std::vector<AsyncExec::Stage> {
 	auto asset_list = AssetList{std::move(loader), services};
-	asset_list.add_manifest(Game::get_manifest());
+	asset_list.add_manifest(GameScene::get_manifest());
 	auto ret = asset_list.build_task_stages();
 	auto& stage = ret.emplace_back();
 	auto& resources = services.get<Resources>();
-	stage.push_back(util::create_font_atlas_task(resources.main_font, Home::get_text_heights()));
+	stage.push_back(util::create_font_atlas_task(resources.main_font, MenuScene::get_text_heights()));
 	return ret;
 }
 } // namespace
@@ -27,7 +27,7 @@ auto make_load_stages(Loader loader, Services const& services) -> std::vector<As
 LoadAssets::LoadAssets(App& app, Services const& services)
 	: Scene(app, services, "LoadAssets"), m_loading_screen(services), m_load(make_load_stages(make_loader(), services)) {}
 
-void LoadAssets::on_loaded() { get_services().get<ISceneSwitcher>().switch_to<Home>(); }
+void LoadAssets::on_loaded() { get_services().get<ISceneSwitcher>().switch_to<MenuScene>(); }
 
 void LoadAssets::tick(Seconds const dt) {
 	auto const load_status = m_load.update();

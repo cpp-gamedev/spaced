@@ -18,6 +18,8 @@ class Scene : public bave::PolyPinned {
 	void tick_frame(bave::Seconds dt);
 	void render_frame() const;
 
+	[[nodiscard]] virtual auto get_music_uri() const -> std::string_view { return {}; }
+
 	[[nodiscard]] auto get_app() const -> bave::App& { return m_app; }
 	[[nodiscard]] auto get_services() const -> Services const& { return m_services; }
 
@@ -49,8 +51,11 @@ class Scene : public bave::PolyPinned {
 	template <typename F>
 	auto on_ui_event(F per_view) -> bool;
 
+	auto cache_views() -> std::span<bave::Ptr<ui::View> const>;
+
 	bave::App& m_app;
 	Services const& m_services;
 	std::vector<std::unique_ptr<ui::View>> m_views{};
+	std::vector<bave::Ptr<ui::View>> m_cached_views{};
 };
 } // namespace spaced
