@@ -7,8 +7,8 @@ using bave::Seconds;
 using bave::Shader;
 
 LoadingScreen::LoadingScreen(Services const& services)
-	: m_layout(&services.get<ILayout>()), m_style(services.get<Styles>().loading_screen), m_progress_bar(services) {
-	auto const world_space = m_layout->get_world_space();
+	: m_display(&services.get<IDisplay>()), m_style(services.get<Styles>().loading_screen), m_progress_bar(services) {
+	auto const world_space = m_display->get_world_space();
 
 	m_background.set_size(1.1f * world_space);
 	m_background.tint = m_style.background_tint;
@@ -32,7 +32,7 @@ void LoadingScreen::update(Seconds const dt, float const progress) {
 }
 
 void LoadingScreen::draw(Shader& shader) const {
-	shader.set_render_view(m_layout->get_main_view());
+	shader.set_render_view(m_display->get_main_view());
 	m_background.draw(shader);
 	m_spinner.draw(shader);
 	m_progress_bar.draw(shader);

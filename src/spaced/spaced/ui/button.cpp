@@ -15,7 +15,7 @@ using bave::Seconds;
 using bave::Shader;
 using bave::TextHeight;
 
-Button::Button(Services const& services) : m_layout(&services.get<ILayout>()), m_styles(&services.get<Styles>()) {
+Button::Button(Services const& services) : m_display(&services.get<IDisplay>()), m_styles(&services.get<Styles>()) {
 	m_text.set_font(services.get<Resources>().main_font);
 	set_text_height(TextHeight::eDefault);
 	set_style(m_styles->buttons["default"]);
@@ -66,7 +66,7 @@ void Button::set_style(Style const& style) {
 
 void Button::on_move(PointerMove const& pointer_move) {
 	if (pointer_move.pointer.id != PointerId::ePrimary) { return; }
-	auto const position = m_layout->unproject(pointer_move.pointer.position);
+	auto const position = m_display->unproject(pointer_move.pointer.position);
 	if (m_hitbox.contains(position)) {
 		m_state = State::eHover;
 	} else {
@@ -77,7 +77,7 @@ void Button::on_move(PointerMove const& pointer_move) {
 void Button::on_tap(PointerTap const& pointer_tap) {
 	if (pointer_tap.pointer.id != PointerId::ePrimary || pointer_tap.button != MouseButton::eLeft) { return; }
 
-	auto const position = m_layout->unproject(pointer_tap.pointer.position);
+	auto const position = m_display->unproject(pointer_tap.pointer.position);
 	if (!m_hitbox.contains(position)) {
 		m_state = State::eIdle;
 		return;

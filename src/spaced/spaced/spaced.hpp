@@ -17,7 +17,7 @@ class Spaced : public GameDriver {
 
 	void load_resources();
 	void create_services();
-	void set_game_layout();
+	void set_layout();
 	void set_prefs();
 	void set_scene();
 

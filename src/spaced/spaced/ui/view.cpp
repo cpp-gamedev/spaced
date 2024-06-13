@@ -6,7 +6,7 @@ using bave::PointerTap;
 using bave::Seconds;
 using bave::Shader;
 
-View::View(Services const& services) : m_layout(&services.get<ILayout>()) {}
+View::View(Services const& services) : m_display(&services.get<IDisplay>()) {}
 
 void View::push(std::unique_ptr<IElement> element) {
 	if (!element) { return; }
@@ -28,7 +28,7 @@ void View::tick(Seconds const dt) {
 
 void View::render(Shader& shader) const {
 	if (m_elements.empty()) { return; }
-	shader.set_render_view(m_layout->get_main_view());
+	shader.set_render_view(m_display->get_main_view());
 	for (auto const& element : m_elements) { element->draw(shader); }
 }
 } // namespace spaced::ui

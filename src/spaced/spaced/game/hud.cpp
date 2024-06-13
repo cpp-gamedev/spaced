@@ -6,7 +6,7 @@
 namespace spaced {
 using bave::TextHeight;
 
-Hud::Hud(Services const& services) : ui::View(services), m_styles(&services.get<Styles>()), m_area(services.get<GameLayout>().hud_area) {
+Hud::Hud(Services const& services) : ui::View(services), m_styles(&services.get<Styles>()), m_area(services.get<Layout>().hud_area) {
 	create_background();
 	create_score(services);
 

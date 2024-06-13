@@ -7,7 +7,7 @@ using bave::RoundedQuad;
 using bave::Seconds;
 using bave::Shader;
 
-PUBase::PUBase(Services const& services, std::string_view const name) : m_services(&services), m_layout(&services.get<GameLayout>()), m_name(name) {
+PUBase::PUBase(Services const& services, std::string_view const name) : m_services(&services), m_layout(&services.get<Layout>()), m_name(name) {
 	auto quad = RoundedQuad{};
 	quad.size = glm::vec2{40.0f};
 	quad.corner_radius = 12.5f;

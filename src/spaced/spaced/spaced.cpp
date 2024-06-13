@@ -97,7 +97,7 @@ void Spaced::set_bindings([[maybe_unused]] Serializer& serializer) {}
 Spaced::Spaced(App& app) : GameDriver(app) {
 	m_log.info("using MSAA: {}x", static_cast<int>(app.get_render_device().get_sample_count()));
 	load_resources();
-	set_game_layout();
+	set_layout();
 	create_services();
 	set_prefs();
 	set_scene();
@@ -137,18 +137,18 @@ void Spaced::create_services() {
 	m_services.bind<Stats>(std::move(stats));
 }
 
-void Spaced::set_game_layout() {
-	auto game_layout = std::make_unique<GameLayout>();
-	auto const& layout = m_services.get<ILayout>();
-	game_layout->world_space = layout.get_world_space();
-	auto const viewport = layout.get_main_view().viewport;
+void Spaced::set_layout() {
+	auto game_layout = std::make_unique<Layout>();
+	auto const& display = m_services.get<IDisplay>();
+	game_layout->world_space = display.get_world_space();
+	auto const viewport = display.get_main_view().viewport;
 	auto const hud_size = glm::vec2{viewport.x, 100.0f};
 	auto const hud_origin = glm::vec2{0.0f, 0.5f * (viewport.y - hud_size.y)};
 	game_layout->hud_area = Rect<>::from_size(hud_size, hud_origin);
 	auto const play_size = glm::vec2{hud_size.x, viewport.y - hud_size.y};
 	auto const play_origin = glm::vec2{0.0f, -0.5f * (viewport.y - play_size.y)};
 	game_layout->play_area = Rect<>::from_size(play_size, play_origin);
-	m_services.bind<GameLayout>(std::move(game_layout));
+	m_services.bind<Layout>(std::move(game_layout));
 }
 
 void Spaced::set_prefs() {

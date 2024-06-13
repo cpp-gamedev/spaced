@@ -1,6 +1,6 @@
 #pragma once
 #include <bave/graphics/text.hpp>
-#include <spaced/services/layout.hpp>
+#include <spaced/services/display.hpp>
 #include <spaced/services/services.hpp>
 #include <spaced/services/styles.hpp>
 #include <spaced/ui/outline_quad.hpp>
@@ -47,7 +47,7 @@ class Button : public IWidget {
 	void resize_background();
 	void reposition_text();
 
-	bave::NotNull<ILayout const*> m_layout;
+	bave::NotNull<IDisplay const*> m_display;
 	bave::NotNull<Styles const*> m_styles;
 
 	OutlineQuad m_background{};

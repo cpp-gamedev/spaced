@@ -63,14 +63,14 @@ struct GameDriver::SceneSwitcher : ISceneSwitcher {
 	[[nodiscard]] auto get_services() const -> Services const& final { return services; }
 };
 
-struct GameDriver::Layout : ILayout {
+struct GameDriver::Display : IDisplay {
 	NotNull<RenderDevice const*> render_device;
 	RenderView main_view{};
 	glm::vec2 framebuffer_size{};
 	Rect<> play_area{};
 	Rect<> hud_area{};
 
-	explicit Layout(NotNull<RenderDevice const*> render_device) : render_device(render_device) {}
+	explicit Display(NotNull<RenderDevice const*> render_device) : render_device(render_device) {}
 
 	[[nodiscard]] auto get_main_view() const -> RenderView const& final { return main_view; }
 	[[nodiscard]] auto get_framebuffer_size() const -> glm::vec2 final { return framebuffer_size; }
@@ -85,11 +85,11 @@ struct GameDriver::Layout : ILayout {
 };
 
 GameDriver::GameDriver(App& app) : Driver(app), m_scene(std::make_unique<EmptyScene>(app, m_services)) {
-	auto layout = std::make_unique<Layout>(&app.get_render_device());
-	m_layout = layout.get();
-	m_layout->framebuffer_size = app.get_framebuffer_size();
-	m_layout->main_view = app.get_render_device().get_default_view();
-	m_services.bind<ILayout>(std::move(layout));
+	auto display = std::make_unique<Display>(&app.get_render_device());
+	m_display = display.get();
+	m_display->framebuffer_size = app.get_framebuffer_size();
+	m_display->main_view = app.get_render_device().get_default_view();
+	m_services.bind<IDisplay>(std::move(display));
 
 	auto switcher = std::make_unique<SceneSwitcher>(app, m_services);
 	m_switcher = switcher.get();
@@ -121,7 +121,7 @@ void GameDriver::on_scroll(MouseScroll const& mouse_scroll) { m_scene->on_scroll
 void GameDriver::on_drop(std::span<std::string const> paths) { m_scene->on_drop(paths); }
 
 void GameDriver::tick() {
-	m_layout->framebuffer_size = get_app().get_framebuffer_size();
+	m_display->framebuffer_size = get_app().get_framebuffer_size();
 
 	if (m_switcher->next_scene) {
 		switch_track(m_scene->get_music_uri(), m_switcher->next_scene->get_music_uri());

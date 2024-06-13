@@ -3,8 +3,8 @@
 #include <bave/input/gamepad.hpp>
 #include <spaced/game/controllers/follow_controller.hpp>
 #include <spaced/game/spring_arm.hpp>
+#include <spaced/services/display.hpp>
 #include <spaced/services/gamepad_provider.hpp>
-#include <spaced/services/layout.hpp>
 #include <spaced/services/services.hpp>
 
 namespace spaced {
@@ -45,7 +45,7 @@ class PlayerController : public FollowController {
 	auto tick_y(bave::Seconds dt) -> float final;
 	void do_inspect() final;
 
-	bave::Ptr<ILayout const> m_layout{};
+	bave::Ptr<IDisplay const> m_display{};
 	bave::Ptr<IGamepadProvider const> m_gamepad_provider{};
 
 	Type m_type{};

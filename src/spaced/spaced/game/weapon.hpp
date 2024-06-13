@@ -2,7 +2,7 @@
 #include <bave/logger.hpp>
 #include <bave/platform.hpp>
 #include <spaced/game/weapon_round.hpp>
-#include <spaced/services/layout.hpp>
+#include <spaced/services/display.hpp>
 #include <spaced/services/services.hpp>
 
 namespace spaced {
@@ -28,7 +28,7 @@ class Weapon : public bave::Polymorphic {
 	int rounds{-1};
 
   protected:
-	[[nodiscard]] auto get_layout() const -> ILayout const& { return *m_layout; }
+	[[nodiscard]] auto get_display() const -> IDisplay const& { return *m_display; }
 
 	virtual auto do_fire(glm::vec2 muzzle_position) -> std::unique_ptr<Round> = 0;
 	virtual void do_inspect();
@@ -37,7 +37,7 @@ class Weapon : public bave::Polymorphic {
 	std::vector<std::string> m_fire_sfx{};
 
   private:
-	bave::NotNull<ILayout const*> m_layout;
+	bave::NotNull<IDisplay const*> m_display;
 	bave::NotNull<IAudio*> m_audio;
 };
 } // namespace spaced

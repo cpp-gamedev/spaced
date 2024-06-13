@@ -32,10 +32,10 @@ class GameDriver : public bave::Driver {
 
   private:
 	struct SceneSwitcher;
-	struct Layout;
+	struct Display;
 
 	bave::Ptr<SceneSwitcher> m_switcher{};
-	bave::Ptr<Layout> m_layout{};
+	bave::Ptr<Display> m_display{};
 	bave::Ptr<IAudio> m_audio{};
 
 	std::unique_ptr<Scene> m_scene{};

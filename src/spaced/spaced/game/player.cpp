@@ -2,6 +2,7 @@
 #include <bave/imgui/im_text.hpp>
 #include <bave/platform.hpp>
 #include <spaced/game/player.hpp>
+#include <spaced/services/layout.hpp>
 #include <spaced/services/resources.hpp>
 #include <spaced/services/stats.hpp>
 #include <spaced/services/styles.hpp>
@@ -19,7 +20,7 @@ using bave::Shader;
 
 Player::Player(Services const& services, std::unique_ptr<IController> controller)
 	: m_services(&services), m_stats(&services.get<Stats>()), m_controller(std::move(controller)) {
-	auto const& layout = services.get<GameLayout>();
+	auto const& layout = services.get<Layout>();
 	ship.transform.position.x = layout.player_x;
 	auto rounded_quad = RoundedQuad{};
 	rounded_quad.size = layout.player_size;

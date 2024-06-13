@@ -1,5 +1,5 @@
 #pragma once
-#include <spaced/services/layout.hpp>
+#include <spaced/services/display.hpp>
 #include <spaced/services/services.hpp>
 #include <spaced/ui/widget.hpp>
 #include <memory>
@@ -26,7 +26,7 @@ class View : public bave::Polymorphic {
   protected:
 	std::vector<std::unique_ptr<ui::IElement>> m_elements{};
 	std::vector<bave::Ptr<ui::IWidget>> m_widgets{};
-	bave::NotNull<ILayout const*> m_layout;
+	bave::NotNull<IDisplay const*> m_display;
 	bool m_destroyed{};
 };
 } // namespace spaced::ui
