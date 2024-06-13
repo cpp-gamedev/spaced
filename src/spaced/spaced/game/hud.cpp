@@ -1,11 +1,16 @@
 #include <fmt/format.h>
+#include <bave/services/styles.hpp>
 #include <spaced/game/hud.hpp>
-#include <spaced/services/styles.hpp>
+#include <spaced/services/layout.hpp>
 
 namespace spaced {
+using bave::Services;
+using bave::Styles;
 using bave::TextHeight;
 
-Hud::Hud(Services const& services) : ui::View(services), m_styles(&services.get<Styles>()), m_area(m_layout->get_hud_area()) {
+namespace ui = bave::ui;
+
+Hud::Hud(Services const& services) : ui::View(services), m_styles(&services.get<Styles>()), m_area(services.get<Layout>().hud_area) {
 	create_background();
 	create_score(services);
 

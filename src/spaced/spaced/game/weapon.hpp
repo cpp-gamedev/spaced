@@ -1,18 +1,20 @@
 #pragma once
 #include <bave/logger.hpp>
 #include <bave/platform.hpp>
+#include <bave/services/display.hpp>
+#include <bave/services/services.hpp>
 #include <spaced/game/weapon_round.hpp>
-#include <spaced/services/layout.hpp>
-#include <spaced/services/services.hpp>
+
+namespace bave {
+class IAudio;
+}
 
 namespace spaced {
-class IAudio;
-
 class Weapon : public bave::Polymorphic {
   public:
 	using Round = IWeaponRound;
 
-	explicit Weapon(Services const& services, std::string name);
+	explicit Weapon(bave::Services const& services, std::string name);
 
 	[[nodiscard]] auto get_rounds_remaining() const -> int { return rounds < 0 ? 1 : rounds; }
 
@@ -28,7 +30,7 @@ class Weapon : public bave::Polymorphic {
 	int rounds{-1};
 
   protected:
-	[[nodiscard]] auto get_layout() const -> ILayout const& { return *m_layout; }
+	[[nodiscard]] auto get_display() const -> bave::IDisplay const& { return *m_display; }
 
 	virtual auto do_fire(glm::vec2 muzzle_position) -> std::unique_ptr<Round> = 0;
 	virtual void do_inspect();
@@ -37,7 +39,7 @@ class Weapon : public bave::Polymorphic {
 	std::vector<std::string> m_fire_sfx{};
 
   private:
-	bave::NotNull<ILayout const*> m_layout;
-	bave::NotNull<IAudio*> m_audio;
+	bave::NotNull<bave::IDisplay const*> m_display;
+	bave::NotNull<bave::IAudio*> m_audio;
 };
 } // namespace spaced

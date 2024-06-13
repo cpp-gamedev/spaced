@@ -1,19 +1,23 @@
 #include <bave/core/random.hpp>
 #include <bave/imgui/im_text.hpp>
+#include <bave/services/services.hpp>
+#include <bave/services/styles.hpp>
 #include <spaced/game/enemy.hpp>
-#include <spaced/services/services.hpp>
-#include <spaced/services/styles.hpp>
 
 namespace spaced {
 using bave::im_text;
 using bave::random_in_range;
 using bave::RoundedQuad;
 using bave::Seconds;
+using bave::Services;
 using bave::Shader;
+using bave::Styles;
 
-Enemy::Enemy(Services const& services, std::string_view const type) : m_layout(&services.get<ILayout>()), m_health_bar(services), m_type(type) {
+namespace ui = bave::ui;
+
+Enemy::Enemy(Services const& services, std::string_view const type) : m_layout(&services.get<Layout>()), m_health_bar(services), m_type(type) {
 	static constexpr auto init_size_v = glm::vec2{100.0f};
-	auto const play_area = m_layout->get_play_area();
+	auto const play_area = m_layout->play_area;
 	auto const y_min = play_area.rb.y + 0.5f * init_size_v.y;
 	auto const y_max = play_area.lt.y - 0.5f * init_size_v.y - 50.0f;
 	setup(init_size_v, random_in_range(y_min, y_max));
@@ -49,7 +53,7 @@ void Enemy::setup(glm::vec2 max_size, float y_position) {
 	rounded_quad.size = max_size;
 	rounded_quad.corner_radius = 0.2f * max_size.x;
 	shape.set_shape(rounded_quad);
-	shape.transform.position.x = 0.5f * (get_layout().get_world_space().x + rounded_quad.size.x);
+	shape.transform.position.x = 0.5f * (get_layout().world_space.x + rounded_quad.size.x);
 	shape.transform.position.y = y_position;
 }
 

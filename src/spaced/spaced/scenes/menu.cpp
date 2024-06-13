@@ -1,18 +1,21 @@
+#include <bave/services/resources.hpp>
+#include <bave/services/scene_switcher.hpp>
+#include <bave/ui/button.hpp>
+#include <bave/ui/dialog.hpp>
+#include <bave/ui/text.hpp>
 #include <spaced/prefs.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/menu.hpp>
 #include <spaced/services/layout.hpp>
-#include <spaced/services/resources.hpp>
-#include <spaced/services/scene_switcher.hpp>
-#include <spaced/ui/button.hpp>
-#include <spaced/ui/dialog.hpp>
-#include <spaced/ui/text.hpp>
 #include <spaced/util.hpp>
 
 namespace spaced {
 using bave::App;
 using bave::Seconds;
+using bave::Services;
 using bave::TextHeight;
+
+namespace ui = bave::ui;
 
 auto MenuScene::get_text_heights() -> std::vector<TextHeight> { return {TextHeight{100}, TextHeight{60}, ui::Dialog::text_height_v}; }
 
@@ -27,7 +30,7 @@ void MenuScene::create_ui() {
 	auto start = std::make_unique<ui::Button>(get_services());
 	start->set_text("start");
 	start->set_position({0.0f, -100.0f});
-	start->callback = [this]() { get_services().get<ISceneSwitcher>().switch_to<GameScene>(); };
+	start->callback = [this]() { get_switcher().switch_to<GameScene>(); };
 
 	auto options = std::make_unique<ui::Button>(get_services());
 	options->set_text("options");

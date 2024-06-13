@@ -1,12 +1,12 @@
 #pragma once
 #include <bave/core/ptr.hpp>
 #include <bave/input/gamepad.hpp>
+#include <bave/services/services.hpp>
 #include <spaced/game/controllers/follow_controller.hpp>
 #include <spaced/game/spring_arm.hpp>
 #include <spaced/game/target_provider.hpp>
 #include <spaced/services/gamepad_provider.hpp>
 #include <spaced/services/layout.hpp>
-#include <spaced/services/services.hpp>
 
 namespace spaced {
 class AutoController : public FollowController {

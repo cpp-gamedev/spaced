@@ -1,10 +1,9 @@
 #pragma once
 #include <bave/app.hpp>
-#include <spaced/ui/view.hpp>
+#include <bave/services/audio.hpp>
+#include <bave/ui/view.hpp>
 
 namespace spaced {
-class IAudio;
-
 struct Prefs {
 	class View;
 
@@ -15,19 +14,19 @@ struct Prefs {
 	void save(bave::App const& app) const;
 };
 
-class Prefs::View : public ui::View {
+class Prefs::View : public bave::ui::View {
   public:
 	View(View const&) = delete;
 	View(View&&) = delete;
 	auto operator=(View const&) = delete;
 	auto operator=(View&&) = delete;
 
-	explicit View(bave::NotNull<bave::App const*> app, Services const& services);
+	explicit View(bave::NotNull<bave::App const*> app, bave::Services const& services);
 	~View() override;
 
   private:
 	bave::NotNull<bave::App const*> m_app;
-	bave::NotNull<IAudio*> m_audio;
+	bave::NotNull<bave::IAudio*> m_audio;
 	Prefs m_prefs;
 };
 } // namespace spaced

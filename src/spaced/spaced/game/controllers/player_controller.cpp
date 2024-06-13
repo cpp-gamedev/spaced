@@ -9,18 +9,20 @@ using bave::Action;
 using bave::EnumArray;
 using bave::GamepadAxis;
 using bave::GamepadButton;
+using bave::IDisplay;
 using bave::im_text;
 using bave::PointerMove;
 using bave::PointerTap;
 using bave::Seconds;
+using bave::Services;
 
-PlayerController::PlayerController(Services const& services) : m_layout(&services.get<ILayout>()), m_gamepad_provider(&services.get<IGamepadProvider>()) {
-	max_y = 0.5f * m_layout->get_world_space().y;
+PlayerController::PlayerController(Services const& services) : m_display(&services.get<IDisplay>()), m_gamepad_provider(&services.get<IGamepadProvider>()) {
+	max_y = 0.5f * m_display->get_world_space().y;
 	min_y = -max_y; // NOLINT(cppcoreguidelines-prefer-member-initializer)
 }
 
 void PlayerController::on_move(PointerMove const& pointer_move) {
-	auto const world_pos = m_layout->project_to_world(pointer_move.pointer.position);
+	auto const world_pos = m_display->project_to_world(pointer_move.pointer.position);
 
 	if (m_type == Type::eTouch) {
 		if (!is_in_move_area(world_pos)) {
@@ -39,7 +41,7 @@ void PlayerController::on_move(PointerMove const& pointer_move) {
 }
 
 void PlayerController::on_tap(PointerTap const& pointer_tap) {
-	auto const world_pos = m_layout->project_to_world(pointer_tap.pointer.position);
+	auto const world_pos = m_display->project_to_world(pointer_tap.pointer.position);
 	if (m_type == Type::eTouch && is_in_move_area(world_pos)) {
 		// pointer tap in move area is ingored
 		return;
@@ -66,7 +68,7 @@ void PlayerController::stop_firing() {
 }
 
 auto PlayerController::is_in_move_area(glm::vec2 const position) const -> bool {
-	auto const n_pos = position.x / m_layout->get_world_space().x;
+	auto const n_pos = position.x / m_display->get_world_space().x;
 	return n_pos <= -n_move_area;
 }
 

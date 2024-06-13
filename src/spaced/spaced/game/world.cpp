@@ -1,7 +1,7 @@
 #include <bave/imgui/im_text.hpp>
+#include <bave/services/resources.hpp>
 #include <spaced/game/enemies/creep_factory.hpp>
 #include <spaced/game/world.hpp>
-#include <spaced/services/resources.hpp>
 #include <spaced/services/stats.hpp>
 
 #include <bave/core/random.hpp>
@@ -11,26 +11,29 @@
 
 namespace spaced {
 using bave::FixedString;
+using bave::IAudio;
 using bave::NotNull;
 using bave::ParticleEmitter;
 using bave::random_in_range;
+using bave::Resources;
 using bave::Seconds;
+using bave::Services;
 using bave::Shader;
 
 namespace {
 [[nodiscard]] auto make_player_controller(Services const& services) {
 	auto ret = std::make_unique<PlayerController>(services);
 	if constexpr (bave::platform_v == bave::Platform::eAndroid) { ret->set_type(PlayerController::Type::eTouch); }
-	auto const& layout = services.get<ILayout>();
-	auto const half_size = 0.5f * layout.get_player_size();
-	auto const play_area = layout.get_play_area();
+	auto const& layout = services.get<Layout>();
+	auto const half_size = 0.5f * layout.player_size;
+	auto const play_area = layout.play_area;
 	ret->max_y = play_area.lt.y - half_size.y;
 	ret->min_y = play_area.rb.y + half_size.y;
 	return ret;
 }
 
 [[nodiscard]] auto make_auto_controller(ITargetProvider const& target_provider, Services const& services) {
-	return std::make_unique<AutoController>(&target_provider, services.get<ILayout>().get_player_x());
+	return std::make_unique<AutoController>(&target_provider, services.get<Layout>().player_x);
 }
 } // namespace
 

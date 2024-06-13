@@ -1,18 +1,18 @@
 #pragma once
+#include <bave/scene.hpp>
 #include <spaced/assets/asset_manifest.hpp>
 #include <spaced/game/game_save.hpp>
 #include <spaced/game/hud.hpp>
 #include <spaced/game/scorer.hpp>
 #include <spaced/game/target_provider.hpp>
 #include <spaced/game/world.hpp>
-#include <spaced/scene.hpp>
 
 namespace spaced {
-class GameScene : public Scene, public IScorer {
+class GameScene : public bave::Scene, public IScorer {
   public:
 	static auto get_manifest() -> AssetManifest;
 
-	GameScene(bave::App& app, Services const& services);
+	GameScene(bave::App& app, bave::Services const& services);
 
   private:
 	void on_focus(bave::FocusChange const& focus_change) final;

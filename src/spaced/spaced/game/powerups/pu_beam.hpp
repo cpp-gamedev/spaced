@@ -4,7 +4,7 @@
 namespace spaced {
 class PUBeam : public PUBase {
   public:
-	explicit PUBeam(Services const& services, int rounds = 2);
+	explicit PUBeam(bave::Services const& services, int rounds = 2);
 
   private:
 	void do_activate(Player& player) final;

@@ -1,6 +1,7 @@
 #include <spaced/game/weapons/projectile.hpp>
 
 namespace spaced {
+using bave::IDisplay;
 using bave::NotNull;
 using bave::Rect;
 using bave::RoundedQuad;
@@ -15,7 +16,7 @@ namespace {
 }
 } // namespace
 
-Projectile::Projectile(NotNull<ILayout const*> layout, Config config, glm::vec2 const muzzle_position) : m_layout(layout), m_config(std::move(config)) {
+Projectile::Projectile(NotNull<IDisplay const*> display, Config config, glm::vec2 const muzzle_position) : m_display(display), m_config(std::move(config)) {
 	auto rounded_quad = RoundedQuad{};
 	rounded_quad.size = m_config.size;
 	rounded_quad.corner_radius = m_config.corner_radius;
@@ -42,7 +43,7 @@ void Projectile::tick(State const& state, Seconds const dt) {
 		}
 	}
 
-	if (m_shape.transform.position.x > 0.5f * (m_layout->get_world_space().x + m_config.size.x)) { m_destroyed = true; }
+	if (m_shape.transform.position.x > 0.5f * (m_display->get_world_space().x + m_config.size.x)) { m_destroyed = true; }
 }
 
 void Projectile::draw(Shader& shader) const { m_shape.draw(shader); }

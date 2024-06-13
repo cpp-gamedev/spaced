@@ -9,12 +9,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(FetchContent)
 
 FetchContent_Declare(
-  bave
-  GIT_REPOSITORY https://github.com/karnkaul/bave
-  GIT_TAG v0.5.4
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ext/bave"
+  bgf
+  GIT_REPOSITORY https://github.com/karnkaul/bgf
+  GIT_TAG v0.1.0
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ext/bgf"
 )
 
-FetchContent_MakeAvailable(bave)
+FetchContent_MakeAvailable(bgf)
 
 add_subdirectory(src)

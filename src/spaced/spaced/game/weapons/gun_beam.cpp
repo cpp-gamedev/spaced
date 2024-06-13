@@ -1,25 +1,28 @@
 #include <bave/graphics/sprite.hpp>
 #include <bave/imgui/im_text.hpp>
+#include <bave/services/styles.hpp>
 #include <spaced/game/weapons/gun_beam.hpp>
-#include <spaced/services/styles.hpp>
 
 namespace spaced {
+using bave::IDisplay;
 using bave::im_text;
 using bave::NotNull;
 using bave::Ptr;
 using bave::Rect;
 using bave::Rgba;
 using bave::Seconds;
+using bave::Services;
 using bave::Shader;
 using bave::Sprite;
+using bave::Styles;
 
 namespace {
 class LaserCharge : public IWeaponRound {
   public:
 	using Config = GunBeam::Config;
 
-	explicit LaserCharge(NotNull<ILayout const*> layout, Config config, glm::vec2 const muzzle_position)
-		: m_layout(layout), m_config(config), m_fire_remain(config.fire_duration) {
+	explicit LaserCharge(NotNull<IDisplay const*> display, Config config, glm::vec2 const muzzle_position)
+		: m_display(display), m_config(config), m_fire_remain(config.fire_duration) {
 		m_ray.transform.position.y = muzzle_position.y;
 	}
 
@@ -30,7 +33,7 @@ class LaserCharge : public IWeaponRound {
 
 		sort_entries(state.targets, state.muzzle_position);
 
-		auto const world_space = m_layout->get_world_space();
+		auto const world_space = m_display->get_world_space();
 		auto const left_x = state.muzzle_position.x;
 		auto right_x = 0.5f * world_space.x;
 		for (auto const& entry : m_entries) {
@@ -88,7 +91,7 @@ class LaserCharge : public IWeaponRound {
 		float distance{};
 	};
 
-	NotNull<ILayout const*> m_layout;
+	NotNull<IDisplay const*> m_display;
 	Config m_config;
 
 	Sprite m_ray{};
@@ -119,7 +122,7 @@ auto GunBeam::do_fire(glm::vec2 const muzzle_position) -> std::unique_ptr<Round>
 	if (rounds > 0) { --rounds; }
 	m_fire_remain = config.fire_duration;
 	m_reload_remain = 0s;
-	return std::make_unique<LaserCharge>(&get_layout(), config, muzzle_position);
+	return std::make_unique<LaserCharge>(&get_display(), config, muzzle_position);
 }
 
 void GunBeam::do_inspect() {

@@ -1,9 +1,12 @@
+#include <bave/services/styles.hpp>
 #include <spaced/game/player.hpp>
 #include <spaced/game/powerups/pu_beam.hpp>
 #include <spaced/game/weapons/gun_beam.hpp>
-#include <spaced/services/styles.hpp>
 
 namespace spaced {
+using bave::Services;
+using bave::Styles;
+
 PUBeam::PUBeam(Services const& services, int rounds) : PUBase(services, "Beam"), m_rounds(rounds) {
 	emitter.config.lerp.tint.lo = emitter.config.lerp.tint.hi = shape.tint = services.get<Styles>().rgbas["gun_beam"];
 	emitter.config.lerp.tint.hi.channels.w = 0;

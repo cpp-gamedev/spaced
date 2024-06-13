@@ -9,6 +9,7 @@ using bave::Loader;
 using bave::Logger;
 using bave::NotNull;
 using bave::ParticleEmitter;
+using bave::Resources;
 using bave::Texture;
 
 struct AssetLoader::Impl {

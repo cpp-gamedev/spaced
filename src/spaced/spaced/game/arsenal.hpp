@@ -8,7 +8,7 @@ struct Stats;
 // Weapons only switch when they are idle.
 class Arsenal {
   public:
-	explicit Arsenal(Services const& services);
+	explicit Arsenal(bave::Services const& services);
 
 	[[nodiscard]] auto get_weapon() const -> Weapon const&;
 	[[nodiscard]] auto get_weapon() -> Weapon&;

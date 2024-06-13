@@ -1,8 +1,8 @@
 #pragma once
 #include <bave/core/ptr.hpp>
 #include <bave/logger.hpp>
+#include <bave/services/service.hpp>
 #include <spaced/serializable.hpp>
-#include <spaced/services/service.hpp>
 #include <functional>
 #include <memory>
 #include <string_view>
@@ -13,7 +13,7 @@ namespace spaced {
 template <typename Type>
 concept SerializableT = std::derived_from<Type, ISerializable>;
 
-class Serializer : public IService {
+class Serializer : public bave::IService {
   public:
 	using Factory = std::function<std::unique_ptr<ISerializable>()>;
 
