@@ -2,6 +2,7 @@
 #include <bave/io/json_io.hpp>
 #include <bave/loader.hpp>
 #include <bave/persistor.hpp>
+#include <spaced/prefs.hpp>
 #include <spaced/scenes/load_assets.hpp>
 #include <spaced/services/audio.hpp>
 #include <spaced/services/gamepad_provider.hpp>
@@ -143,6 +144,7 @@ Spaced::Spaced(App& app) : Driver(app), m_scene(std::make_unique<Scene>(app, m_s
 	load_resources();
 	set_layout();
 	create_services();
+	set_prefs();
 	set_scene();
 }
 
@@ -226,6 +228,12 @@ void Spaced::create_services() {
 	auto stats = std::make_unique<PersistentStats>(&get_app());
 	++stats->run_count;
 	m_services.bind<Stats>(std::move(stats));
+}
+
+void Spaced::set_prefs() {
+	auto const prefs = Prefs::load(get_app());
+	m_audio->set_music_gain(prefs.music_gain);
+	m_audio->set_sfx_gain(prefs.sfx_gain);
 }
 
 void Spaced::set_scene() {
