@@ -21,16 +21,16 @@ namespace {
 [[nodiscard]] auto make_player_controller(Services const& services) {
 	auto ret = std::make_unique<PlayerController>(services);
 	if constexpr (bave::platform_v == bave::Platform::eAndroid) { ret->set_type(PlayerController::Type::eTouch); }
-	auto const& layout = services.get<ILayout>();
-	auto const half_size = 0.5f * layout.get_player_size();
-	auto const play_area = layout.get_play_area();
+	auto const& layout = services.get<GameLayout>();
+	auto const half_size = 0.5f * layout.player_size;
+	auto const play_area = layout.play_area;
 	ret->max_y = play_area.lt.y - half_size.y;
 	ret->min_y = play_area.rb.y + half_size.y;
 	return ret;
 }
 
 [[nodiscard]] auto make_auto_controller(ITargetProvider const& target_provider, Services const& services) {
-	return std::make_unique<AutoController>(&target_provider, services.get<ILayout>().get_player_x());
+	return std::make_unique<AutoController>(&target_provider, services.get<GameLayout>().player_x);
 }
 } // namespace
 

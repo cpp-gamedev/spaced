@@ -19,10 +19,10 @@ using bave::Shader;
 
 Player::Player(Services const& services, std::unique_ptr<IController> controller)
 	: m_services(&services), m_stats(&services.get<Stats>()), m_controller(std::move(controller)) {
-	auto const& layout = services.get<ILayout>();
-	ship.transform.position.x = layout.get_player_x();
+	auto const& layout = services.get<GameLayout>();
+	ship.transform.position.x = layout.player_x;
 	auto rounded_quad = RoundedQuad{};
-	rounded_quad.size = layout.get_player_size();
+	rounded_quad.size = layout.player_size;
 	rounded_quad.corner_radius = 20.0f;
 	ship.set_shape(rounded_quad);
 

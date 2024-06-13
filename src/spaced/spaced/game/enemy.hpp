@@ -27,7 +27,7 @@ class Enemy : public IDamageable, public bave::IDrawable {
 
 	void setup(glm::vec2 max_size, float y_position);
 
-	[[nodiscard]] auto get_layout() const -> ILayout const& { return *m_layout; }
+	[[nodiscard]] auto get_layout() const -> GameLayout const& { return *m_layout; }
 
 	void inspect() {
 		if constexpr (bave::debug_v) { do_inspect(); }
@@ -43,7 +43,7 @@ class Enemy : public IDamageable, public bave::IDrawable {
   private:
 	virtual void do_inspect();
 
-	bave::NotNull<ILayout const*> m_layout;
+	bave::NotNull<GameLayout const*> m_layout;
 
 	ui::ProgressBar m_health_bar;
 

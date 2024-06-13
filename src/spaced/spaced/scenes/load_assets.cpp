@@ -26,5 +26,5 @@ LoadAssets::LoadAssets(App& app, Services const& services) : Scene(app, services
 
 auto LoadAssets::build_load_stages() -> std::vector<AsyncExec::Stage> { return make_load_stages(make_loader(), get_services()); }
 
-void LoadAssets::on_loaded() { get_services().get<ISceneSwitcher>().switch_to<MenuScene>(); }
+void LoadAssets::on_loaded() { get_switcher().switch_to<MenuScene>(); }
 } // namespace spaced

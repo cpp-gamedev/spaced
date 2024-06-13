@@ -1,5 +1,6 @@
 #include <spaced/scene.hpp>
 #include <spaced/services/layout.hpp>
+#include <spaced/services/scene_switcher.hpp>
 #include <algorithm>
 
 namespace spaced {
@@ -63,6 +64,8 @@ auto Scene::pop_view() -> std::unique_ptr<ui::View> {
 	m_views.pop_back();
 	return ret;
 }
+
+auto Scene::get_switcher() const -> ISceneSwitcher& { return get_services().get<ISceneSwitcher>(); }
 
 void Scene::tick_frame(Seconds const dt) {
 	update_loading(dt);

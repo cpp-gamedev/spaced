@@ -9,6 +9,8 @@
 #include <spaced/ui/view.hpp>
 
 namespace spaced {
+class ISceneSwitcher;
+
 class Scene : public bave::EventSink {
   public:
 	void start_loading();
@@ -32,6 +34,8 @@ class Scene : public bave::EventSink {
 
 	void push_view(std::unique_ptr<ui::View> view);
 	auto pop_view() -> std::unique_ptr<ui::View>;
+
+	[[nodiscard]] auto get_switcher() const -> ISceneSwitcher&;
 
 	bave::Rgba clear_colour{bave::black_v};
 

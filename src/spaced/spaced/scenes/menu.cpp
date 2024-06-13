@@ -27,7 +27,7 @@ void MenuScene::create_ui() {
 	auto start = std::make_unique<ui::Button>(get_services());
 	start->set_text("start");
 	start->set_position({0.0f, -100.0f});
-	start->callback = [this]() { get_services().get<ISceneSwitcher>().switch_to<GameScene>(); };
+	start->callback = [this]() { get_switcher().switch_to<GameScene>(); };
 
 	auto options = std::make_unique<ui::Button>(get_services());
 	options->set_text("options");

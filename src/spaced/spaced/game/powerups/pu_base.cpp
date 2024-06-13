@@ -7,7 +7,7 @@ using bave::RoundedQuad;
 using bave::Seconds;
 using bave::Shader;
 
-PUBase::PUBase(Services const& services, std::string_view const name) : m_services(&services), m_layout(&services.get<ILayout>()), m_name(name) {
+PUBase::PUBase(Services const& services, std::string_view const name) : m_services(&services), m_layout(&services.get<GameLayout>()), m_name(name) {
 	auto quad = RoundedQuad{};
 	quad.size = glm::vec2{40.0f};
 	quad.corner_radius = 12.5f;
@@ -21,7 +21,7 @@ PUBase::PUBase(Services const& services, std::string_view const name) : m_servic
 
 void PUBase::tick(Seconds const dt) {
 	shape.transform.position.x -= speed * dt.count();
-	if (shape.transform.position.x < m_layout->get_play_area().lt.x - 0.5f * shape.get_shape().size.x) { m_destroyed = true; }
+	if (shape.transform.position.x < m_layout->play_area.lt.x - 0.5f * shape.get_shape().size.x) { m_destroyed = true; }
 
 	emitter.set_position(shape.transform.position);
 	if (!m_emitter_ticked) {

@@ -27,7 +27,7 @@ class PUBase : public IPowerup {
 	virtual void do_activate(Player& player) = 0;
 
 	bave::NotNull<Services const*> m_services;
-	bave::NotNull<ILayout const*> m_layout;
+	bave::NotNull<GameLayout const*> m_layout;
 	std::string_view m_name{};
 	bool m_emitter_ticked{};
 	bool m_destroyed{};

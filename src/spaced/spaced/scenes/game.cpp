@@ -54,9 +54,7 @@ GameScene::GameScene(App& app, Services const& services) : Scene(app, services, 
 void GameScene::on_focus(FocusChange const& focus_change) { m_world.player.on_focus(focus_change); }
 
 void GameScene::on_key(KeyInput const& key_input) {
-	if (key_input.key == Key::eEscape && key_input.action == Action::eRelease && key_input.mods == KeyMods{}) {
-		get_services().get<ISceneSwitcher>().switch_to<MenuScene>();
-	}
+	if (key_input.key == Key::eEscape && key_input.action == Action::eRelease && key_input.mods == KeyMods{}) { get_switcher().switch_to<MenuScene>(); }
 }
 
 void GameScene::on_move(PointerMove const& pointer_move) { m_world.player.on_move(pointer_move); }
@@ -84,7 +82,7 @@ void GameScene::on_game_over() {
 	auto dci = ui::DialogCreateInfo{
 		.size = {600.0f, 200.0f},
 		.content_text = "GAME OVER",
-		.main_button = {.text = "RESTART", .callback = [this] { get_services().get<ISceneSwitcher>().switch_to<GameScene>(); }},
+		.main_button = {.text = "RESTART", .callback = [this] { get_switcher().switch_to<GameScene>(); }},
 		.second_button = {.text = "QUIT", .callback = [this] { get_app().shutdown(); }},
 	};
 
@@ -122,7 +120,7 @@ void GameScene::inspect(Seconds const dt, Seconds const frame_time) {
 			ImGui::Checkbox("fps lock", &m_debug.fps.lock);
 
 			ImGui::Separator();
-			if (ImGui::Button("reload scene")) { get_services().get<ISceneSwitcher>().switch_to<GameScene>(); }
+			if (ImGui::Button("reload scene")) { get_switcher().switch_to<GameScene>(); }
 		}
 		ImGui::End();
 
