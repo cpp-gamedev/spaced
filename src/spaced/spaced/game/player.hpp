@@ -17,7 +17,7 @@ class Player : public bave::IDrawable {
 		std::span<bave::NotNull<IPowerup*> const> powerups{};
 	};
 
-	explicit Player(Services const& services, std::unique_ptr<IController> controller);
+	explicit Player(bave::Services const& services, std::unique_ptr<IController> controller);
 
 	void on_focus(bave::FocusChange const& focus_change);
 	void on_move(bave::PointerMove const& pointer_move);
@@ -50,7 +50,7 @@ class Player : public bave::IDrawable {
 	void do_inspect();
 
 	bave::Logger m_log{"Player"};
-	bave::NotNull<Services const*> m_services;
+	bave::NotNull<bave::Services const*> m_services;
 	bave::NotNull<Stats*> m_stats;
 	std::unique_ptr<IController> m_controller;
 	bave::ParticleEmitter m_exhaust{};

@@ -1,7 +1,7 @@
 #include <bave/imgui/im_text.hpp>
+#include <bave/services/resources.hpp>
 #include <spaced/game/enemies/creep_factory.hpp>
 #include <spaced/game/world.hpp>
-#include <spaced/services/resources.hpp>
 #include <spaced/services/stats.hpp>
 
 #include <bave/core/random.hpp>
@@ -11,10 +11,13 @@
 
 namespace spaced {
 using bave::FixedString;
+using bave::IAudio;
 using bave::NotNull;
 using bave::ParticleEmitter;
 using bave::random_in_range;
+using bave::Resources;
 using bave::Seconds;
+using bave::Services;
 using bave::Shader;
 
 namespace {

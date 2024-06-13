@@ -4,13 +4,16 @@
 #include <spaced/game/scorer.hpp>
 #include <spaced/game/target_provider.hpp>
 
-namespace spaced {
+namespace bave {
 struct Resources;
+}
+
+namespace spaced {
 struct Stats;
 
 class World : public ITargetProvider {
   public:
-	explicit World(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> scorer);
+	explicit World(bave::NotNull<bave::Services const*> services, bave::NotNull<IScorer*> scorer);
 
 	[[nodiscard]] auto get_targets() const -> std::span<bave::NotNull<IDamageable*> const> final { return m_targets; }
 
@@ -32,9 +35,9 @@ class World : public ITargetProvider {
 	void debug_controller_type();
 	void debug_spawn_powerup(glm::vec2 position);
 
-	bave::NotNull<Services const*> m_services;
-	bave::NotNull<Resources const*> m_resources;
-	bave::NotNull<IAudio*> m_audio;
+	bave::NotNull<bave::Services const*> m_services;
+	bave::NotNull<bave::Resources const*> m_resources;
+	bave::NotNull<bave::IAudio*> m_audio;
 	bave::NotNull<Stats*> m_stats;
 	bave::NotNull<IScorer*> m_scorer;
 

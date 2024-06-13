@@ -2,16 +2,16 @@
 #include <bave/core/time.hpp>
 #include <bave/graphics/shape.hpp>
 #include <bave/platform.hpp>
+#include <bave/services/services.hpp>
+#include <bave/ui/progress_bar.hpp>
 #include <spaced/game/damageable.hpp>
 #include <spaced/game/health.hpp>
 #include <spaced/services/layout.hpp>
-#include <spaced/services/services.hpp>
-#include <spaced/ui/progress_bar.hpp>
 
 namespace spaced {
 class Enemy : public IDamageable, public bave::IDrawable {
   public:
-	explicit Enemy(Services const& services, std::string_view type);
+	explicit Enemy(bave::Services const& services, std::string_view type);
 
 	[[nodiscard]] auto get_instigator() const -> Instigator final { return Instigator::eEnemy; }
 	[[nodiscard]] auto get_bounds() const -> bave::Rect<> override { return shape.get_bounds(); }
@@ -45,7 +45,7 @@ class Enemy : public IDamageable, public bave::IDrawable {
 
 	bave::NotNull<Layout const*> m_layout;
 
-	ui::ProgressBar m_health_bar;
+	bave::ui::ProgressBar m_health_bar;
 
 	std::string_view m_type{};
 	bool m_destroyed{};

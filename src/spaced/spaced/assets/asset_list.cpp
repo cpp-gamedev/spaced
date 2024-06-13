@@ -1,9 +1,12 @@
+#include <bave/services/resources.hpp>
 #include <spaced/assets/asset_list.hpp>
 #include <spaced/assets/asset_loader.hpp>
-#include <spaced/services/resources.hpp>
 
 namespace spaced {
+using bave::AsyncExec;
 using bave::Loader;
+using bave::Resources;
+using bave::Services;
 
 AssetList::AssetList(Loader loader, Services const& services) : m_loader(std::move(loader)), m_resources(&services.get<Resources>()) {}
 

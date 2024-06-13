@@ -1,16 +1,21 @@
 #include <bave/persistor.hpp>
+#include <bave/services/audio.hpp>
+#include <bave/services/styles.hpp>
+#include <bave/ui/button.hpp>
+#include <bave/ui/slider.hpp>
+#include <bave/ui/text.hpp>
 #include <djson/json.hpp>
 #include <spaced/prefs.hpp>
-#include <spaced/services/audio.hpp>
-#include <spaced/services/styles.hpp>
-#include <spaced/ui/button.hpp>
-#include <spaced/ui/slider.hpp>
-#include <spaced/ui/text.hpp>
 
 namespace spaced {
 using bave::App;
+using bave::IAudio;
 using bave::NotNull;
 using bave::Persistor;
+using bave::Services;
+using bave::Styles;
+
+namespace ui = bave::ui;
 
 namespace {
 constexpr std::string_view uri_v{"spaced/prefs.json"};

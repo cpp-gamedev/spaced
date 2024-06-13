@@ -1,11 +1,11 @@
 #include <imgui.h>
 #include <bave/imgui/im_text.hpp>
 #include <bave/platform.hpp>
+#include <bave/services/resources.hpp>
+#include <bave/services/styles.hpp>
 #include <spaced/game/player.hpp>
 #include <spaced/services/layout.hpp>
-#include <spaced/services/resources.hpp>
 #include <spaced/services/stats.hpp>
-#include <spaced/services/styles.hpp>
 
 // temp for testing
 #include <spaced/game/weapons/gun_beam.hpp>
@@ -14,9 +14,12 @@ namespace spaced {
 using bave::ParticleEmitter;
 using bave::PointerMove;
 using bave::PointerTap;
+using bave::Resources;
 using bave::RoundedQuad;
 using bave::Seconds;
+using bave::Services;
 using bave::Shader;
+using bave::Styles;
 
 Player::Player(Services const& services, std::unique_ptr<IController> controller)
 	: m_services(&services), m_stats(&services.get<Stats>()), m_controller(std::move(controller)) {

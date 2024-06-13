@@ -9,10 +9,12 @@ using bave::Action;
 using bave::EnumArray;
 using bave::GamepadAxis;
 using bave::GamepadButton;
+using bave::IDisplay;
 using bave::im_text;
 using bave::PointerMove;
 using bave::PointerTap;
 using bave::Seconds;
+using bave::Services;
 
 PlayerController::PlayerController(Services const& services) : m_display(&services.get<IDisplay>()), m_gamepad_provider(&services.get<IGamepadProvider>()) {
 	max_y = 0.5f * m_display->get_world_space().y;

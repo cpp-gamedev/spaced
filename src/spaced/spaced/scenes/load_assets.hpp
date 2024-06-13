@@ -1,13 +1,13 @@
 #pragma once
-#include <spaced/scene.hpp>
+#include <bave/scene.hpp>
 
 namespace spaced {
-class LoadAssets : public Scene {
+class LoadAssets : public bave::Scene {
   public:
-	explicit LoadAssets(bave::App& app, Services const& services);
+	explicit LoadAssets(bave::App& app, bave::Services const& services);
 
   private:
-	auto build_load_stages() -> std::vector<AsyncExec::Stage> final;
+	auto build_load_stages() -> std::vector<bave::AsyncExec::Stage> final;
 	void on_loaded() final;
 };
 } // namespace spaced

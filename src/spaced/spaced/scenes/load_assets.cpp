@@ -1,14 +1,17 @@
+#include <bave/services/resources.hpp>
+#include <bave/services/scene_switcher.hpp>
 #include <spaced/assets/asset_list.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/load_assets.hpp>
 #include <spaced/scenes/menu.hpp>
-#include <spaced/services/resources.hpp>
-#include <spaced/services/scene_switcher.hpp>
 #include <spaced/util.hpp>
 
 namespace spaced {
 using bave::App;
+using bave::AsyncExec;
 using bave::Loader;
+using bave::Resources;
+using bave::Services;
 
 namespace {
 auto make_load_stages(Loader loader, Services const& services) -> std::vector<AsyncExec::Stage> {

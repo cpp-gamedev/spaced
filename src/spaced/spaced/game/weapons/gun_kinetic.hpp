@@ -1,12 +1,12 @@
 #pragma once
+#include <bave/services/audio.hpp>
 #include <spaced/game/weapon.hpp>
 #include <spaced/game/weapons/projectile.hpp>
-#include <spaced/services/audio.hpp>
 
 namespace spaced {
 class GunKinetic final : public Weapon {
   public:
-	explicit GunKinetic(Services const& services);
+	explicit GunKinetic(bave::Services const& services);
 
 	[[nodiscard]] auto is_idle() const -> bool final { return m_reload_remain <= 0s; }
 
@@ -20,6 +20,6 @@ class GunKinetic final : public Weapon {
 	void do_inspect() final;
 
 	bave::Seconds m_reload_remain{};
-	bave::NotNull<IAudio*> m_audio;
+	bave::NotNull<bave::IAudio*> m_audio;
 };
 } // namespace spaced

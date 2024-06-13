@@ -1,10 +1,12 @@
+#include <bave/services/resources.hpp>
 #include <spaced/game/powerups/pu_base.hpp>
-#include <spaced/services/resources.hpp>
 
 namespace spaced {
 using bave::ParticleEmitter;
+using bave::Resources;
 using bave::RoundedQuad;
 using bave::Seconds;
+using bave::Services;
 using bave::Shader;
 
 PUBase::PUBase(Services const& services, std::string_view const name) : m_services(&services), m_layout(&services.get<Layout>()), m_name(name) {

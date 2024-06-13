@@ -1,9 +1,9 @@
 #pragma once
 #include <bave/graphics/rect.hpp>
-#include <spaced/services/service.hpp>
+#include <bave/services/service.hpp>
 
 namespace spaced {
-struct Layout : IService {
+struct Layout : bave::IService {
 	glm::vec2 world_space{};
 	bave::Rect<> play_area{};
 	bave::Rect<> hud_area{};

@@ -3,6 +3,7 @@
 
 namespace spaced {
 using bave::Seconds;
+using bave::Services;
 using bave::Shader;
 
 Arsenal::Arsenal(Services const& services) : m_primary(services), m_stats(&services.get<Stats>()) {}

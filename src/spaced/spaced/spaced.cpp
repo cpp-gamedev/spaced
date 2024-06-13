@@ -2,16 +2,15 @@
 #include <bave/io/json_io.hpp>
 #include <bave/loader.hpp>
 #include <bave/persistor.hpp>
+#include <bave/services/audio.hpp>
+#include <bave/services/resources.hpp>
+#include <bave/services/styles.hpp>
 #include <spaced/prefs.hpp>
 #include <spaced/scenes/load_assets.hpp>
-#include <spaced/services/audio.hpp>
 #include <spaced/services/gamepad_provider.hpp>
 #include <spaced/services/layout.hpp>
-#include <spaced/services/resources.hpp>
-#include <spaced/services/scene_switcher.hpp>
 #include <spaced/services/serializer.hpp>
 #include <spaced/services/stats.hpp>
-#include <spaced/services/styles.hpp>
 #include <spaced/spaced.hpp>
 
 namespace spaced {
@@ -21,13 +20,17 @@ using bave::AudioClip;
 using bave::AudioDevice;
 using bave::AudioStreamer;
 using bave::Gamepad;
+using bave::IAudio;
+using bave::IDisplay;
 using bave::Loader;
 using bave::NotNull;
 using bave::Persistor;
 using bave::Rect;
 using bave::RenderDevice;
 using bave::RenderView;
+using bave::Resources;
 using bave::Seconds;
+using bave::Styles;
 
 struct GamepadProvider : IGamepadProvider {
 	bave::App& app; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
@@ -35,35 +38,6 @@ struct GamepadProvider : IGamepadProvider {
 	explicit GamepadProvider(bave::App& app) : app(app) {}
 
 	[[nodiscard]] auto get_gamepad() const -> Gamepad const& final { return app.get_most_recent_gamepad(); }
-};
-
-struct Audio : IAudio {
-	NotNull<AudioDevice*> audio_device;
-	NotNull<AudioStreamer*> audio_streamer;
-	NotNull<Resources const*> resources;
-
-	explicit Audio(NotNull<AudioDevice*> audio_device, NotNull<AudioStreamer*> audio_streamer, NotNull<Resources const*> resources)
-		: audio_device(audio_device), audio_streamer(audio_streamer), resources(resources) {}
-
-	[[nodiscard]] auto get_sfx_gain() const -> float final { return audio_device->sfx_gain; }
-	void set_sfx_gain(float const gain) final { audio_device->sfx_gain = gain; }
-
-	[[nodiscard]] auto get_music_gain() const -> float final { return audio_streamer->gain; }
-	void set_music_gain(float const gain) final { audio_streamer->gain = gain; }
-
-	void play_sfx(std::string_view const uri) final {
-		auto const clip = resources->get<AudioClip>(uri);
-		if (!clip) { return; }
-		audio_device->play_once(*clip);
-	}
-
-	void play_music(std::string_view const uri, Seconds const crossfade) final {
-		auto const clip = resources->get<AudioClip>(uri);
-		if (!clip) { return; }
-		audio_streamer->play(clip, crossfade);
-	}
-
-	void stop_music() final { audio_streamer->stop(); }
 };
 
 struct PersistentStats : Stats {

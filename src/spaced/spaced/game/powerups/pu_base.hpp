@@ -2,14 +2,14 @@
 #include <bave/core/time.hpp>
 #include <bave/graphics/particle_system.hpp>
 #include <bave/graphics/shape.hpp>
+#include <bave/services/services.hpp>
 #include <spaced/game/powerup.hpp>
 #include <spaced/services/layout.hpp>
-#include <spaced/services/services.hpp>
 
 namespace spaced {
 class PUBase : public IPowerup {
   public:
-	explicit PUBase(Services const& services, std::string_view name);
+	explicit PUBase(bave::Services const& services, std::string_view name);
 
 	void tick(bave::Seconds dt) final;
 	void draw(bave::Shader& shader) const final;
@@ -26,7 +26,7 @@ class PUBase : public IPowerup {
   protected:
 	virtual void do_activate(Player& player) = 0;
 
-	bave::NotNull<Services const*> m_services;
+	bave::NotNull<bave::Services const*> m_services;
 	bave::NotNull<Layout const*> m_layout;
 	std::string_view m_name{};
 	bool m_emitter_ticked{};

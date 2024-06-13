@@ -1,5 +1,5 @@
 #pragma once
-#include <spaced/services/service.hpp>
+#include <bave/services/service.hpp>
 #include <cstdint>
 
 namespace dj {
@@ -7,7 +7,7 @@ class Json;
 }
 
 namespace spaced {
-struct Stats : IService {
+struct Stats : bave::IService {
 	struct {
 		std::int64_t play_count{};
 	} game{};

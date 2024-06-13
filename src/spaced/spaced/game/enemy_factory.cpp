@@ -1,9 +1,11 @@
+#include <bave/services/audio.hpp>
 #include <spaced/game/enemy_factory.hpp>
-#include <spaced/services/audio.hpp>
 
 namespace spaced {
+using bave::IAudio;
 using bave::NotNull;
 using bave::Seconds;
+using bave::Services;
 
 EnemyFactory::EnemyFactory(NotNull<Services const*> services) : m_services(services), m_audio(&services->get<IAudio>()) {}
 

@@ -1,17 +1,20 @@
 #include <bave/graphics/sprite.hpp>
 #include <bave/imgui/im_text.hpp>
+#include <bave/services/styles.hpp>
 #include <spaced/game/weapons/gun_beam.hpp>
-#include <spaced/services/styles.hpp>
 
 namespace spaced {
+using bave::IDisplay;
 using bave::im_text;
 using bave::NotNull;
 using bave::Ptr;
 using bave::Rect;
 using bave::Rgba;
 using bave::Seconds;
+using bave::Services;
 using bave::Shader;
 using bave::Sprite;
+using bave::Styles;
 
 namespace {
 class LaserCharge : public IWeaponRound {

@@ -1,12 +1,12 @@
 #pragma once
-#include <spaced/scene.hpp>
+#include <bave/scene.hpp>
 
 namespace spaced {
-class MenuScene : public Scene {
+class MenuScene : public bave::Scene {
   public:
 	static auto get_text_heights() -> std::vector<bave::TextHeight>;
 
-	explicit MenuScene(bave::App& app, Services const& services);
+	explicit MenuScene(bave::App& app, bave::Services const& services);
 
   private:
 	void create_ui();

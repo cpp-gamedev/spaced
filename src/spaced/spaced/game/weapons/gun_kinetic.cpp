@@ -1,11 +1,14 @@
 #include <bave/imgui/im_text.hpp>
+#include <bave/services/styles.hpp>
 #include <spaced/game/weapons/gun_kinetic.hpp>
-#include <spaced/services/styles.hpp>
 
 namespace spaced {
+using bave::IAudio;
 using bave::im_text;
 using bave::Rgba;
 using bave::Seconds;
+using bave::Services;
+using bave::Styles;
 
 GunKinetic::GunKinetic(Services const& services) : Weapon(services, "GunKinetic"), m_audio(&services.get<IAudio>()) {
 	projectile_config.tint = services.get<Styles>().rgbas["black"];

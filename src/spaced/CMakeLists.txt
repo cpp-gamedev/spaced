@@ -7,7 +7,7 @@ add_library(${PROJECT_NAME})
 add_library(spaced::lib ALIAS ${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
-  bave::bave
+  bave::bgf
   bave::bave-compile-options
 )
 

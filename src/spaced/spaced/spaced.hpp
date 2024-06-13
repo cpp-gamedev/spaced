@@ -1,14 +1,16 @@
 #pragma once
 #include <bave/driver.hpp>
-#include <spaced/game_driver.hpp>
-#include <spaced/services/services.hpp>
+#include <bave/game_driver.hpp>
+
+namespace bave {
+struct Resources;
+}
 
 namespace spaced {
 class Serializer;
-struct Resources;
 struct SceneSwitcher;
 
-class Spaced : public GameDriver {
+class Spaced : public bave::GameDriver {
   public:
 	explicit Spaced(bave::App& app);
 
@@ -22,6 +24,6 @@ class Spaced : public GameDriver {
 	void set_scene();
 
 	bave::Logger m_log{"Spaced"};
-	bave::Ptr<Resources> m_resources{};
+	bave::Ptr<bave::Resources> m_resources{};
 };
 } // namespace spaced

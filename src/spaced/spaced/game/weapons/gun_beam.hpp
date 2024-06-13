@@ -12,7 +12,7 @@ class GunBeam final : public Weapon {
 		float dps{10.0f};
 	};
 
-	explicit GunBeam(Services const& services);
+	explicit GunBeam(bave::Services const& services);
 
 	[[nodiscard]] auto is_idle() const -> bool final { return m_fire_remain <= 0s; }
 	void tick(bave::Seconds dt) final;

@@ -1,7 +1,7 @@
 #pragma once
 #include <bave/core/ptr.hpp>
 #include <bave/loader.hpp>
-#include <spaced/services/resources.hpp>
+#include <bave/services/resources.hpp>
 #include <functional>
 #include <memory>
 
@@ -10,7 +10,7 @@ class AssetLoader {
   public:
 	using LoadTask = std::function<void()>;
 
-	explicit AssetLoader(bave::Loader loader, bave::NotNull<Resources*> resources);
+	explicit AssetLoader(bave::Loader loader, bave::NotNull<bave::Resources*> resources);
 
 	[[nodiscard]] auto make_load_font(std::string uri, bool reload = false) -> LoadTask;
 	[[nodiscard]] auto make_load_texture(std::string uri, bool mip_map = false, bool reload = false) -> LoadTask;
