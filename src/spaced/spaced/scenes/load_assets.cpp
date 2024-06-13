@@ -9,8 +9,6 @@
 namespace spaced {
 using bave::App;
 using bave::Loader;
-using bave::Seconds;
-using bave::Shader;
 
 namespace {
 auto make_load_stages(Loader loader, Services const& services) -> std::vector<AsyncExec::Stage> {
@@ -24,18 +22,9 @@ auto make_load_stages(Loader loader, Services const& services) -> std::vector<As
 }
 } // namespace
 
-LoadAssets::LoadAssets(App& app, Services const& services)
-	: Scene(app, services, "LoadAssets"), m_loading_screen(services), m_load(make_load_stages(make_loader(), services)) {}
+LoadAssets::LoadAssets(App& app, Services const& services) : Scene(app, services, "LoadAssets") {}
+
+auto LoadAssets::build_load_stages() -> std::vector<AsyncExec::Stage> { return make_load_stages(make_loader(), get_services()); }
 
 void LoadAssets::on_loaded() { get_services().get<ISceneSwitcher>().switch_to<MenuScene>(); }
-
-void LoadAssets::tick(Seconds const dt) {
-	auto const load_status = m_load.update();
-	auto const progress = load_status.progress();
-	m_loading_screen.update(dt, progress);
-
-	if (load_status.is_complete()) { on_loaded(); }
-}
-
-void LoadAssets::render(Shader& shader) const { m_loading_screen.draw(shader); }
 } // namespace spaced

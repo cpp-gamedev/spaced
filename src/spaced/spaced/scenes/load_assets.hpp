@@ -1,7 +1,5 @@
 #pragma once
-#include <spaced/async_exec.hpp>
 #include <spaced/scene.hpp>
-#include <spaced/ui/loading_screen.hpp>
 
 namespace spaced {
 class LoadAssets : public Scene {
@@ -9,12 +7,7 @@ class LoadAssets : public Scene {
 	explicit LoadAssets(bave::App& app, Services const& services);
 
   private:
-	void on_loaded();
-
-	void tick(bave::Seconds dt) final;
-	void render(bave::Shader& shader) const final;
-
-	ui::LoadingScreen m_loading_screen;
-	AsyncExec m_load;
+	auto build_load_stages() -> std::vector<AsyncExec::Stage> final;
+	void on_loaded() final;
 };
 } // namespace spaced

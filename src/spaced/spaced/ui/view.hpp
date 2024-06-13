@@ -21,6 +21,7 @@ class View : public bave::Polymorphic {
 	virtual void render(bave::Shader& shader) const;
 
 	bool block_input_events{true};
+	bool active{true};
 
   protected:
 	std::vector<std::unique_ptr<ui::IElement>> m_elements{};

@@ -139,7 +139,7 @@ struct SceneSwitcher : ISceneSwitcher {
 
 void Spaced::set_bindings([[maybe_unused]] Serializer& serializer) {}
 
-Spaced::Spaced(App& app) : Driver(app), m_scene(std::make_unique<Scene>(app, m_services)) {
+Spaced::Spaced(App& app) : Driver(app), m_scene(std::make_unique<EmptyScene>(app, m_services)) {
 	m_log.info("using MSAA: {}x", static_cast<int>(app.get_render_device().get_sample_count()));
 	load_resources();
 	set_layout();
@@ -165,6 +165,7 @@ void Spaced::tick() {
 	if (m_scene_switcher->next_scene) {
 		switch_track(m_scene->get_music_uri(), m_scene_switcher->next_scene->get_music_uri());
 		m_scene = std::move(m_scene_switcher->next_scene);
+		m_scene->start_loading();
 	}
 
 	m_scene->tick_frame(dt);

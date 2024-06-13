@@ -2,13 +2,15 @@
 #include <bave/app.hpp>
 #include <bave/core/polymorphic.hpp>
 #include <bave/loader.hpp>
+#include <spaced/async_exec.hpp>
 #include <spaced/services/services.hpp>
+#include <spaced/ui/loading_screen.hpp>
 #include <spaced/ui/view.hpp>
 
 namespace spaced {
 class Scene : public bave::PolyPinned {
   public:
-	explicit Scene(bave::App& app, Services const& services, std::string name = "Scene");
+	void start_loading();
 
 	void on_focus_event(bave::FocusChange const& focus_change);
 	void on_key_event(bave::KeyInput const& key_input);
@@ -22,16 +24,22 @@ class Scene : public bave::PolyPinned {
 
 	[[nodiscard]] auto get_app() const -> bave::App& { return m_app; }
 	[[nodiscard]] auto get_services() const -> Services const& { return m_services; }
-
-	[[nodiscard]] auto is_ui_blocking_input() const -> bool;
-
 	[[nodiscard]] auto make_loader() const -> bave::Loader { return bave::Loader{&m_app.get_data_store(), &m_app.get_render_device()}; }
 
+	[[nodiscard]] auto is_loading() const -> bool { return m_loading_screen.has_value(); }
+	[[nodiscard]] auto is_ui_blocking_input() const -> bool;
+
 	void push_view(std::unique_ptr<ui::View> view);
+	auto pop_view() -> std::unique_ptr<ui::View>;
 
 	bave::Rgba clear_colour{bave::black_v};
 
   protected:
+	explicit Scene(bave::App& app, Services const& services, std::string name);
+
+	virtual auto build_load_stages() -> std::vector<AsyncExec::Stage> { return {}; }
+	virtual void on_loaded() {}
+
 	virtual void on_focus(bave::FocusChange const& /*focus_change*/) {}
 	virtual void on_resize(bave::WindowResize const& /*window_resize*/) {}
 	virtual void on_resize(bave::FramebufferResize const& /*framebuffer_resize*/) {}
@@ -53,9 +61,20 @@ class Scene : public bave::PolyPinned {
 
 	auto cache_views() -> std::span<bave::Ptr<ui::View> const>;
 
+	void update_loading(bave::Seconds dt);
+	auto render_loading(bave::Shader& shader) const -> bool;
+
 	bave::App& m_app;
 	Services const& m_services;
 	std::vector<std::unique_ptr<ui::View>> m_views{};
 	std::vector<bave::Ptr<ui::View>> m_cached_views{};
+
+	std::optional<AsyncExec> m_load{};
+	std::optional<ui::LoadingScreen> m_loading_screen{};
+};
+
+class EmptyScene : public Scene {
+  public:
+	explicit EmptyScene(bave::App& app, Services const& services) : Scene(app, services, "EmptyScene") {}
 };
 } // namespace spaced
