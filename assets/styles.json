@@ -37,8 +37,8 @@
       "padding": 10
     },
     "enemy": {
-      "background": "#f75c03ff",
-      "fill": "#ffffffff",
+      "background": "orange",
+      "fill": "milk",
       "corner_ratio": 0.5,
       "padding": 5
     }
@@ -50,9 +50,9 @@
         10.000000
       ],
       "corner_ratio": 0.25,
-      "background_tint": "#e5cdaeff",
-      "outline_tint": "#231d2aff",
-      "content_text_tint": "#231d2aff"
+      "background_tint": "milk",
+      "outline_tint": "black",
+      "content_text_tint": "black"
     }
   },
   "sliders": {
@@ -63,7 +63,7 @@
     }
   },
   "loading_screen": {
-    "background_tint": "#231d2aff",
+    "background_tint": "black",
     "spinner": {
       "size": [
         100.000000,
