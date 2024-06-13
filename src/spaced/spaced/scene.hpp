@@ -1,6 +1,7 @@
 #pragma once
 #include <bave/app.hpp>
 #include <bave/core/polymorphic.hpp>
+#include <bave/input/event_sink.hpp>
 #include <bave/loader.hpp>
 #include <spaced/async_exec.hpp>
 #include <spaced/services/services.hpp>
@@ -8,7 +9,7 @@
 #include <spaced/ui/view.hpp>
 
 namespace spaced {
-class Scene : public bave::PolyPinned {
+class Scene : public bave::EventSink {
   public:
 	void start_loading();
 
@@ -39,16 +40,6 @@ class Scene : public bave::PolyPinned {
 
 	virtual auto build_load_stages() -> std::vector<AsyncExec::Stage> { return {}; }
 	virtual void on_loaded() {}
-
-	virtual void on_focus(bave::FocusChange const& /*focus_change*/) {}
-	virtual void on_resize(bave::WindowResize const& /*window_resize*/) {}
-	virtual void on_resize(bave::FramebufferResize const& /*framebuffer_resize*/) {}
-	virtual void on_key(bave::KeyInput const& /*key_input*/) {}
-	virtual void on_char(bave::CharInput const& /*char_input*/) {}
-	virtual void on_tap(bave::PointerTap const& /*pointer_tap*/) {}
-	virtual void on_move(bave::PointerMove const& /*pointer_move*/) {}
-	virtual void on_scroll(bave::MouseScroll const& /*mouse_scroll*/) {}
-	virtual void on_drop(std::span<std::string const> /*paths*/) {}
 
 	virtual void tick(bave::Seconds /*dt*/) {}
 	virtual void render(bave::Shader& /*shader*/) const {}
