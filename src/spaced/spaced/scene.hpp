@@ -51,8 +51,11 @@ class Scene : public bave::PolyPinned {
 	template <typename F>
 	auto on_ui_event(F per_view) -> bool;
 
+	auto cache_views() -> std::span<bave::Ptr<ui::View> const>;
+
 	bave::App& m_app;
 	Services const& m_services;
 	std::vector<std::unique_ptr<ui::View>> m_views{};
+	std::vector<bave::Ptr<ui::View>> m_cached_views{};
 };
 } // namespace spaced
