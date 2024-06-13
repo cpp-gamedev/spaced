@@ -36,8 +36,6 @@ void Slider::set_value(float const value) {
 
 	m_knob.transform.position = glm::vec2{left_x + delta, origin.y};
 	m_progress_bar.set_progress(m_value);
-
-	if (on_change) { on_change(m_value); }
 }
 
 void Slider::set_style(Style style) {
