@@ -14,26 +14,23 @@ namespace spaced {
 using bave::ParticleEmitter;
 using bave::PointerMove;
 using bave::PointerTap;
+using bave::Rect;
 using bave::Resources;
-using bave::RoundedQuad;
 using bave::Seconds;
 using bave::Services;
 using bave::Shader;
-using bave::Styles;
+using bave::Texture;
 
 Player::Player(Services const& services, std::unique_ptr<IController> controller)
 	: m_services(&services), m_stats(&services.get<Stats>()), m_controller(std::move(controller)) {
 	auto const& layout = services.get<Layout>();
 	ship.transform.position.x = layout.player_x;
-	auto rounded_quad = RoundedQuad{};
-	rounded_quad.size = layout.player_size;
-	rounded_quad.corner_radius = 20.0f;
-	ship.set_shape(rounded_quad);
-
-	auto const& rgbas = services.get<Styles>().rgbas;
-	ship.tint = rgbas["black"];
 
 	auto const& resources = services.get<Resources>();
+
+	if (auto const texture = services.get<Resources>().get<Texture>("images/player_ship.png")) { ship.set_texture(texture); }
+	ship.set_auto_size(ship_size);
+
 	if (auto const exhaust = resources.get<ParticleEmitter>("particles/exhaust.json")) { m_exhaust = *exhaust; }
 	m_exhaust.set_position(get_exhaust_position());
 	m_exhaust.pre_warm();
@@ -59,8 +56,9 @@ void Player::tick(State const& state, Seconds const dt) {
 	auto const y_position = m_controller->tick(dt);
 	set_y(y_position);
 
+	auto const hitbox = Rect<>::from_size(hitbox_size, ship.transform.position);
 	for (auto const& target : state.targets) {
-		if (is_intersecting(target->get_bounds(), ship.get_bounds())) {
+		if (is_intersecting(target->get_bounds(), hitbox)) {
 			on_death(dt);
 			target->force_death();
 			return;

@@ -34,6 +34,10 @@ namespace ui = bave::ui;
 namespace {
 auto get_manifest() -> AssetManifest {
 	return AssetManifest{
+		.textures =
+			{
+				"images/player_ship.png",
+			},
 		.audio_clips =
 			{
 				"sfx/bubble.wav",
