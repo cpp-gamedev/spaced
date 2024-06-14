@@ -1,10 +1,11 @@
+#include <bave/assets/asset_list.hpp>
+#include <bave/assets/asset_manifest.hpp>
 #include <bave/core/random.hpp>
 #include <bave/imgui/im_text.hpp>
 #include <bave/services/scene_switcher.hpp>
 #include <bave/services/styles.hpp>
 #include <bave/ui/button.hpp>
 #include <bave/ui/dialog.hpp>
-#include <spaced/assets/asset_list.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/menu.hpp>
 #include <spaced/services/stats.hpp>
@@ -12,6 +13,8 @@
 namespace spaced {
 using bave::Action;
 using bave::App;
+using bave::AssetList;
+using bave::AssetManifest;
 using bave::AsyncExec;
 using bave::FocusChange;
 using bave::im_text;
@@ -28,12 +31,12 @@ using bave::Styles;
 
 namespace ui = bave::ui;
 
-auto GameScene::get_manifest() -> AssetManifest {
+namespace {
+auto get_manifest() -> AssetManifest {
 	return AssetManifest{
 		.audio_clips =
 			{
 				"sfx/bubble.wav",
-				"music/menu.mp3",
 				"music/game.mp3",
 			},
 		.particle_emitters =
@@ -44,6 +47,7 @@ auto GameScene::get_manifest() -> AssetManifest {
 			},
 	};
 }
+} // namespace
 
 GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_save(&app) { clear_colour = services.get<Styles>().rgbas["mocha"]; }
 

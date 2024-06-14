@@ -1,6 +1,5 @@
 #pragma once
 #include <bave/scene.hpp>
-#include <spaced/assets/asset_manifest.hpp>
 #include <spaced/game/game_save.hpp>
 #include <spaced/game/hud.hpp>
 #include <spaced/game/scorer.hpp>
@@ -10,8 +9,6 @@
 namespace spaced {
 class GameScene : public bave::Scene, public IScorer {
   public:
-	static auto get_manifest() -> AssetManifest;
-
 	GameScene(bave::App& app, bave::Services const& services);
 
   private:

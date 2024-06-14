@@ -1,9 +1,9 @@
+#include <bave/assets/asset_list.hpp>
 #include <bave/services/resources.hpp>
 #include <bave/services/scene_switcher.hpp>
 #include <bave/ui/button.hpp>
 #include <bave/ui/dialog.hpp>
 #include <bave/ui/text.hpp>
-#include <spaced/assets/asset_list.hpp>
 #include <spaced/prefs.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/menu.hpp>
@@ -12,6 +12,7 @@
 
 namespace spaced {
 using bave::App;
+using bave::AssetList;
 using bave::AsyncExec;
 using bave::Seconds;
 using bave::Services;
