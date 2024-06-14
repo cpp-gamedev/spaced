@@ -12,25 +12,21 @@
 #include <spaced/services/serializer.hpp>
 #include <spaced/services/stats.hpp>
 #include <spaced/spaced.hpp>
+#include <array>
 
 namespace spaced {
 namespace {
 using bave::App;
-using bave::AudioClip;
-using bave::AudioDevice;
-using bave::AudioStreamer;
+using bave::GameDriver;
 using bave::Gamepad;
 using bave::IAudio;
 using bave::IDisplay;
-using bave::Loader;
 using bave::NotNull;
 using bave::Persistor;
 using bave::Rect;
-using bave::RenderDevice;
-using bave::RenderView;
-using bave::Resources;
 using bave::Seconds;
 using bave::Styles;
+using bave::TextHeight;
 
 struct GamepadProvider : IGamepadProvider {
 	bave::App& app; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
@@ -64,39 +60,42 @@ struct PersistentStats : Stats {
 		persistor.write_json(uri_v, json);
 	}
 };
+
+constexpr auto preload_text_heights_v = std::array{TextHeight{100}, TextHeight{60}};
+
+constexpr auto gdci_v = bave::GameDriver::CreateInfo{
+	.assets =
+		{
+			.main_font =
+				{
+					.uri = "fonts/CuteDino.otf",
+					.preload_heights = preload_text_heights_v,
+				},
+			.spinner = "images/spinner.png",
+			.styles = "styles.json",
+		},
+};
 } // namespace
 
 void Spaced::set_bindings([[maybe_unused]] Serializer& serializer) {}
 
-Spaced::Spaced(App& app) : GameDriver(app) {
+Spaced::Spaced(App& app) : GameDriver(app, gdci_v) {
 	m_log.info("using MSAA: {}x", static_cast<int>(app.get_render_device().get_sample_count()));
-	load_resources();
+	save_styles();
 	set_layout();
 	create_services();
 	set_prefs();
 	set_scene();
 }
 
-void Spaced::load_resources() {
-	auto const loader = Loader{&get_app().get_data_store(), &get_app().get_render_device()};
-	m_resources = &m_services.get<Resources>();
-	m_resources->main_font = loader.load_font("fonts/CuteDino.otf");
-	m_resources->spinner = loader.load_texture("images/spinner.png", true);
-
-	auto styles = std::make_unique<Styles>();
-	if (auto const json = loader.load_json("styles.json")) {
-		*styles = Styles::load(json);
-		m_log.info("loaded Styles from 'styles.json'");
-	}
-
+void Spaced::save_styles() {
 	if constexpr (bave::debug_v) {
 		static bool s_save_styles{};
 		if (s_save_styles) {
-			auto const json = styles->save();
+			auto const json = m_services.get<Styles>().save();
 			json.to_file("styles.json");
 		}
 	}
-	m_services.bind<Styles>(std::move(styles));
 }
 
 void Spaced::create_services() {

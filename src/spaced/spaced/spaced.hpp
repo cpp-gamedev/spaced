@@ -17,7 +17,7 @@ class Spaced : public bave::GameDriver {
   private:
 	static void set_bindings(Serializer& serializer);
 
-	void load_resources();
+	void save_styles();
 	void create_services();
 	void set_layout();
 	void set_prefs();

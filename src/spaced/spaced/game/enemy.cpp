@@ -13,8 +13,6 @@ using bave::Services;
 using bave::Shader;
 using bave::Styles;
 
-namespace ui = bave::ui;
-
 Enemy::Enemy(Services const& services, std::string_view const type) : m_layout(&services.get<Layout>()), m_health_bar(services), m_type(type) {
 	static constexpr auto init_size_v = glm::vec2{100.0f};
 	auto const play_area = m_layout->play_area;
