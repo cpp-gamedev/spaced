@@ -4,13 +4,12 @@
 namespace spaced {
 class MenuScene : public bave::Scene {
   public:
-	static auto get_text_heights() -> std::vector<bave::TextHeight>;
-
 	explicit MenuScene(bave::App& app, bave::Services const& services);
 
   private:
-	void create_ui();
+	auto build_load_stages() -> std::vector<bave::AsyncExec::Stage> final;
+	void on_loaded() final;
 
-	[[nodiscard]] auto get_music_uri() const -> std::string_view final { return "music/menu.mp3"; }
+	void create_ui();
 };
 } // namespace spaced

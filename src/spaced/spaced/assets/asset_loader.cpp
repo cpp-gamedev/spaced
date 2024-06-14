@@ -1,19 +1,14 @@
 #include <bave/graphics/particle_system.hpp>
 #include <bave/io/json_io.hpp>
-#include <bave/logger.hpp>
 #include <spaced/assets/asset_loader.hpp>
 #include <mutex>
 
 namespace spaced {
 using bave::Loader;
-using bave::Logger;
 using bave::NotNull;
-using bave::ParticleEmitter;
 using bave::Resources;
-using bave::Texture;
 
 struct AssetLoader::Impl {
-	Logger log{"AssetLoader"};
 	Loader loader;
 	NotNull<Resources*> resources;
 	std::mutex mutex{};
@@ -21,41 +16,38 @@ struct AssetLoader::Impl {
 
 AssetLoader::AssetLoader(Loader loader, NotNull<Resources*> resources) : m_impl(new Impl{.loader = std::move(loader), .resources = resources}) {}
 
-auto AssetLoader::make_load_font(std::string uri, bool reload) -> LoadTask {
-	auto const load = [](Loader const& loader, std::string_view const uri) { return loader.load_font(uri); };
-	return make_load_task(std::move(uri), reload, load);
-}
-
 auto AssetLoader::make_load_texture(std::string uri, bool mip_map, bool reload) -> LoadTask {
 	auto const load = [mip_map](Loader const& loader, std::string_view const uri) { return loader.load_texture(uri, mip_map); };
 	return make_load_task(std::move(uri), reload, load);
 }
 
-auto AssetLoader::make_load_texture_atlas(std::string uri, bool mip_map, bool reload) -> LoadTask {
+auto AssetLoader::make_load_nine_slice(std::string uri, bool reload) -> LoadTask {
+	auto const load = [](Loader const& loader, std::string_view const uri) { return loader.load_texture_9slice(uri); };
+	return make_load_task(std::move(uri), reload, load);
+}
+
+auto AssetLoader::make_load_atlas(std::string uri, bool mip_map, bool reload) -> LoadTask {
 	auto const load = [mip_map](Loader const& loader, std::string_view const uri) { return loader.load_texture_atlas(uri, mip_map); };
 	return make_load_task(std::move(uri), reload, load);
 }
 
-auto AssetLoader::make_load_particle_emitter(std::string uri, bool const reload) -> LoadTask {
-	auto const load = [impl = m_impl.get()](Loader const& loader, std::string_view const uri) -> std::shared_ptr<ParticleEmitter> {
-		auto const json = loader.load_json(uri);
-		if (!json) { return {}; }
-
-		auto ret = std::make_shared<ParticleEmitter>();
-		bave::from_json(json["config"], ret->config);
-		if (auto const& texture = json["texture"]) {
-			auto lock = std::scoped_lock{impl->mutex};
-			ret->set_texture(impl->resources->get<Texture>(texture.as_string()));
-		}
-
-		impl->log.info("loaded ParticleEmitter: '{}'", uri);
-		return ret;
-	};
+auto AssetLoader::make_load_font(std::string uri, bool reload) -> LoadTask {
+	auto const load = [](Loader const& loader, std::string_view const uri) { return loader.load_font(uri); };
 	return make_load_task(std::move(uri), reload, load);
 }
 
 auto AssetLoader::make_load_audio_clip(std::string uri, bool const reload) -> LoadTask {
 	auto const load = [](Loader const& loader, std::string_view const uri) { return loader.load_audio_clip(uri); };
+	return make_load_task(std::move(uri), reload, load);
+}
+
+auto AssetLoader::make_load_anim_timeline(std::string uri, bool const reload) -> LoadTask {
+	auto const load = [](Loader const& loader, std::string_view const uri) { return loader.load_anim_timeline(uri); };
+	return make_load_task(std::move(uri), reload, load);
+}
+
+auto AssetLoader::make_load_particle_emitter(std::string uri, bool const reload) -> LoadTask {
+	auto const load = [](Loader const& loader, std::string_view const uri) { return loader.load_particle_emitter(uri); };
 	return make_load_task(std::move(uri), reload, load);
 }
 

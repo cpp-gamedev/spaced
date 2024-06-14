@@ -3,6 +3,7 @@
 #include <bave/ui/button.hpp>
 #include <bave/ui/dialog.hpp>
 #include <bave/ui/text.hpp>
+#include <spaced/assets/asset_list.hpp>
 #include <spaced/prefs.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/menu.hpp>
@@ -11,15 +12,27 @@
 
 namespace spaced {
 using bave::App;
+using bave::AsyncExec;
 using bave::Seconds;
 using bave::Services;
 using bave::TextHeight;
 
 namespace ui = bave::ui;
 
-auto MenuScene::get_text_heights() -> std::vector<TextHeight> { return {TextHeight{100}, TextHeight{60}, ui::Dialog::text_height_v}; }
+MenuScene::MenuScene(App& app, Services const& services) : Scene(app, services, "Home") {}
 
-MenuScene::MenuScene(App& app, Services const& services) : Scene(app, services, "Home") { create_ui(); }
+auto MenuScene::build_load_stages() -> std::vector<AsyncExec::Stage> {
+	auto ret = std::vector<AsyncExec::Stage>{};
+	auto asset_list = AssetList{make_loader(), get_services()};
+	asset_list.add_audio_clip("music/menu.mp3");
+	ret.push_back(asset_list.build_load_stage());
+	return ret;
+}
+
+void MenuScene::on_loaded() {
+	switch_track("music/menu.mp3");
+	create_ui();
+}
 
 void MenuScene::create_ui() {
 	auto m_header = std::make_unique<ui::Text>(get_services());

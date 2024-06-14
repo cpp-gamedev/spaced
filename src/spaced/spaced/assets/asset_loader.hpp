@@ -12,11 +12,13 @@ class AssetLoader {
 
 	explicit AssetLoader(bave::Loader loader, bave::NotNull<bave::Resources*> resources);
 
-	[[nodiscard]] auto make_load_font(std::string uri, bool reload = false) -> LoadTask;
 	[[nodiscard]] auto make_load_texture(std::string uri, bool mip_map = false, bool reload = false) -> LoadTask;
-	[[nodiscard]] auto make_load_texture_atlas(std::string uri, bool mip_map = false, bool reload = false) -> LoadTask;
-	[[nodiscard]] auto make_load_particle_emitter(std::string uri, bool reload = false) -> LoadTask;
+	[[nodiscard]] auto make_load_nine_slice(std::string uri, bool reload = false) -> LoadTask;
+	[[nodiscard]] auto make_load_atlas(std::string uri, bool mip_map = false, bool reload = false) -> LoadTask;
+	[[nodiscard]] auto make_load_font(std::string uri, bool reload = false) -> LoadTask;
 	[[nodiscard]] auto make_load_audio_clip(std::string uri, bool reload = false) -> LoadTask;
+	[[nodiscard]] auto make_load_anim_timeline(std::string uri, bool reload = false) -> LoadTask;
+	[[nodiscard]] auto make_load_particle_emitter(std::string uri, bool reload = false) -> LoadTask;
 
   private:
 	template <typename FuncT>

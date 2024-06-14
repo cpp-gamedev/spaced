@@ -6,7 +6,7 @@
 #include <bave/services/resources.hpp>
 #include <bave/services/styles.hpp>
 #include <spaced/prefs.hpp>
-#include <spaced/scenes/load_assets.hpp>
+#include <spaced/scenes/menu.hpp>
 #include <spaced/services/gamepad_provider.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/serializer.hpp>
@@ -131,5 +131,5 @@ void Spaced::set_prefs() {
 	audio.set_sfx_gain(prefs.sfx_gain);
 }
 
-void Spaced::set_scene() { get_switcher().switch_to<LoadAssets>(); }
+void Spaced::set_scene() { get_switcher().switch_to<MenuScene>(); }
 } // namespace spaced
