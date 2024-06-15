@@ -67,6 +67,7 @@ void World::tick(Seconds const dt) {
 	for (auto& emitter : m_enemy_death_emitters) { emitter.tick(dt); }
 	std::erase_if(m_enemy_death_emitters, [](ParticleEmitter const& emitter) { return emitter.active_particles() == 0; });
 
+	if (!in_play) { m_active_powerups.clear(); }
 	for (auto const& powerup : m_active_powerups) { powerup->tick(dt); }
 	std::erase_if(m_active_powerups, [](auto const& powerup) { return powerup->is_destroyed(); });
 

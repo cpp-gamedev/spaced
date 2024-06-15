@@ -10,6 +10,7 @@ class IWeaponRound : public bave::IDrawable {
 	struct State {
 		std::span<bave::NotNull<IDamageable*> const> targets{};
 		glm::vec2 muzzle_position{};
+		bool in_play{true};
 	};
 
 	virtual void tick(State const& state, bave::Seconds dt) = 0;

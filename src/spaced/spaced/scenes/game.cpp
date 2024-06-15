@@ -44,6 +44,7 @@ auto get_manifest() -> AssetManifest {
 		.audio_clips =
 			{
 				"sfx/bubble.wav",
+				"sfx/kinetic_fire.wav",
 				"music/game.mp3",
 			},
 		.particle_emitters =

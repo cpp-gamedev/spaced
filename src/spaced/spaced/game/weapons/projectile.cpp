@@ -4,7 +4,6 @@ namespace spaced {
 using bave::IDisplay;
 using bave::NotNull;
 using bave::Rect;
-using bave::RoundedQuad;
 using bave::Seconds;
 using bave::Shader;
 

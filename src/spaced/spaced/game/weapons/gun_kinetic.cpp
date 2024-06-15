@@ -25,6 +25,7 @@ auto GunKinetic::do_fire(glm::vec2 const muzzle_position) -> std::unique_ptr<Rou
 
 	if (rounds > 0) { --rounds; }
 	m_reload_remain = reload_delay;
+	get_audio().play_sfx("sfx/kinetic_fire.wav");
 	return std::make_unique<Projectile>(&get_display(), projectile_config, muzzle_position);
 }
 

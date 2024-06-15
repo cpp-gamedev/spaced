@@ -51,6 +51,13 @@ void Player::tick(State const& state, Seconds const dt) {
 		if (m_death->active_particles() == 0) { m_death.reset(); }
 	}
 
+	auto const round_state = IWeaponRound::State{
+		.targets = state.targets,
+		.muzzle_position = get_muzzle_position(),
+		.in_play = !health.is_dead(),
+	};
+	m_arsenal.tick(round_state, m_controller->is_firing(), dt);
+
 	if (health.is_dead()) { return; }
 
 	auto const y_position = m_controller->tick(dt);
@@ -64,9 +71,6 @@ void Player::tick(State const& state, Seconds const dt) {
 			return;
 		}
 	}
-
-	auto const round_state = IWeaponRound::State{.targets = state.targets, .muzzle_position = get_muzzle_position()};
-	m_arsenal.tick(round_state, m_controller->is_firing(), dt);
 
 	m_exhaust.set_position(get_exhaust_position());
 	m_exhaust.tick(dt);
