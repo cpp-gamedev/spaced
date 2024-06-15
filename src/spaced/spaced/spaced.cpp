@@ -114,16 +114,17 @@ void Spaced::set_layout() {
 	static constexpr auto world_space_v = glm::vec2{1920.0f, 1080.0f};
 
 	auto layout = std::make_unique<Layout>();
+	m_layout = layout.get();
 	auto& display = m_services.get<IDisplay>();
 	display.set_world_space(display.get_viewport_scaler().match_width(world_space_v));
 
 	layout->world_space = display.get_world_space();
-	layout->player_x = -0.5f * layout->world_space.x + 0.1f * layout->world_space.x;
-	auto const hud_size = glm::vec2{display.get_ui_space().x, 100.0f};
-	auto const hud_origin = glm::vec2{0.0f, 0.5f * (display.get_ui_space().y - hud_size.y)};
+	layout->player_x = -0.5f * layout->world_space.x + 0.2f * layout->world_space.x;
+	auto const hud_size = glm::vec2{layout->world_space.x, 100.0f};
+	auto const hud_origin = glm::vec2{0.0f, 0.5f * (layout->world_space.y - hud_size.y)};
 	layout->hud_area = Rect<>::from_size(hud_size, hud_origin);
-	auto const play_size = glm::vec2{hud_size.x, display.get_world_space().y - hud_size.y};
-	auto const play_origin = glm::vec2{0.0f, -0.5f * (display.get_world_space().y - play_size.y)};
+	auto const play_size = glm::vec2{hud_size.x, layout->world_space.y - hud_size.y};
+	auto const play_origin = glm::vec2{0.0f, -0.5f * (layout->world_space.y - play_size.y)};
 	layout->play_area = Rect<>::from_size(play_size, play_origin);
 	m_services.bind<Layout>(std::move(layout));
 }

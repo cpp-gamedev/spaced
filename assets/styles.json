@@ -58,7 +58,7 @@
   "sliders": {
     "default": {
       "progress_bar": "default",
-      "knob_diameter": 30,
+      "knob_diameter": 50,
       "knob_tint": "#9f2b68ff"
     }
   },

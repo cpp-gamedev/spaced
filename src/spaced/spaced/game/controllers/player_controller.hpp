@@ -33,7 +33,7 @@ class PlayerController : public FollowController {
 
 	float max_y{};
 	float min_y{};
-	float n_move_area{0.25f}; // from left
+	float n_move_area{0.3f}; // from left
 
 	float gamepad_sensitivity{2000.0f};
 

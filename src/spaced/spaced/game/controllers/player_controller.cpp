@@ -68,8 +68,9 @@ void PlayerController::stop_firing() {
 }
 
 auto PlayerController::is_in_move_area(glm::vec2 const position) const -> bool {
-	auto const n_pos = position.x / m_display->get_world_space().x;
-	return n_pos <= -n_move_area;
+	auto const width = m_display->get_world_space().x;
+	auto const n_pos = (position.x + 0.5f * width) / width;
+	return n_pos <= n_move_area;
 }
 
 void PlayerController::tick_gamepad(Seconds const dt) {
