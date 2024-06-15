@@ -19,6 +19,7 @@ using bave::Resources;
 using bave::Seconds;
 using bave::Services;
 using bave::Shader;
+using bave::Texture;
 
 namespace {
 [[nodiscard]] auto make_player_controller(Services const& services) {
@@ -39,14 +40,19 @@ namespace {
 
 World::World(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> scorer)
 	: player(*services, make_player_controller(*services)), m_services(services), m_resources(&services->get<Resources>()), m_audio(&services->get<IAudio>()),
-	  m_stats(&services->get<Stats>()), m_scorer(scorer) {
+	  m_stats(&services->get<Stats>()), m_scorer(scorer), m_background(*services) {
 	m_enemy_factories["CreepFactory"] = std::make_unique<CreepFactory>(services);
+
+	m_background.set_texture(services->get<Resources>().get<Texture>("images/background.png"));
+	m_background.set_tile_size(glm::vec2{300.0f});
+	m_background.x_speed = 50.0f;
 }
 
 void World::tick(Seconds const dt) {
 	bool const in_play = !player.health.is_dead();
 
 	if (in_play) {
+		m_background.tick(dt);
 		for (auto& [_, factory] : m_enemy_factories) {
 			if (auto enemy = factory->tick(dt)) { m_active_enemies.push_back(std::move(enemy)); }
 		}
@@ -74,6 +80,7 @@ void World::tick(Seconds const dt) {
 }
 
 void World::draw(Shader& shader) const {
+	m_background.draw(shader);
 	for (auto const& enemy : m_active_enemies) { enemy->draw(shader); }
 	for (auto const& emitter : m_enemy_death_emitters) { emitter.draw(shader); }
 	for (auto const& powerup : m_active_powerups) { powerup->draw(shader); }

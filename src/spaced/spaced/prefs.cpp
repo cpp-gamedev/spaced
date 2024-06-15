@@ -45,7 +45,7 @@ Prefs::View::View(NotNull<App const*> app, Services const& services)
 	auto const& styles = services.get<Styles>();
 
 	auto bg = std::make_unique<ui::OutlineQuad>();
-	bg->set_size({400.0f, 400.0f});
+	bg->set_size({600.0f, 600.0f});
 	bg->set_outline_width(5.0f);
 	bg->set_corner_ratio(0.1f);
 	bg->set_tint(styles.rgbas["milk"]);
@@ -53,7 +53,7 @@ Prefs::View::View(NotNull<App const*> app, Services const& services)
 
 	auto text = std::make_unique<ui::Text>(services);
 	text->text.set_string("music");
-	text->set_position({0.0f, 130.0f});
+	text->set_position({0.0f, 230.0f});
 	push(std::move(text));
 
 	auto slider = std::make_unique<ui::Slider>(services);
@@ -62,12 +62,12 @@ Prefs::View::View(NotNull<App const*> app, Services const& services)
 		m_prefs.music_gain = val;
 		m_audio->set_music_gain(val);
 	};
-	slider->set_position({0.0f, 100.0f});
+	slider->set_position({0.0f, 200.0f});
 	push(std::move(slider));
 
 	text = std::make_unique<ui::Text>(services);
 	text->text.set_string("sfx");
-	text->set_position({0.0f, 30.0f});
+	text->set_position({0.0f, 130.0f});
 	push(std::move(text));
 
 	slider = std::make_unique<ui::Slider>(services);
@@ -76,13 +76,13 @@ Prefs::View::View(NotNull<App const*> app, Services const& services)
 		m_prefs.sfx_gain = val;
 		m_audio->set_sfx_gain(val);
 	};
-	slider->set_position({0.0f, 0.0f});
+	slider->set_position({0.0f, 100.0f});
 	push(std::move(slider));
 
 	auto button = std::make_unique<ui::Button>(services);
 	button->set_text("close");
 	button->callback = [this] { set_destroyed(); };
-	button->set_position({0.0f, -100.0f});
+	button->set_position({0.0f, -200.0f});
 	push(std::move(button));
 }
 

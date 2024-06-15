@@ -5,6 +5,8 @@
 #include <bave/ui/view.hpp>
 
 namespace spaced {
+struct Layout;
+
 class Hud : public bave::ui::View {
   public:
 	explicit Hud(bave::Services const& services);
@@ -16,8 +18,10 @@ class Hud : public bave::ui::View {
 	void create_background();
 	void create_score(bave::Services const& services);
 
+	bave::NotNull<bave::IDisplay const*> m_display;
+	bave::NotNull<Layout const*> m_layout;
 	bave::NotNull<bave::Styles const*> m_styles;
-	bave::Rect<> m_area{};
+	glm::vec2 m_text_bounds_size{};
 
 	bave::Ptr<bave::ui::OutlineQuad> m_background{};
 	bave::Ptr<bave::ui::Text> m_score{};

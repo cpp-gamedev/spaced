@@ -9,6 +9,7 @@ struct Resources;
 namespace spaced {
 class Serializer;
 struct SceneSwitcher;
+struct Layout;
 
 class Spaced : public bave::GameDriver {
   public:
@@ -17,7 +18,7 @@ class Spaced : public bave::GameDriver {
   private:
 	static void set_bindings(Serializer& serializer);
 
-	void load_resources();
+	void save_styles();
 	void create_services();
 	void set_layout();
 	void set_prefs();
@@ -25,5 +26,6 @@ class Spaced : public bave::GameDriver {
 
 	bave::Logger m_log{"Spaced"};
 	bave::Ptr<bave::Resources> m_resources{};
+	bave::Ptr<Layout> m_layout{};
 };
 } // namespace spaced

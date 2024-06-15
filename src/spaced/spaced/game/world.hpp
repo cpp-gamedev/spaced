@@ -3,6 +3,7 @@
 #include <spaced/game/player.hpp>
 #include <spaced/game/scorer.hpp>
 #include <spaced/game/target_provider.hpp>
+#include <spaced/game/tiled_bg.hpp>
 
 namespace bave {
 struct Resources;
@@ -40,6 +41,8 @@ class World : public ITargetProvider {
 	bave::NotNull<bave::IAudio*> m_audio;
 	bave::NotNull<Stats*> m_stats;
 	bave::NotNull<IScorer*> m_scorer;
+
+	TiledBg m_background;
 
 	std::unordered_map<std::string, std::unique_ptr<EnemyFactory>> m_enemy_factories{};
 

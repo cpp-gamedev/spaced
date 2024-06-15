@@ -43,7 +43,9 @@ class Player : public bave::IDrawable {
 		if constexpr (bave::debug_v) { do_inspect(); }
 	}
 
-	bave::RoundedQuadShape ship{};
+	bave::Sprite ship{};
+	glm::vec2 ship_size{100.0f};
+	glm::vec2 hitbox_size{75.0f};
 	Health health{};
 
   private:

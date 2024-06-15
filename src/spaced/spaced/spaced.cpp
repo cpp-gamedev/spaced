@@ -6,31 +6,27 @@
 #include <bave/services/resources.hpp>
 #include <bave/services/styles.hpp>
 #include <spaced/prefs.hpp>
-#include <spaced/scenes/load_assets.hpp>
+#include <spaced/scenes/menu.hpp>
 #include <spaced/services/gamepad_provider.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/serializer.hpp>
 #include <spaced/services/stats.hpp>
 #include <spaced/spaced.hpp>
+#include <array>
 
 namespace spaced {
 namespace {
 using bave::App;
-using bave::AudioClip;
-using bave::AudioDevice;
-using bave::AudioStreamer;
+using bave::GameDriver;
 using bave::Gamepad;
 using bave::IAudio;
 using bave::IDisplay;
-using bave::Loader;
 using bave::NotNull;
 using bave::Persistor;
 using bave::Rect;
-using bave::RenderDevice;
-using bave::RenderView;
-using bave::Resources;
 using bave::Seconds;
 using bave::Styles;
+using bave::TextHeight;
 
 struct GamepadProvider : IGamepadProvider {
 	bave::App& app; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
@@ -64,39 +60,42 @@ struct PersistentStats : Stats {
 		persistor.write_json(uri_v, json);
 	}
 };
+
+constexpr auto preload_text_heights_v = std::array{TextHeight{100}, TextHeight{60}};
+
+constexpr auto gdci_v = bave::GameDriver::CreateInfo{
+	.assets =
+		{
+			.main_font =
+				{
+					.uri = "fonts/CuteDino.otf",
+					.preload_heights = preload_text_heights_v,
+				},
+			.spinner = "images/spinner.png",
+			.styles = "styles.json",
+		},
+};
 } // namespace
 
 void Spaced::set_bindings([[maybe_unused]] Serializer& serializer) {}
 
-Spaced::Spaced(App& app) : GameDriver(app) {
+Spaced::Spaced(App& app) : GameDriver(app, gdci_v) {
 	m_log.info("using MSAA: {}x", static_cast<int>(app.get_render_device().get_sample_count()));
-	load_resources();
+	save_styles();
 	set_layout();
 	create_services();
 	set_prefs();
 	set_scene();
 }
 
-void Spaced::load_resources() {
-	auto const loader = Loader{&get_app().get_data_store(), &get_app().get_render_device()};
-	m_resources = &m_services.get<Resources>();
-	m_resources->main_font = loader.load_font("fonts/CuteDino.otf");
-	m_resources->spinner = loader.load_texture("images/spinner.png", true);
-
-	auto styles = std::make_unique<Styles>();
-	if (auto const json = loader.load_json("styles.json")) {
-		*styles = Styles::load(json);
-		m_log.info("loaded Styles from 'styles.json'");
-	}
-
+void Spaced::save_styles() {
 	if constexpr (bave::debug_v) {
 		static bool s_save_styles{};
 		if (s_save_styles) {
-			auto const json = styles->save();
+			auto const json = m_services.get<Styles>().save();
 			json.to_file("styles.json");
 		}
 	}
-	m_services.bind<Styles>(std::move(styles));
 }
 
 void Spaced::create_services() {
@@ -112,17 +111,22 @@ void Spaced::create_services() {
 }
 
 void Spaced::set_layout() {
-	auto game_layout = std::make_unique<Layout>();
-	auto const& display = m_services.get<IDisplay>();
-	game_layout->world_space = display.get_world_space();
-	auto const viewport = display.get_main_view().viewport;
-	auto const hud_size = glm::vec2{viewport.x, 100.0f};
-	auto const hud_origin = glm::vec2{0.0f, 0.5f * (viewport.y - hud_size.y)};
-	game_layout->hud_area = Rect<>::from_size(hud_size, hud_origin);
-	auto const play_size = glm::vec2{hud_size.x, viewport.y - hud_size.y};
-	auto const play_origin = glm::vec2{0.0f, -0.5f * (viewport.y - play_size.y)};
-	game_layout->play_area = Rect<>::from_size(play_size, play_origin);
-	m_services.bind<Layout>(std::move(game_layout));
+	static constexpr auto world_space_v = glm::vec2{1920.0f, 1080.0f};
+
+	auto layout = std::make_unique<Layout>();
+	m_layout = layout.get();
+	auto& display = m_services.get<IDisplay>();
+	display.set_world_space(display.get_viewport_scaler().match_width(world_space_v));
+
+	layout->world_space = display.get_world_space();
+	layout->player_x = -0.5f * layout->world_space.x + 0.2f * layout->world_space.x;
+	auto const hud_size = glm::vec2{layout->world_space.x, 100.0f};
+	auto const hud_origin = glm::vec2{0.0f, 0.5f * (layout->world_space.y - hud_size.y)};
+	layout->hud_area = Rect<>::from_size(hud_size, hud_origin);
+	auto const play_size = glm::vec2{hud_size.x, layout->world_space.y - hud_size.y};
+	auto const play_origin = glm::vec2{0.0f, -0.5f * (layout->world_space.y - play_size.y)};
+	layout->play_area = Rect<>::from_size(play_size, play_origin);
+	m_services.bind<Layout>(std::move(layout));
 }
 
 void Spaced::set_prefs() {
@@ -132,5 +136,5 @@ void Spaced::set_prefs() {
 	audio.set_sfx_gain(prefs.sfx_gain);
 }
 
-void Spaced::set_scene() { get_switcher().switch_to<LoadAssets>(); }
+void Spaced::set_scene() { get_switcher().switch_to<MenuScene>(); }
 } // namespace spaced
