@@ -128,6 +128,7 @@ auto GunBeam::do_fire(glm::vec2 const muzzle_position) -> std::unique_ptr<Round>
 	if (rounds > 0) { --rounds; }
 	m_fire_remain = config.fire_duration;
 	m_reload_remain = 0s;
+	get_audio().play_sfx("sfx/beam_fire.wav");
 	return std::make_unique<LaserCharge>(&get_display(), config, muzzle_position);
 }
 
