@@ -37,6 +37,7 @@ auto get_manifest() -> AssetManifest {
 		.textures =
 			{
 				"images/player_ship.png",
+				"images/creep_ship.png",
 				"images/background.png",
 			},
 		.audio_clips =

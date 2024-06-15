@@ -1,6 +1,6 @@
 #pragma once
 #include <bave/core/time.hpp>
-#include <bave/graphics/shape.hpp>
+#include <bave/graphics/sprite.hpp>
 #include <bave/platform.hpp>
 #include <bave/services/services.hpp>
 #include <bave/ui/progress_bar.hpp>
@@ -14,7 +14,7 @@ class Enemy : public IDamageable, public bave::IDrawable {
 	explicit Enemy(bave::Services const& services, std::string_view type);
 
 	[[nodiscard]] auto get_instigator() const -> Instigator final { return Instigator::eEnemy; }
-	[[nodiscard]] auto get_bounds() const -> bave::Rect<> override { return shape.get_bounds(); }
+	[[nodiscard]] auto get_bounds() const -> bave::Rect<> override;
 	auto take_damage(float damage) -> bool override;
 	void force_death() override;
 
@@ -33,7 +33,8 @@ class Enemy : public IDamageable, public bave::IDrawable {
 		if constexpr (bave::debug_v) { do_inspect(); }
 	}
 
-	bave::RoundedQuadShape shape{};
+	bave::Sprite sprite{};
+	std::optional<glm::vec2> hitbox{};
 	Health health{};
 	std::int64_t points{10};
 

@@ -91,7 +91,7 @@ void World::on_death(Enemy const& enemy, bool const add_score) {
 	if (auto source = m_resources->get<ParticleEmitter>(enemy.death_emitter)) {
 		auto& emitter = m_enemy_death_emitters.emplace_back(*source);
 		emitter.config.respawn = false;
-		emitter.set_position(enemy.shape.transform.position);
+		emitter.set_position(enemy.sprite.transform.position);
 	}
 
 	m_audio->play_any_sfx(enemy.death_sfx);
@@ -101,7 +101,7 @@ void World::on_death(Enemy const& enemy, bool const add_score) {
 		++m_stats->player.enemies_poofed;
 
 		// temp
-		if (random_in_range(0, 10) < 3) { debug_spawn_powerup(enemy.shape.transform.position); }
+		if (random_in_range(0, 10) < 3) { debug_spawn_powerup(enemy.sprite.transform.position); }
 		// temp
 	}
 }
