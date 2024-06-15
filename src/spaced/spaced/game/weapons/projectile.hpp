@@ -1,5 +1,5 @@
 #pragma once
-#include <bave/graphics/shape.hpp>
+#include <bave/graphics/sprite.hpp>
 #include <bave/services/display.hpp>
 #include <spaced/game/instigator.hpp>
 #include <spaced/game/weapon_round.hpp>
@@ -12,7 +12,7 @@ class Projectile : public IWeaponRound {
 		glm::vec2 size{60.0f, 10.0f};
 		float corner_radius{0.5f * size.y};
 		float x_speed{1500.0f};
-		bave::Rgba tint{bave::black_v};
+		bave::Rgba tint{bave::white_v};
 		float damage{1.0f};
 		Instigator instigator{Instigator::ePlayer};
 	};
@@ -27,7 +27,7 @@ class Projectile : public IWeaponRound {
 	bave::NotNull<bave::IDisplay const*> m_display;
 	Config m_config{};
 
-	bave::RoundedQuadShape m_shape{};
+	bave::Sprite m_sprite{};
 	bool m_destroyed{};
 };
 } // namespace spaced
