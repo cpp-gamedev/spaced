@@ -20,7 +20,7 @@ auto Arsenal::get_weapon() -> Weapon& {
 void Arsenal::tick(IWeaponRound::State const& round_state, bool const fire, Seconds const dt) {
 	tick_weapons(dt);
 	check_switch_weapon();
-	if (fire) { fire_weapon(round_state.muzzle_position); }
+	if (round_state.in_play && fire) { fire_weapon(round_state.muzzle_position); }
 	tick_rounds(round_state, dt);
 }
 

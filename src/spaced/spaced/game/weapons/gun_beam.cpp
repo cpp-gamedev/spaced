@@ -26,9 +26,14 @@ class LaserCharge : public IWeaponRound {
 		m_ray.transform.position.y = muzzle_position.y;
 	}
 
-	[[nodiscard]] auto is_destroyed() const -> bool final { return m_fire_remain <= 0s; }
+	[[nodiscard]] auto is_destroyed() const -> bool final { return m_destroyed; }
 
 	void tick(State const& state, bave::Seconds dt) final {
+		if (!state.in_play || m_fire_remain <= 0s) {
+			m_destroyed = true;
+			return;
+		}
+
 		if (m_fire_remain > 0s) { m_fire_remain -= dt; }
 
 		sort_entries(state.targets, state.muzzle_position);
@@ -97,6 +102,7 @@ class LaserCharge : public IWeaponRound {
 	Sprite m_ray{};
 	Seconds m_fire_remain{};
 	std::vector<Entry> m_entries{};
+	bool m_destroyed{};
 };
 } // namespace
 
@@ -122,6 +128,7 @@ auto GunBeam::do_fire(glm::vec2 const muzzle_position) -> std::unique_ptr<Round>
 	if (rounds > 0) { --rounds; }
 	m_fire_remain = config.fire_duration;
 	m_reload_remain = 0s;
+	get_audio().play_sfx("sfx/beam_fire.wav");
 	return std::make_unique<LaserCharge>(&get_display(), config, muzzle_position);
 }
 

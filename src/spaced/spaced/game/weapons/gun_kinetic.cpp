@@ -1,17 +1,19 @@
 #include <bave/imgui/im_text.hpp>
-#include <bave/services/styles.hpp>
+#include <bave/services/resources.hpp>
 #include <spaced/game/weapons/gun_kinetic.hpp>
 
 namespace spaced {
 using bave::IAudio;
 using bave::im_text;
+using bave::Resources;
 using bave::Rgba;
 using bave::Seconds;
 using bave::Services;
-using bave::Styles;
+using bave::Texture;
 
 GunKinetic::GunKinetic(Services const& services) : Weapon(services, "GunKinetic"), m_audio(&services.get<IAudio>()) {
-	projectile_config.tint = services.get<Styles>().rgbas["black"];
+	projectile_config.texture = services.get<Resources>().get<Texture>("images/kinetic_projectile.png");
+	if (projectile_config.texture) { projectile_config.size = projectile_config.texture->get_size(); }
 }
 
 void GunKinetic::tick(Seconds const dt) {
@@ -23,6 +25,7 @@ auto GunKinetic::do_fire(glm::vec2 const muzzle_position) -> std::unique_ptr<Rou
 
 	if (rounds > 0) { --rounds; }
 	m_reload_remain = reload_delay;
+	get_audio().play_sfx("sfx/kinetic_fire.wav");
 	return std::make_unique<Projectile>(&get_display(), projectile_config, muzzle_position);
 }
 

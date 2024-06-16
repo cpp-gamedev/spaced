@@ -7,6 +7,7 @@
 namespace spaced {
 using bave::im_text;
 using bave::random_in_range;
+using bave::Rect;
 using bave::RoundedQuad;
 using bave::Seconds;
 using bave::Services;
@@ -23,6 +24,11 @@ Enemy::Enemy(Services const& services, std::string_view const type) : m_layout(&
 	m_health_bar.set_style(services.get<Styles>().progress_bars["enemy"]);
 }
 
+auto Enemy::get_bounds() const -> bave::Rect<> {
+	if (hitbox) { return Rect<>::from_size(*hitbox, sprite.transform.position); }
+	return sprite.get_bounds();
+}
+
 auto Enemy::take_damage(float const damage) -> bool {
 	if (is_destroyed()) { return false; }
 	health.inflict_damage(damage);
@@ -35,14 +41,14 @@ void Enemy::force_death() {
 }
 
 void Enemy::tick(Seconds const /*dt*/, bool const /*in_play*/) {
-	m_health_bar.position = shape.transform.position;
-	m_health_bar.position.y += 0.5f * shape.get_shape().size.y + 20.0f;
-	m_health_bar.size = {shape.get_shape().size.x, 10.0f};
+	m_health_bar.position = sprite.transform.position;
+	m_health_bar.position.y += 0.5f * sprite.get_shape().size.y + 20.0f;
+	m_health_bar.size = {sprite.get_shape().size.x, 10.0f};
 	m_health_bar.set_progress(health.get_hit_points() / health.get_total_hit_points());
 }
 
 void Enemy::draw(Shader& shader) const {
-	shape.draw(shader);
+	sprite.draw(shader);
 	m_health_bar.draw(shader);
 }
 
@@ -50,9 +56,9 @@ void Enemy::setup(glm::vec2 max_size, float y_position) {
 	auto rounded_quad = RoundedQuad{};
 	rounded_quad.size = max_size;
 	rounded_quad.corner_radius = 0.2f * max_size.x;
-	shape.set_shape(rounded_quad);
-	shape.transform.position.x = 0.5f * (get_layout().world_space.x + rounded_quad.size.x);
-	shape.transform.position.y = y_position;
+	sprite.set_shape(rounded_quad);
+	sprite.transform.position.x = 0.5f * (get_layout().world_space.x + rounded_quad.size.x);
+	sprite.transform.position.y = y_position;
 }
 
 void Enemy::do_inspect() {

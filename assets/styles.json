@@ -32,7 +32,7 @@
   "progress_bars": {
     "default": {
       "background": "#9f2b68ff",
-      "fill": "#ffffffff",
+      "fill": "milk",
       "corner_ratio": 0.5,
       "padding": 10
     },

@@ -37,11 +37,15 @@ auto get_manifest() -> AssetManifest {
 		.textures =
 			{
 				"images/player_ship.png",
+				"images/creep_ship.png",
 				"images/background.png",
+				"images/kinetic_projectile.png",
 			},
 		.audio_clips =
 			{
-				"sfx/bubble.wav",
+				"sfx/swish.wav",
+				"sfx/kinetic_fire.wav",
+				"sfx/beam_fire.wav",
 				"music/game.mp3",
 			},
 		.particle_emitters =
