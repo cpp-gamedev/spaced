@@ -1,1 +1,3 @@
 SpaceShooterRedux: https://opengameart.org/content/space-shooter-redux, https://www.kenney.nl
+sfx/beam_fire.wav: https://opengameart.org/content/laser-rifle
+sfx/swish.wav: https://opengameart.org/content/battle-sound-effects

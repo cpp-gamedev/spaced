@@ -39,7 +39,7 @@ class Enemy : public IDamageable, public bave::IDrawable {
 	std::int64_t points{10};
 
 	std::string death_emitter{"particles/explode.json"};
-	std::vector<std::string> death_sfx{"sfx/bubble.wav"};
+	std::vector<std::string> death_sfx{"sfx/swish.wav"};
 
   private:
 	virtual void do_inspect();

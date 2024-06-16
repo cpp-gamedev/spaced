@@ -43,7 +43,7 @@ auto get_manifest() -> AssetManifest {
 			},
 		.audio_clips =
 			{
-				"sfx/bubble.wav",
+				"sfx/swish.wav",
 				"sfx/kinetic_fire.wav",
 				"sfx/beam_fire.wav",
 				"music/game.mp3",
