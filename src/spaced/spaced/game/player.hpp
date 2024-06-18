@@ -24,7 +24,7 @@ class Player : public bave::IDrawable {
 	void on_move(bave::PointerMove const& pointer_move);
 	void on_tap(bave::PointerTap const& pointer_tap);
 
-	void tick(State const& state, bave::Seconds dt);
+	auto tick(State const& state, bave::Seconds dt) -> bool;
 	void draw(bave::Shader& shader) const final;
 
 	void set_y(float y);
@@ -53,7 +53,7 @@ class Player : public bave::IDrawable {
 	glm::vec2 hitbox_size{75.0f};
 
   private:
-	void check_hit(IDamageable& out, bave::Rect<> const& hitbox, bave::Seconds dt);
+	auto check_hit(IDamageable& out, bave::Rect<> const& hitbox, bave::Seconds dt) -> bool;
 
 	void do_inspect();
 

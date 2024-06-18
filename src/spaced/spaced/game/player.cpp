@@ -48,7 +48,7 @@ void Player::on_move(PointerMove const& pointer_move) { m_controller->on_move(po
 
 void Player::on_tap(PointerTap const& pointer_tap) { m_controller->on_tap(pointer_tap); }
 
-void Player::tick(State const& state, Seconds const dt) {
+auto Player::tick(State const& state, Seconds const dt) -> bool {
 	if (m_death) {
 		m_death->tick(dt);
 		if (m_death->active_particles() == 0) { m_death.reset(); }
@@ -66,15 +66,16 @@ void Player::tick(State const& state, Seconds const dt) {
 
 	m_exhaust.tick(dt);
 
-	if (m_health.is_dead()) { return; }
+	if (m_health.is_dead()) { return false; }
 
 	auto const y_position = m_controller->tick(dt);
 	set_y(y_position);
 
 	m_exhaust.set_position(get_exhaust_position());
 
+	auto ret = false;
 	auto const hitbox = Rect<>::from_size(hitbox_size, ship.transform.position);
-	for (auto const& target : state.targets) { check_hit(*target, hitbox, dt); }
+	for (auto const& target : state.targets) { ret |= check_hit(*target, hitbox, dt); }
 
 	for (auto const& powerup : state.powerups) {
 		if (is_intersecting(powerup->get_bounds(), ship.get_bounds())) {
@@ -82,6 +83,8 @@ void Player::tick(State const& state, Seconds const dt) {
 			++m_stats->player.powerups_collected;
 		}
 	}
+
+	return ret;
 }
 
 void Player::draw(Shader& shader) const {
@@ -121,16 +124,19 @@ void Player::on_death(Seconds const dt) {
 	++m_stats->player.death_count;
 }
 
-void Player::check_hit(IDamageable& out, Rect<> const& hitbox, Seconds const dt) {
+auto Player::check_hit(IDamageable& out, Rect<> const& hitbox, Seconds const dt) -> bool {
 	if (m_shield.is_active()) {
 		if (is_intersecting(out.get_bounds(), m_shield.get_bounds())) { out.force_death(); }
-		return;
+		return false;
 	}
 
 	if (is_intersecting(out.get_bounds(), hitbox)) {
 		out.force_death();
 		on_death(dt);
+		return true;
 	}
+
+	return false;
 }
 
 void Player::do_inspect() {

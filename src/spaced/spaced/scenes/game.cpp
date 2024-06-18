@@ -39,6 +39,7 @@ auto get_manifest() -> AssetManifest {
 		.textures =
 			{
 				"images/player_ship.png",
+				"images/player_ship_icon.png",
 				"images/shield.png",
 				"images/creep_ship.png",
 				"images/background.png",
@@ -95,6 +96,7 @@ void GameScene::on_loaded() {
 	auto hud = std::make_unique<Hud>(services);
 	m_hud = hud.get();
 	m_hud->set_hi_score(m_save.get_hi_score());
+	m_hud->set_lives(m_spare_lives);
 	push_view(std::move(hud));
 
 	++services.get<Stats>().game.play_count;
@@ -119,7 +121,9 @@ void GameScene::tick(Seconds const dt) {
 	m_world->tick(dt, !game_over);
 
 	auto const player_state = Player::State{.targets = m_world->get_targets(), .powerups = m_world->get_powerups()};
-	m_player->tick(player_state, dt);
+	auto const player_died = m_player->tick(player_state, dt);
+
+	if (player_died) { m_hud->on_death(); }
 
 	if (m_player->is_idle()) { on_player_death(); }
 
