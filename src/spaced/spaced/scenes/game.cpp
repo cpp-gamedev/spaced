@@ -6,6 +6,8 @@
 #include <bave/services/styles.hpp>
 #include <bave/ui/button.hpp>
 #include <bave/ui/dialog.hpp>
+#include <spaced/game/controllers/auto_controller.hpp>
+#include <spaced/game/controllers/player_controller.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/menu.hpp>
 #include <spaced/services/stats.hpp>
@@ -56,6 +58,21 @@ auto get_manifest() -> AssetManifest {
 			},
 	};
 }
+
+[[nodiscard]] auto make_player_controller(Services const& services) {
+	auto ret = std::make_unique<PlayerController>(services);
+	if constexpr (bave::platform_v == bave::Platform::eAndroid) { ret->set_type(PlayerController::Type::eTouch); }
+	auto const& layout = services.get<Layout>();
+	auto const half_size = 0.5f * layout.player_size;
+	auto const play_area = layout.play_area;
+	ret->max_y = play_area.lt.y - half_size.y;
+	ret->min_y = play_area.rb.y + half_size.y;
+	return ret;
+}
+
+[[nodiscard]] auto make_auto_controller(ITargetProvider const& target_provider, Services const& services) {
+	return std::make_unique<AutoController>(&target_provider, services.get<Layout>().player_x);
+}
 } // namespace
 
 GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_save(&app) { clear_colour = services.get<Styles>().rgbas["mocha"]; }
@@ -72,6 +89,8 @@ void GameScene::on_loaded() {
 	auto const& services = get_services();
 	m_world.emplace(&services, this);
 
+	m_player.emplace(services, make_player_controller(services));
+
 	auto hud = std::make_unique<Hud>(services);
 	m_hud = hud.get();
 	m_hud->set_hi_score(m_save.get_hi_score());
@@ -82,26 +101,33 @@ void GameScene::on_loaded() {
 	switch_track("music/game.mp3");
 }
 
-void GameScene::on_focus(FocusChange const& focus_change) { m_world->player.on_focus(focus_change); }
+void GameScene::on_focus(FocusChange const& focus_change) { m_player->on_focus(focus_change); }
 
 void GameScene::on_key(KeyInput const& key_input) {
 	if (key_input.key == Key::eEscape && key_input.action == Action::eRelease && key_input.mods == KeyMods{}) { get_switcher().switch_to<MenuScene>(); }
 }
 
-void GameScene::on_move(PointerMove const& pointer_move) { m_world->player.on_move(pointer_move); }
+void GameScene::on_move(PointerMove const& pointer_move) { m_player->on_move(pointer_move); }
 
-void GameScene::on_tap(PointerTap const& pointer_tap) { m_world->player.on_tap(pointer_tap); }
+void GameScene::on_tap(PointerTap const& pointer_tap) { m_player->on_tap(pointer_tap); }
 
 void GameScene::tick(Seconds const dt) {
 	auto ft = bave::DeltaTime{};
 
-	m_world->tick(dt);
-	if (m_world->player.health.is_dead() && !m_game_over_dialog_pushed) { on_game_over(); }
+	m_world->tick(dt, !m_player->is_dead());
+
+	auto const player_state = Player::State{.targets = m_world->get_targets(), .powerups = m_world->get_powerups()};
+	m_player->tick(player_state, dt);
+
+	if (m_player->is_dead() && !m_game_over_dialog_pushed) { on_game_over(); }
 
 	if constexpr (bave::debug_v) { inspect(dt, ft.update()); }
 }
 
-void GameScene::render(Shader& shader) const { m_world->draw(shader); }
+void GameScene::render(Shader& shader) const {
+	m_world->draw(shader);
+	m_player->draw(shader);
+}
 
 void GameScene::add_score(std::int64_t const score) {
 	m_score += score;
@@ -134,6 +160,13 @@ void GameScene::inspect(Seconds const dt, Seconds const frame_time) {
 
 		if (ImGui::Begin("Debug")) {
 			if (ImGui::BeginTabBar("World")) {
+				if (ImGui::BeginTabItem("Player")) {
+					m_player->inspect();
+					ImGui::Separator();
+					debug_controller_type();
+					ImGui::EndTabItem();
+				}
+
 				m_world->inspect();
 				ImGui::EndTabBar();
 			}
@@ -142,7 +175,7 @@ void GameScene::inspect(Seconds const dt, Seconds const frame_time) {
 			im_text("score: {}", get_score());
 
 			ImGui::Separator();
-			if (ImGui::Button("end game")) { m_world->player.on_death({}); }
+			if (ImGui::Button("end game")) { m_player->on_death(dt); }
 
 			ImGui::Separator();
 			im_text("dt: {:05.2f}", std::chrono::duration<float, std::milli>(dt).count());
@@ -160,6 +193,28 @@ void GameScene::inspect(Seconds const dt, Seconds const frame_time) {
 			auto const min_dt = Seconds{1.0f / static_cast<float>(m_debug.fps.limit)};
 			auto const dt_remain = min_dt - frame_time;
 			if (dt_remain > 0s) { std::this_thread::sleep_for(dt_remain); }
+		}
+	}
+}
+
+void GameScene::debug_controller_type() {
+	if constexpr (bave::imgui_v) {
+		static constexpr auto type_names_v = std::array{
+			PlayerController::type_name_v,
+			AutoController::type_name_v,
+		};
+
+		auto const make_controller = [this](std::string_view const type_name) -> std::unique_ptr<IController> {
+			if (type_name == AutoController::type_name_v) { return make_auto_controller(*m_world, get_services()); }
+			return make_player_controller(get_services());
+		};
+
+		auto const& controller = m_player->get_controller();
+		if (ImGui::BeginCombo("controller", controller.get_type_name().data())) {
+			for (auto const type_name : type_names_v) {
+				if (ImGui::Selectable(type_name.data())) { m_player->set_controller(make_controller(type_name)); }
+			}
+			ImGui::EndCombo();
 		}
 	}
 }

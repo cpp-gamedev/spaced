@@ -37,6 +37,8 @@ class Player : public bave::IDrawable {
 
 	void set_special_weapon(std::unique_ptr<Weapon> weapon) { m_arsenal.set_special(std::move(weapon)); }
 
+	[[nodiscard]] auto is_dead() const -> bool { return m_health.is_dead(); }
+
 	void on_death(bave::Seconds dt);
 
 	void inspect() {
@@ -46,7 +48,6 @@ class Player : public bave::IDrawable {
 	bave::Sprite ship{};
 	glm::vec2 ship_size{100.0f};
 	glm::vec2 hitbox_size{75.0f};
-	Health health{};
 
   private:
 	void do_inspect();
@@ -60,5 +61,6 @@ class Player : public bave::IDrawable {
 	std::optional<bave::ParticleEmitter> m_death{};
 
 	Arsenal m_arsenal{*m_services};
+	Health m_health{};
 };
 } // namespace spaced

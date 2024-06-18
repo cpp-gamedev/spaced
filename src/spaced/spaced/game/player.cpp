@@ -33,6 +33,7 @@ Player::Player(Services const& services, std::unique_ptr<IController> controller
 
 	if (auto const exhaust = resources.get<ParticleEmitter>("particles/exhaust.json")) { m_exhaust = *exhaust; }
 	m_exhaust.set_position(get_exhaust_position());
+	m_exhaust.config.respawn = true;
 	m_exhaust.pre_warm();
 
 	if (auto const death = resources.get<ParticleEmitter>("particles/explode.json")) { m_death_source = *death; }
@@ -54,14 +55,18 @@ void Player::tick(State const& state, Seconds const dt) {
 	auto const round_state = IWeaponRound::State{
 		.targets = state.targets,
 		.muzzle_position = get_muzzle_position(),
-		.in_play = !health.is_dead(),
+		.in_play = !m_health.is_dead(),
 	};
 	m_arsenal.tick(round_state, m_controller->is_firing(), dt);
 
-	if (health.is_dead()) { return; }
+	m_exhaust.tick(dt);
+
+	if (m_health.is_dead()) { return; }
 
 	auto const y_position = m_controller->tick(dt);
 	set_y(y_position);
+
+	m_exhaust.set_position(get_exhaust_position());
 
 	auto const hitbox = Rect<>::from_size(hitbox_size, ship.transform.position);
 	for (auto const& target : state.targets) {
@@ -72,9 +77,6 @@ void Player::tick(State const& state, Seconds const dt) {
 		}
 	}
 
-	m_exhaust.set_position(get_exhaust_position());
-	m_exhaust.tick(dt);
-
 	for (auto const& powerup : state.powerups) {
 		if (is_intersecting(powerup->get_bounds(), ship.get_bounds())) {
 			powerup->activate(*this);
@@ -84,10 +86,8 @@ void Player::tick(State const& state, Seconds const dt) {
 }
 
 void Player::draw(Shader& shader) const {
-	if (!health.is_dead()) {
-		m_exhaust.draw(shader);
-		ship.draw(shader);
-	}
+	m_exhaust.draw(shader);
+	if (!m_health.is_dead()) { ship.draw(shader); }
 	m_arsenal.draw(shader);
 	if (m_death) { m_death->draw(shader); }
 }
@@ -104,10 +104,13 @@ void Player::set_controller(std::unique_ptr<IController> controller) {
 }
 
 void Player::on_death(Seconds const dt) {
-	health = 0.0f;
+	m_health = 0.0f;
 	m_death = m_death_source;
 	m_death->set_position(ship.transform.position);
 	m_death->tick(dt);
+
+	m_exhaust.config.respawn = false;
+
 	++m_stats->player.death_count;
 }
 
@@ -127,7 +130,7 @@ void Player::do_inspect() {
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNodeEx("Status", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
-			health.inspect();
+			m_health.inspect();
 			ImGui::TreePop();
 		}
 	}

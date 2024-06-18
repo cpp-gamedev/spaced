@@ -2,6 +2,7 @@
 #include <bave/scene.hpp>
 #include <spaced/game/game_save.hpp>
 #include <spaced/game/hud.hpp>
+#include <spaced/game/player.hpp>
 #include <spaced/game/scorer.hpp>
 #include <spaced/game/target_provider.hpp>
 #include <spaced/game/world.hpp>
@@ -31,8 +32,11 @@ class GameScene : public bave::Scene, public IScorer {
 
 	void inspect(bave::Seconds dt, bave::Seconds frame_time);
 
+	void debug_controller_type();
+
 	GameSave m_save;
 	std::optional<World> m_world{};
+	std::optional<Player> m_player{};
 	std::int64_t m_score{};
 	bave::Ptr<Hud> m_hud{};
 	bool m_game_over_dialog_pushed{};
