@@ -22,14 +22,16 @@ using bave::Shader;
 using bave::Texture;
 
 Player::Player(Services const& services, std::unique_ptr<IController> controller)
-	: m_services(&services), m_stats(&services.get<Stats>()), m_controller(std::move(controller)) {
+	: m_services(&services), m_stats(&services.get<Stats>()), m_controller(std::move(controller)), m_shield(services) {
 	auto const& layout = services.get<Layout>();
 	ship.transform.position.x = layout.player_x;
 
 	auto const& resources = services.get<Resources>();
 
-	if (auto const texture = services.get<Resources>().get<Texture>("images/player_ship.png")) { ship.set_texture(texture); }
-	ship.set_auto_size(ship_size);
+	if (auto const texture = services.get<Resources>().get<Texture>("images/player_ship.png")) {
+		ship.set_texture(texture);
+		ship.set_size(texture->get_size());
+	}
 
 	if (auto const exhaust = resources.get<ParticleEmitter>("particles/exhaust.json")) { m_exhaust = *exhaust; }
 	m_exhaust.set_position(get_exhaust_position());
@@ -59,6 +61,9 @@ void Player::tick(State const& state, Seconds const dt) {
 	};
 	m_arsenal.tick(round_state, m_controller->is_firing(), dt);
 
+	m_shield.set_position(ship.transform.position);
+	m_shield.tick(dt);
+
 	m_exhaust.tick(dt);
 
 	if (m_health.is_dead()) { return; }
@@ -69,13 +74,7 @@ void Player::tick(State const& state, Seconds const dt) {
 	m_exhaust.set_position(get_exhaust_position());
 
 	auto const hitbox = Rect<>::from_size(hitbox_size, ship.transform.position);
-	for (auto const& target : state.targets) {
-		if (is_intersecting(target->get_bounds(), hitbox)) {
-			on_death(dt);
-			target->force_death();
-			return;
-		}
-	}
+	for (auto const& target : state.targets) { check_hit(*target, hitbox, dt); }
 
 	for (auto const& powerup : state.powerups) {
 		if (is_intersecting(powerup->get_bounds(), ship.get_bounds())) {
@@ -87,7 +86,10 @@ void Player::tick(State const& state, Seconds const dt) {
 
 void Player::draw(Shader& shader) const {
 	m_exhaust.draw(shader);
-	if (!m_health.is_dead()) { ship.draw(shader); }
+	if (!m_health.is_dead()) {
+		ship.draw(shader);
+		m_shield.draw(shader);
+	}
 	m_arsenal.draw(shader);
 	if (m_death) { m_death->draw(shader); }
 }
@@ -103,6 +105,11 @@ void Player::set_controller(std::unique_ptr<IController> controller) {
 	m_controller = std::move(controller);
 }
 
+void Player::set_shield(Seconds const ttl) {
+	m_shield.ttl = ttl;
+	m_shield.set_position(ship.transform.position);
+}
+
 void Player::on_death(Seconds const dt) {
 	m_health = 0.0f;
 	m_death = m_death_source;
@@ -112,6 +119,18 @@ void Player::on_death(Seconds const dt) {
 	m_exhaust.config.respawn = false;
 
 	++m_stats->player.death_count;
+}
+
+void Player::check_hit(IDamageable& out, Rect<> const& hitbox, Seconds const dt) {
+	if (m_shield.is_active()) {
+		if (is_intersecting(out.get_bounds(), m_shield.get_bounds())) { out.force_death(); }
+		return;
+	}
+
+	if (is_intersecting(out.get_bounds(), hitbox)) {
+		out.force_death();
+		on_death(dt);
+	}
 }
 
 void Player::do_inspect() {
@@ -127,6 +146,11 @@ void Player::do_inspect() {
 				m_arsenal.set_special(std::move(beam));
 			}
 			m_arsenal.get_weapon().inspect();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNodeEx("Shield", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
+			auto ttl = m_shield.ttl.count();
+			if (ImGui::DragFloat("ttl", &ttl, 0.25f, 0.0f, 60.0f, "%.2f")) { m_shield.ttl = Seconds{ttl}; }
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNodeEx("Status", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {

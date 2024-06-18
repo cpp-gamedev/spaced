@@ -6,6 +6,7 @@
 #include <spaced/game/controller.hpp>
 #include <spaced/game/health.hpp>
 #include <spaced/game/powerup.hpp>
+#include <spaced/game/shield.hpp>
 
 namespace spaced {
 struct Stats;
@@ -37,7 +38,10 @@ class Player : public bave::IDrawable {
 
 	void set_special_weapon(std::unique_ptr<Weapon> weapon) { m_arsenal.set_special(std::move(weapon)); }
 
+	void set_shield(bave::Seconds ttl);
+
 	[[nodiscard]] auto is_dead() const -> bool { return m_health.is_dead(); }
+	[[nodiscard]] auto is_idle() const -> bool { return m_exhaust.active_particles() == 0; }
 
 	void on_death(bave::Seconds dt);
 
@@ -46,10 +50,11 @@ class Player : public bave::IDrawable {
 	}
 
 	bave::Sprite ship{};
-	glm::vec2 ship_size{100.0f};
 	glm::vec2 hitbox_size{75.0f};
 
   private:
+	void check_hit(IDamageable& out, bave::Rect<> const& hitbox, bave::Seconds dt);
+
 	void do_inspect();
 
 	bave::Logger m_log{"Player"};
@@ -57,6 +62,8 @@ class Player : public bave::IDrawable {
 	bave::NotNull<Stats*> m_stats;
 	std::unique_ptr<IController> m_controller;
 	bave::ParticleEmitter m_exhaust{};
+	Shield m_shield;
+
 	bave::ParticleEmitter m_death_source{};
 	std::optional<bave::ParticleEmitter> m_death{};
 

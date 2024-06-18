@@ -26,6 +26,9 @@ class GameScene : public bave::Scene, public IScorer {
 
 	[[nodiscard]] auto get_score() const -> std::int64_t final { return m_score; }
 	void add_score(std::int64_t score) final;
+
+	void on_player_death();
+	void respawn_player();
 	void on_game_over();
 
 	void update_hi_score();
@@ -37,6 +40,8 @@ class GameScene : public bave::Scene, public IScorer {
 	GameSave m_save;
 	std::optional<World> m_world{};
 	std::optional<Player> m_player{};
+	int m_spare_lives{2};
+
 	std::int64_t m_score{};
 	bave::Ptr<Hud> m_hud{};
 	bool m_game_over_dialog_pushed{};

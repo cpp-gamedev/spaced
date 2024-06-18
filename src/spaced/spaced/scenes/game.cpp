@@ -39,6 +39,7 @@ auto get_manifest() -> AssetManifest {
 		.textures =
 			{
 				"images/player_ship.png",
+				"images/shield.png",
 				"images/creep_ship.png",
 				"images/background.png",
 				"images/kinetic_projectile.png",
@@ -114,12 +115,13 @@ void GameScene::on_tap(PointerTap const& pointer_tap) { m_player->on_tap(pointer
 void GameScene::tick(Seconds const dt) {
 	auto ft = bave::DeltaTime{};
 
-	m_world->tick(dt, !m_player->is_dead());
+	auto const game_over = m_player->is_idle() && m_spare_lives == 0;
+	m_world->tick(dt, !game_over);
 
 	auto const player_state = Player::State{.targets = m_world->get_targets(), .powerups = m_world->get_powerups()};
 	m_player->tick(player_state, dt);
 
-	if (m_player->is_dead() && !m_game_over_dialog_pushed) { on_game_over(); }
+	if (m_player->is_idle()) { on_player_death(); }
 
 	if constexpr (bave::debug_v) { inspect(dt, ft.update()); }
 }
@@ -135,6 +137,24 @@ void GameScene::add_score(std::int64_t const score) {
 	update_hi_score();
 }
 
+void GameScene::on_player_death() {
+	if (m_spare_lives > 0) {
+		--m_spare_lives;
+		respawn_player();
+		return;
+	}
+
+	if (!m_game_over_dialog_pushed) {
+		m_game_over_dialog_pushed = true;
+		on_game_over();
+	}
+}
+
+void GameScene::respawn_player() {
+	m_player.emplace(get_services(), make_player_controller(get_services()));
+	m_player->set_shield(2s);
+}
+
 void GameScene::on_game_over() {
 	auto dci = ui::DialogCreateInfo{
 		.size = {600.0f, 200.0f},
@@ -144,7 +164,6 @@ void GameScene::on_game_over() {
 	};
 
 	auto dialog = std::make_unique<ui::Dialog>(get_services(), std::move(dci));
-	m_game_over_dialog_pushed = true;
 	push_view(std::move(dialog));
 }
 
