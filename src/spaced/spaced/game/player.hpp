@@ -6,6 +6,7 @@
 #include <spaced/game/controller.hpp>
 #include <spaced/game/health.hpp>
 #include <spaced/game/powerup.hpp>
+#include <spaced/game/shield.hpp>
 
 namespace spaced {
 struct Stats;
@@ -23,7 +24,7 @@ class Player : public bave::IDrawable {
 	void on_move(bave::PointerMove const& pointer_move);
 	void on_tap(bave::PointerTap const& pointer_tap);
 
-	void tick(State const& state, bave::Seconds dt);
+	auto tick(State const& state, bave::Seconds dt) -> bool;
 	void draw(bave::Shader& shader) const final;
 
 	void set_y(float y);
@@ -37,6 +38,11 @@ class Player : public bave::IDrawable {
 
 	void set_special_weapon(std::unique_ptr<Weapon> weapon) { m_arsenal.set_special(std::move(weapon)); }
 
+	void set_shield(bave::Seconds ttl);
+
+	[[nodiscard]] auto is_dead() const -> bool { return m_health.is_dead(); }
+	[[nodiscard]] auto is_idle() const -> bool { return m_exhaust.active_particles() == 0; }
+
 	void on_death(bave::Seconds dt);
 
 	void inspect() {
@@ -44,11 +50,11 @@ class Player : public bave::IDrawable {
 	}
 
 	bave::Sprite ship{};
-	glm::vec2 ship_size{100.0f};
 	glm::vec2 hitbox_size{75.0f};
-	Health health{};
 
   private:
+	auto check_hit(IDamageable& out, bave::Rect<> const& hitbox, bave::Seconds dt) -> bool;
+
 	void do_inspect();
 
 	bave::Logger m_log{"Player"};
@@ -56,9 +62,12 @@ class Player : public bave::IDrawable {
 	bave::NotNull<Stats*> m_stats;
 	std::unique_ptr<IController> m_controller;
 	bave::ParticleEmitter m_exhaust{};
+	Shield m_shield;
+
 	bave::ParticleEmitter m_death_source{};
 	std::optional<bave::ParticleEmitter> m_death{};
 
 	Arsenal m_arsenal{*m_services};
+	Health m_health{};
 };
 } // namespace spaced

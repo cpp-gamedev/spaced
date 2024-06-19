@@ -1,6 +1,7 @@
 #pragma once
+#include <spaced/game/damageable.hpp>
 #include <spaced/game/enemy_factory.hpp>
-#include <spaced/game/player.hpp>
+#include <spaced/game/powerup.hpp>
 #include <spaced/game/scorer.hpp>
 #include <spaced/game/target_provider.hpp>
 #include <spaced/game/tiled_bg.hpp>
@@ -17,8 +18,9 @@ class World : public ITargetProvider {
 	explicit World(bave::NotNull<bave::Services const*> services, bave::NotNull<IScorer*> scorer);
 
 	[[nodiscard]] auto get_targets() const -> std::span<bave::NotNull<IDamageable*> const> final { return m_targets; }
+	[[nodiscard]] auto get_powerups() const -> std::span<bave::NotNull<IPowerup*> const> { return m_powerups; }
 
-	void tick(bave::Seconds dt);
+	void tick(bave::Seconds dt, bool in_play);
 	void draw(bave::Shader& shader) const;
 
 	void on_death(Enemy const& enemy, bool add_score);
@@ -27,13 +29,10 @@ class World : public ITargetProvider {
 		if constexpr (bave::debug_v) { do_inspect(); }
 	}
 
-	Player player;
-
   private:
 	void do_inspect();
 	void inspect_enemies();
 
-	void debug_controller_type();
 	void debug_spawn_powerup(glm::vec2 position);
 
 	bave::NotNull<bave::Services const*> m_services;
