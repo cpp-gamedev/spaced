@@ -34,7 +34,25 @@ using bave::Styles;
 namespace ui = bave::ui;
 
 namespace {
-auto get_manifest() -> AssetManifest {
+[[nodiscard]] auto make_player_controller(Services const& services) {
+	auto ret = std::make_unique<PlayerController>(services);
+	if constexpr (bave::platform_v == bave::Platform::eAndroid) { ret->set_type(PlayerController::Type::eTouch); }
+	auto const& layout = services.get<Layout>();
+	auto const half_size = 0.5f * layout.player_size;
+	auto const play_area = layout.play_area;
+	ret->max_y = play_area.lt.y - half_size.y;
+	ret->min_y = play_area.rb.y + half_size.y;
+	return ret;
+}
+
+[[nodiscard]] auto make_auto_controller(ITargetProvider const& target_provider, Services const& services) {
+	return std::make_unique<AutoController>(&target_provider, services.get<Layout>().player_x);
+}
+} // namespace
+
+GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_save(&app) { clear_colour = services.get<Styles>().rgbas["mocha"]; }
+
+auto GameScene::get_asset_manifest() -> AssetManifest {
 	return AssetManifest{
 		.textures =
 			{
@@ -61,47 +79,31 @@ auto get_manifest() -> AssetManifest {
 	};
 }
 
-[[nodiscard]] auto make_player_controller(Services const& services) {
-	auto ret = std::make_unique<PlayerController>(services);
-	if constexpr (bave::platform_v == bave::Platform::eAndroid) { ret->set_type(PlayerController::Type::eTouch); }
-	auto const& layout = services.get<Layout>();
-	auto const half_size = 0.5f * layout.player_size;
-	auto const play_area = layout.play_area;
-	ret->max_y = play_area.lt.y - half_size.y;
-	ret->min_y = play_area.rb.y + half_size.y;
-	return ret;
-}
-
-[[nodiscard]] auto make_auto_controller(ITargetProvider const& target_provider, Services const& services) {
-	return std::make_unique<AutoController>(&target_provider, services.get<Layout>().player_x);
-}
-} // namespace
-
-GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_save(&app) { clear_colour = services.get<Styles>().rgbas["mocha"]; }
-
-auto GameScene::build_load_stages() -> std::vector<AsyncExec::Stage> {
-	auto ret = std::vector<AsyncExec::Stage>{};
-	auto asset_list = AssetList{make_loader(), get_services()};
-	asset_list.add_manifest(get_manifest());
-	ret.push_back(asset_list.build_load_stage());
-	return ret;
-}
-
 void GameScene::on_loaded() {
 	auto const& services = get_services();
-	m_world.emplace(&services, this);
-
-	m_player.emplace(services, make_player_controller(services));
 
 	auto hud = std::make_unique<Hud>(services);
 	m_hud = hud.get();
-	m_hud->set_hi_score(m_save.get_hi_score());
-	m_hud->set_lives(m_spare_lives);
 	push_view(std::move(hud));
 
-	++services.get<Stats>().game.play_count;
+	start_play();
 
 	switch_track("music/game.mp3");
+}
+
+void GameScene::start_play() {
+	auto const& services = get_services();
+
+	m_world.emplace(&services, this);
+	m_player.emplace(services, make_player_controller(services));
+
+	m_score = 0;
+	m_spare_lives = 2;
+	m_hud->set_score(m_score);
+	m_hud->set_hi_score(m_save.get_hi_score());
+	m_hud->set_lives(m_spare_lives);
+
+	++services.get<Stats>().game.play_count;
 }
 
 void GameScene::on_focus(FocusChange const& focus_change) { m_player->on_focus(focus_change); }
@@ -163,7 +165,7 @@ void GameScene::on_game_over() {
 	auto dci = ui::DialogCreateInfo{
 		.size = {600.0f, 200.0f},
 		.content_text = "GAME OVER",
-		.main_button = {.text = "RESTART", .callback = [this] { get_switcher().switch_to<GameScene>(); }},
+		.main_button = {.text = "RESTART", .callback = [this] { start_play(); }},
 		.second_button = {.text = "QUIT", .callback = [this] { get_app().shutdown(); }},
 	};
 
@@ -207,6 +209,8 @@ void GameScene::inspect(Seconds const dt, Seconds const frame_time) {
 			ImGui::Checkbox("fps lock", &m_debug.fps.lock);
 
 			ImGui::Separator();
+			if (ImGui::Button("restart")) { start_play(); }
+			ImGui::SameLine();
 			if (ImGui::Button("reload scene")) { get_switcher().switch_to<GameScene>(); }
 		}
 		ImGui::End();

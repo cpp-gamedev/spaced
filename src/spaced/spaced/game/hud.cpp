@@ -36,7 +36,7 @@ void Hud::set_lives(int const lives) {
 	m_lives_icon.instances.resize(static_cast<std::size_t>(lives));
 	auto x_offset = 0.0f;
 	for (auto& instance : m_lives_icon.instances) {
-		instance.transform.position.x += x_offset;
+		instance.transform.position.x = x_offset;
 		x_offset += 2.0f * m_lives_icon.get_shape().size.x;
 	}
 }
