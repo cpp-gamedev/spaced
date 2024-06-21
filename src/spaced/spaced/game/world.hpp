@@ -3,6 +3,7 @@
 #include <spaced/game/enemy_factory.hpp>
 #include <spaced/game/powerup.hpp>
 #include <spaced/game/scorer.hpp>
+#include <spaced/game/star_field.hpp>
 #include <spaced/game/target_provider.hpp>
 #include <spaced/game/tiled_bg.hpp>
 
@@ -42,6 +43,7 @@ class World : public ITargetProvider {
 	bave::NotNull<IScorer*> m_scorer;
 
 	TiledBg m_background;
+	StarField m_star_field;
 
 	std::unordered_map<std::string, std::unique_ptr<EnemyFactory>> m_enemy_factories{};
 

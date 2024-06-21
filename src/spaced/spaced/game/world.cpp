@@ -21,17 +21,25 @@ using bave::Texture;
 
 World::World(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> scorer)
 	: m_services(services), m_resources(&services->get<Resources>()), m_audio(&services->get<IAudio>()), m_stats(&services->get<Stats>()), m_scorer(scorer),
-	  m_background(*services) {
+	  m_background(*services), m_star_field(*services) {
 	m_enemy_factories["CreepFactory"] = std::make_unique<CreepFactory>(services);
 
-	m_background.set_texture(services->get<Resources>().get<Texture>("images/background.png"));
+	auto const& resources = services->get<Resources>();
+
+	m_background.set_texture(resources.get<Texture>("images/background.png"));
 	m_background.set_tile_size(glm::vec2{300.0f});
 	m_background.x_speed = 50.0f;
+
+	auto const config = StarField::Config{.spawn_rate = 0.2s};
+	m_star_field.add_field(resources.get<Texture>("images/star_blue.png"), config);
+	m_star_field.add_field(resources.get<Texture>("images/star_red.png"), config);
+	m_star_field.add_field(resources.get<Texture>("images/star_yellow.png"), config);
 }
 
 void World::tick(Seconds const dt, bool const in_play) {
 	if (in_play) {
 		m_background.tick(dt);
+		m_star_field.tick(dt);
 		for (auto& [_, factory] : m_enemy_factories) {
 			if (auto enemy = factory->tick(dt)) { m_active_enemies.push_back(std::move(enemy)); }
 		}
@@ -58,6 +66,7 @@ void World::tick(Seconds const dt, bool const in_play) {
 
 void World::draw(Shader& shader) const {
 	m_background.draw(shader);
+	m_star_field.draw(shader);
 	for (auto const& enemy : m_active_enemies) { enemy->draw(shader); }
 	for (auto const& emitter : m_enemy_death_emitters) { emitter.draw(shader); }
 	for (auto const& powerup : m_active_powerups) { powerup->draw(shader); }
