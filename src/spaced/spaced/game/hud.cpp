@@ -10,7 +10,6 @@ using bave::IDisplay;
 using bave::Resources;
 using bave::Seconds;
 using bave::Services;
-using bave::Shader;
 using bave::Styles;
 using bave::Text;
 using bave::TextHeight;

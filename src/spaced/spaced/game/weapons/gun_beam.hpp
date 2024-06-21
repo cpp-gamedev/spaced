@@ -14,7 +14,7 @@ class GunBeam final : public Weapon {
 
 	explicit GunBeam(bave::Services const& services);
 
-	[[nodiscard]] auto is_idle() const -> bool final { return m_fire_remain <= 0s; }
+	[[nodiscard]] auto is_idle() const -> bool final { return m_fire_remain <= 0s && m_reload_remain <= 0s; }
 	[[nodiscard]] auto get_icon() const -> std::shared_ptr<bave::Texture const> final { return config.beam_texture; }
 
 	void tick(bave::Seconds dt) final;
