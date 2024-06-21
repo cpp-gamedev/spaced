@@ -62,6 +62,7 @@ auto GameScene::get_asset_manifest() -> AssetManifest {
 				"images/creep_ship.png",
 				"images/background.png",
 				"images/kinetic_projectile.png",
+				"images/beam_round.png",
 			},
 		.audio_clips =
 			{
@@ -125,7 +126,10 @@ void GameScene::tick(Seconds const dt) {
 	auto const player_state = Player::State{.targets = m_world->get_targets(), .powerups = m_world->get_powerups()};
 	auto const player_died = m_player->tick(player_state, dt);
 
-	if (player_died) { m_hud->on_death(); }
+	if (player_died) { m_hud->set_lives(m_spare_lives - 1); }
+	auto const& weapon = m_player->get_weapon();
+	m_hud->set_weapon(weapon.get_icon());
+	m_hud->set_rounds(weapon.get_rounds_remaining());
 
 	if (m_player->is_idle()) { on_player_death(); }
 

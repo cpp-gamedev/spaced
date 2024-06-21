@@ -13,7 +13,8 @@ class Weapon : public bave::Polymorphic {
 
 	explicit Weapon(bave::Services const& services, std::string name);
 
-	[[nodiscard]] auto get_rounds_remaining() const -> int { return rounds < 0 ? 1 : rounds; }
+	[[nodiscard]] auto get_rounds_remaining() const -> int { return rounds; }
+	[[nodiscard]] virtual auto get_icon() const -> std::shared_ptr<bave::Texture const> { return {}; }
 
 	auto fire(glm::vec2 muzzle_position) -> std::unique_ptr<Round>;
 	[[nodiscard]] virtual auto is_idle() const -> bool = 0;

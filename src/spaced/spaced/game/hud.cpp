@@ -12,6 +12,7 @@ using bave::Seconds;
 using bave::Services;
 using bave::Shader;
 using bave::Styles;
+using bave::Text;
 using bave::TextHeight;
 using bave::Texture;
 
@@ -21,38 +22,42 @@ Hud::Hud(Services const& services)
 	: ui::View(services), m_display(&services.get<IDisplay>()), m_layout(&services.get<Layout>()), m_styles(&services.get<Styles>()) {
 	create_background();
 	create_score(services);
-	create_lives_icon(services);
+	create_lives(services);
+	create_weapon(services);
 
 	block_input_events = false;
 	render_view = m_display->get_world_view();
 }
 
-void Hud::set_lives(int const lives) {
-	if (lives <= 0) {
-		m_lives_icon.instances.clear();
-		return;
-	}
-
-	m_lives_icon.instances.resize(static_cast<std::size_t>(lives));
-	auto x_offset = 0.0f;
-	for (auto& instance : m_lives_icon.instances) {
-		instance.transform.position.x = x_offset;
-		x_offset += 2.0f * m_lives_icon.get_shape().size.x;
-	}
-}
-
-void Hud::on_death() {
-	if (m_lives_icon.instances.empty()) { return; }
-	m_lives_icon.instances.pop_back();
+void Hud::set_lives(int lives) {
+	lives = std::clamp(lives, 0, 99); // TODO: max_lives
+	m_lives_count->text.set_string(fmt::format("x{}", lives));
 }
 
 void Hud::set_score(std::int64_t const score) { m_score->text.set_string(fmt::format("{}", score)); }
 
 void Hud::set_hi_score(std::int64_t const score) { m_hi_score->text.set_string(fmt::format("HI {}", score)); }
 
-void Hud::render(Shader& shader) const {
-	View::render(shader);
-	m_lives_icon.draw(shader);
+void Hud::set_weapon(std::shared_ptr<Texture const> texture) {
+	if (texture) { m_weapon_icon->sprite.set_size(texture->get_size()); }
+	m_weapon_icon->sprite.set_texture(std::move(texture));
+}
+
+void Hud::set_rounds(int const count) {
+	if (count < 0) {
+		m_round_count->text.set_string("--");
+	} else {
+		m_round_count->text.set_string(fmt::format("{}", count));
+	}
+}
+
+auto Hud::make_text(Services const& services) const -> std::unique_ptr<ui::Text> {
+	auto const& rgbas = m_styles->rgbas;
+	auto text = std::make_unique<ui::Text>(services);
+	text->text.set_height(TextHeight{60});
+	text->text.transform.position = m_layout->hud_area.centre();
+	text->text.tint = rgbas["grey"];
+	return text;
 }
 
 void Hud::create_background() {
@@ -66,45 +71,62 @@ void Hud::create_background() {
 }
 
 void Hud::create_score(Services const& services) {
-	auto const& rgbas = m_styles->rgbas;
-
-	auto make_text = [&] {
-		auto text = std::make_unique<ui::Text>(services);
-		text->text.set_height(TextHeight{60});
-		text->text.transform.position = m_layout->hud_area.centre();
-		text->text.tint = rgbas["grey"];
-		return text;
-	};
-
-	auto text = make_text();
+	auto text = make_text(services);
 	m_score = text.get();
 	text->text.set_string("9999999999");
 	m_text_bounds_size = text->text.get_bounds().size();
 	text->text.transform.position.y -= 0.5f * m_text_bounds_size.y;
 	set_score(0);
-
 	push(std::move(text));
 
-	text = make_text();
+	text = make_text(services);
 	m_hi_score = text.get();
 	text->text.transform.position.x = m_layout->hud_area.rb.x - 50.0f;
 	text->text.transform.position.y -= 0.5f * m_text_bounds_size.y;
-	text->text.set_align(bave::Text::Align::eLeft);
+	text->text.set_align(Text::Align::eLeft);
 	set_hi_score(0);
-
 	push(std::move(text));
 }
 
-void Hud::create_lives_icon(Services const& services) {
-	auto quad = m_lives_icon.get_shape();
-	quad.size = glm::vec2{20.0f};
+void Hud::create_lives(Services const& services) {
+	auto sprite = std::make_unique<ui::Sprite>();
+	m_lives_icon = sprite.get();
+	m_lives_icon->sprite.set_size(glm::vec2{20.0f});
 	auto const& resources = services.get<Resources>();
 	if (auto const texture = resources.get<Texture>("images/player_ship_icon.png")) {
-		quad.size = texture->get_size();
-		m_lives_icon.set_texture(texture);
+		m_lives_icon->sprite.set_texture(texture);
+		m_lives_icon->sprite.set_size(texture->get_size());
 	}
-	m_lives_icon.set_shape(quad);
-	m_lives_icon.transform.position = m_layout->hud_area.centre();
-	m_lives_icon.transform.position.x = m_layout->hud_area.lt.x + 100.0f;
+	auto position = m_layout->hud_area.centre();
+	position.x = m_layout->hud_area.lt.x + 100.0f;
+	m_lives_icon->set_position(position);
+	push(std::move(sprite));
+
+	auto text = make_text(services);
+	text->text.transform.position.y -= 0.5f * m_text_bounds_size.y;
+	text->text.transform.position.x = m_lives_icon->get_position().x + m_lives_icon->get_size().x;
+	text->text.set_align(Text::Align::eRight);
+	text->text.set_string("0");
+	m_lives_count = text.get();
+	push(std::move(text));
+}
+
+void Hud::create_weapon(Services const& services) {
+	auto sprite = std::make_unique<ui::Sprite>();
+	m_weapon_icon = sprite.get();
+	sprite->sprite.set_size(glm::vec2{50.0f});
+	auto position = m_lives_icon->get_position();
+	position.y -= 5.0f;
+	position.x = m_lives_count->get_position().x + 200.0f;
+	sprite->set_position(position);
+	push(std::move(sprite));
+
+	auto text = make_text(services);
+	m_round_count = text.get();
+	text->text.transform.position.x = position.x + m_weapon_icon->get_size().x;
+	text->text.transform.position.y -= 0.5f * m_text_bounds_size.y;
+	text->text.set_align(Text::Align::eRight);
+	text->text.set_string("--");
+	push(std::move(text));
 }
 } // namespace spaced

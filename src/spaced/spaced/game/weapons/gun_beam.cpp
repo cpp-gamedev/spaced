@@ -1,5 +1,6 @@
 #include <bave/graphics/sprite.hpp>
 #include <bave/imgui/im_text.hpp>
+#include <bave/services/resources.hpp>
 #include <bave/services/styles.hpp>
 #include <spaced/game/weapons/gun_beam.hpp>
 
@@ -9,12 +10,14 @@ using bave::im_text;
 using bave::NotNull;
 using bave::Ptr;
 using bave::Rect;
+using bave::Resources;
 using bave::Rgba;
 using bave::Seconds;
 using bave::Services;
 using bave::Shader;
 using bave::Sprite;
 using bave::Styles;
+using bave::Texture;
 
 namespace {
 class LaserCharge : public IWeaponRound {
@@ -109,6 +112,7 @@ class LaserCharge : public IWeaponRound {
 GunBeam::GunBeam(Services const& services) : Weapon(services, "GunBeam") {
 	auto const& rgbas = services.get<Styles>().rgbas;
 	config.beam_tint = rgbas.get_or("gun_beam", rgbas["grey"]);
+	m_icon = services.get<Resources>().get<Texture>("images/beam_round.png");
 }
 
 void GunBeam::tick(Seconds const dt) {

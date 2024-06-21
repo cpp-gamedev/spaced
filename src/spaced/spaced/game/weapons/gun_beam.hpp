@@ -15,6 +15,8 @@ class GunBeam final : public Weapon {
 	explicit GunBeam(bave::Services const& services);
 
 	[[nodiscard]] auto is_idle() const -> bool final { return m_fire_remain <= 0s; }
+	[[nodiscard]] auto get_icon() const -> std::shared_ptr<bave::Texture const> final { return m_icon; }
+
 	void tick(bave::Seconds dt) final;
 
 	Config config{};
@@ -22,6 +24,8 @@ class GunBeam final : public Weapon {
   private:
 	auto do_fire(glm::vec2 muzzle_position) -> std::unique_ptr<Round> final;
 	void do_inspect() final;
+
+	std::shared_ptr<bave::Texture const> m_icon{};
 
 	bave::Seconds m_fire_remain{};
 	bave::Seconds m_reload_remain{};
