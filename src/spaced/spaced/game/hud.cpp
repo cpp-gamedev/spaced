@@ -6,7 +6,7 @@
 #include <spaced/services/layout.hpp>
 
 namespace spaced {
-using bave::IDisplay;
+using bave::Display;
 using bave::Resources;
 using bave::Seconds;
 using bave::Services;
@@ -17,15 +17,14 @@ using bave::Texture;
 
 namespace ui = bave::ui;
 
-Hud::Hud(Services const& services)
-	: ui::View(services), m_display(&services.get<IDisplay>()), m_layout(&services.get<Layout>()), m_styles(&services.get<Styles>()) {
+Hud::Hud(Services const& services) : ui::View(services), m_layout(&services.get<Layout>()), m_styles(&services.get<Styles>()) {
 	create_background();
 	create_score(services);
 	create_lives(services);
 	create_weapon(services);
 
 	block_input_events = false;
-	render_view = m_display->get_world_view();
+	render_view = services.get<Display>().world.render_view;
 }
 
 void Hud::set_lives(int lives) {

@@ -26,7 +26,6 @@ class Hud : public bave::ui::View {
 	void create_lives(bave::Services const& services);
 	void create_weapon(bave::Services const& services);
 
-	bave::NotNull<bave::IDisplay const*> m_display;
 	bave::NotNull<Layout const*> m_layout;
 	bave::NotNull<bave::Styles const*> m_styles;
 	glm::vec2 m_text_bounds_size{};
