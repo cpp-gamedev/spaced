@@ -3,9 +3,9 @@
 #include <bave/services/resources.hpp>
 #include <bave/services/styles.hpp>
 #include <spaced/game/weapons/gun_beam.hpp>
+#include <spaced/services/layout.hpp>
 
 namespace spaced {
-using bave::IDisplay;
 using bave::im_text;
 using bave::NotNull;
 using bave::Ptr;
@@ -22,8 +22,8 @@ class LaserCharge : public IWeaponRound {
   public:
 	using Config = GunBeam::Config;
 
-	explicit LaserCharge(NotNull<IDisplay const*> display, NotNull<Config const*> config, glm::vec2 const muzzle_position)
-		: m_display(display), m_config(config), m_fire_remain(config->fire_duration) {
+	explicit LaserCharge(NotNull<Layout const*> layout, NotNull<Config const*> config, glm::vec2 const muzzle_position)
+		: m_layout(layout), m_config(config), m_fire_remain(config->fire_duration) {
 		m_ray.transform.position.y = muzzle_position.y;
 		m_ray.set_texture(m_config->beam_texture);
 	}
@@ -40,7 +40,7 @@ class LaserCharge : public IWeaponRound {
 
 		sort_entries(state.targets, state.muzzle_position);
 
-		auto const world_space = m_display->get_world_space();
+		auto const world_space = m_layout->world_space;
 		auto const left_x = state.muzzle_position.x;
 		auto right_x = 0.5f * world_space.x;
 		for (auto const& entry : m_entries) {
@@ -97,7 +97,7 @@ class LaserCharge : public IWeaponRound {
 		float distance{};
 	};
 
-	NotNull<IDisplay const*> m_display;
+	NotNull<Layout const*> m_layout;
 	NotNull<Config const*> m_config;
 
 	Sprite m_ray{};

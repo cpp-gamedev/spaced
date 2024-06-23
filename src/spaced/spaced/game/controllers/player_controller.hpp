@@ -1,11 +1,11 @@
 #pragma once
 #include <bave/core/ptr.hpp>
 #include <bave/input/gamepad.hpp>
-#include <bave/services/display.hpp>
 #include <bave/services/services.hpp>
 #include <spaced/game/controllers/follow_controller.hpp>
 #include <spaced/game/spring_arm.hpp>
 #include <spaced/services/gamepad_provider.hpp>
+#include <spaced/services/layout.hpp>
 
 namespace spaced {
 class PlayerController : public FollowController {
@@ -45,8 +45,8 @@ class PlayerController : public FollowController {
 	auto tick_y(bave::Seconds dt) -> float final;
 	void do_inspect() final;
 
-	bave::Ptr<bave::IDisplay const> m_display{};
-	bave::Ptr<IGamepadProvider const> m_gamepad_provider{};
+	bave::NotNull<Layout const*> m_layout;
+	bave::NotNull<IGamepadProvider const*> m_gamepad_provider;
 
 	Type m_type{};
 	float m_y{};

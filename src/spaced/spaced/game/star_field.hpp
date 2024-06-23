@@ -3,8 +3,8 @@
 #include <bave/core/time.hpp>
 #include <bave/graphics/instanced.hpp>
 #include <bave/graphics/sprite.hpp>
-#include <bave/services/display.hpp>
 #include <bave/services/services.hpp>
+#include <spaced/services/layout.hpp>
 
 namespace spaced {
 class StarField : public bave::IDrawable {
@@ -34,22 +34,23 @@ class StarField : public bave::IDrawable {
 
 	struct Field {
 		Config config{};
+		bave::Rect<> play_area{};
 		bave::Instanced<bave::Sprite> sprite{};
 
 		std::vector<Star> stars{};
 		bave::Seconds next_spawn{};
 
-		[[nodiscard]] auto spawn(glm::vec2 world_space) const -> Star;
+		[[nodiscard]] auto spawn() const -> Star;
 
-		void pre_warm(glm::vec2 world_space);
+		void pre_warm();
 
-		void tick(glm::vec2 world_space, bave::Seconds dt);
-		auto tick_stars(glm::vec2 world_space, bave::Seconds dt) -> bool;
-		void tick_spawn(glm::vec2 world_space, bave::Seconds dt);
+		void tick(bave::Seconds dt);
+		auto tick_stars(bave::Seconds dt) -> bool;
+		void tick_spawn(bave::Seconds dt);
 		void sync();
 	};
 
-	bave::NotNull<bave::IDisplay const*> m_display;
+	bave::NotNull<Layout const*> m_layout;
 
 	std::vector<Field> m_fields{};
 	bave::Seconds m_next_spawn{};
