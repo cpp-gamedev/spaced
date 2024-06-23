@@ -15,9 +15,7 @@
 namespace spaced {
 using bave::Action;
 using bave::App;
-using bave::AssetList;
 using bave::AssetManifest;
-using bave::AsyncExec;
 using bave::FocusChange;
 using bave::im_text;
 using bave::Key;

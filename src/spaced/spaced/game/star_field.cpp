@@ -24,7 +24,6 @@ void StarField::add_field(std::shared_ptr<Texture const> texture, Config const& 
 
 void StarField::tick(Seconds const dt) {
 	for (auto& field : m_fields) { field.tick(m_display->get_world_space(), dt); }
-	sync();
 }
 
 void StarField::draw(Shader& shader) const {
