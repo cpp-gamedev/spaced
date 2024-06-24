@@ -9,6 +9,7 @@ class GunKinetic final : public Weapon {
 	explicit GunKinetic(bave::Services const& services);
 
 	[[nodiscard]] auto is_idle() const -> bool final { return m_reload_remain <= 0s; }
+	[[nodiscard]] auto get_icon() const -> std::shared_ptr<bave::Texture const> final { return projectile_config.texture; }
 
 	void tick(bave::Seconds dt) final;
 

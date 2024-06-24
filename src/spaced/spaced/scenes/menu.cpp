@@ -1,4 +1,3 @@
-#include <bave/assets/asset_list.hpp>
 #include <bave/services/resources.hpp>
 #include <bave/services/scene_switcher.hpp>
 #include <bave/ui/button.hpp>
@@ -12,8 +11,7 @@
 
 namespace spaced {
 using bave::App;
-using bave::AssetList;
-using bave::AsyncExec;
+using bave::AssetManifest;
 using bave::Seconds;
 using bave::Services;
 using bave::TextHeight;
@@ -22,12 +20,10 @@ namespace ui = bave::ui;
 
 MenuScene::MenuScene(App& app, Services const& services) : Scene(app, services, "Home") {}
 
-auto MenuScene::build_load_stages() -> std::vector<AsyncExec::Stage> {
-	auto ret = std::vector<AsyncExec::Stage>{};
-	auto asset_list = AssetList{make_loader(), get_services()};
-	asset_list.add_audio_clip("music/menu.mp3");
-	ret.push_back(asset_list.build_load_stage());
-	return ret;
+auto MenuScene::get_asset_manifest() -> AssetManifest {
+	return AssetManifest{
+		.audio_clips = {"music/menu.mp3"},
+	};
 }
 
 void MenuScene::on_loaded() {

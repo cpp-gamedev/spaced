@@ -7,6 +7,7 @@
 #include <bave/services/styles.hpp>
 #include <spaced/prefs.hpp>
 #include <spaced/scenes/menu.hpp>
+#include <spaced/services/game_signals.hpp>
 #include <spaced/services/gamepad_provider.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/serializer.hpp>
@@ -17,10 +18,10 @@
 namespace spaced {
 namespace {
 using bave::App;
+using bave::Display;
 using bave::GameDriver;
 using bave::Gamepad;
 using bave::IAudio;
-using bave::IDisplay;
 using bave::NotNull;
 using bave::Persistor;
 using bave::Rect;
@@ -108,17 +109,19 @@ void Spaced::create_services() {
 	auto stats = std::make_unique<PersistentStats>(&get_app());
 	++stats->run_count;
 	m_services.bind<Stats>(std::move(stats));
+
+	m_services.bind<GameSignals>(std::make_unique<GameSignals>());
 }
 
 void Spaced::set_layout() {
 	static constexpr auto world_space_v = glm::vec2{1920.0f, 1080.0f};
 
-	auto layout = std::make_unique<Layout>();
+	auto layout = std::make_unique<Layout>(&get_app().get_render_device());
 	m_layout = layout.get();
-	auto& display = m_services.get<IDisplay>();
-	display.set_world_space(display.get_viewport_scaler().match_width(world_space_v));
+	auto& world_space = m_services.get<Display>().world;
+	world_space.render_view.viewport = world_space.get_viewport_scaler().match_width(world_space_v);
 
-	layout->world_space = display.get_world_space();
+	layout->world_space = world_space.get_size();
 	layout->player_x = -0.5f * layout->world_space.x + 0.2f * layout->world_space.x;
 	auto const hud_size = glm::vec2{layout->world_space.x, 100.0f};
 	auto const hud_origin = glm::vec2{0.0f, 0.5f * (layout->world_space.y - hud_size.y)};

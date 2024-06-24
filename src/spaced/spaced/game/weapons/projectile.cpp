@@ -1,7 +1,6 @@
 #include <spaced/game/weapons/projectile.hpp>
 
 namespace spaced {
-using bave::IDisplay;
 using bave::NotNull;
 using bave::Rect;
 using bave::Seconds;
@@ -15,7 +14,7 @@ namespace {
 }
 } // namespace
 
-Projectile::Projectile(NotNull<IDisplay const*> display, Config config, glm::vec2 const muzzle_position) : m_display(display), m_config(std::move(config)) {
+Projectile::Projectile(NotNull<Layout const*> layout, Config config, glm::vec2 const muzzle_position) : m_layout(layout), m_config(std::move(config)) {
 	m_sprite.set_texture(std::move(m_config.texture));
 	m_sprite.set_auto_size(m_config.size);
 	m_sprite.tint = m_config.tint;
@@ -38,7 +37,7 @@ void Projectile::tick(State const& state, Seconds const dt) {
 		}
 	}
 
-	if (m_sprite.transform.position.x > 0.5f * (m_display->get_world_space().x + m_config.size.x)) { m_destroyed = true; }
+	if (m_sprite.transform.position.x > 0.5f * (m_layout->world_space.x + m_config.size.x)) { m_destroyed = true; }
 }
 
 void Projectile::draw(Shader& shader) const { m_sprite.draw(shader); }

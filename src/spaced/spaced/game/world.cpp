@@ -1,7 +1,9 @@
 #include <bave/imgui/im_text.hpp>
 #include <bave/services/resources.hpp>
+#include <bave/services/styles.hpp>
 #include <spaced/game/enemies/creep_factory.hpp>
 #include <spaced/game/world.hpp>
+#include <spaced/services/layout.hpp>
 #include <spaced/services/stats.hpp>
 
 #include <bave/core/random.hpp>
@@ -17,21 +19,34 @@ using bave::Resources;
 using bave::Seconds;
 using bave::Services;
 using bave::Shader;
+using bave::Styles;
 using bave::Texture;
 
 World::World(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> scorer)
 	: m_services(services), m_resources(&services->get<Resources>()), m_audio(&services->get<IAudio>()), m_stats(&services->get<Stats>()), m_scorer(scorer),
-	  m_background(*services) {
+	  m_star_field(*services) {
 	m_enemy_factories["CreepFactory"] = std::make_unique<CreepFactory>(services);
 
-	m_background.set_texture(services->get<Resources>().get<Texture>("images/background.png"));
-	m_background.set_tile_size(glm::vec2{300.0f});
-	m_background.x_speed = 50.0f;
+	auto const& resources = services->get<Resources>();
+
+	auto const play_area = services->get<Layout>().play_area;
+	auto const& rgbas = services->get<Styles>().rgbas;
+	auto quad = bave::Quad{.size = play_area.size()};
+	auto geometry = quad.to_geometry();
+	geometry.vertex_array.vertices[0].rgba = geometry.vertex_array.vertices[1].rgba = rgbas["bg_bottom"].to_vec4();
+	geometry.vertex_array.vertices[2].rgba = geometry.vertex_array.vertices[3].rgba = rgbas["bg_top"].to_vec4();
+	m_background.set_geometry(std::move(geometry));
+	m_background.transform.position = play_area.centre();
+
+	auto const config = StarField::Config{.spawn_rate = 0.2s};
+	m_star_field.add_field(resources.get<Texture>("images/star_blue.png"), config);
+	m_star_field.add_field(resources.get<Texture>("images/star_red.png"), config);
+	m_star_field.add_field(resources.get<Texture>("images/star_yellow.png"), config);
 }
 
 void World::tick(Seconds const dt, bool const in_play) {
 	if (in_play) {
-		m_background.tick(dt);
+		m_star_field.tick(dt);
 		for (auto& [_, factory] : m_enemy_factories) {
 			if (auto enemy = factory->tick(dt)) { m_active_enemies.push_back(std::move(enemy)); }
 		}
@@ -58,6 +73,7 @@ void World::tick(Seconds const dt, bool const in_play) {
 
 void World::draw(Shader& shader) const {
 	m_background.draw(shader);
+	m_star_field.draw(shader);
 	for (auto const& enemy : m_active_enemies) { enemy->draw(shader); }
 	for (auto const& emitter : m_enemy_death_emitters) { emitter.draw(shader); }
 	for (auto const& powerup : m_active_powerups) { powerup->draw(shader); }

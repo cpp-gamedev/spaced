@@ -6,7 +6,9 @@
     "milk": "#e5cdaeff",
     "ice": "#d6dbe1e1",
     "orange": "#f75c03ff",
-    "gun_beam": "#bc96e6ff"
+    "gun_beam": "#bc96e6ff",
+    "bg_top": "#10020eff",
+    "bg_bottom": "#040003ff"
   },
   "buttons": {
     "default": {

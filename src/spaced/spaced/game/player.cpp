@@ -22,7 +22,7 @@ using bave::Shader;
 using bave::Texture;
 
 Player::Player(Services const& services, std::unique_ptr<IController> controller)
-	: m_services(&services), m_stats(&services.get<Stats>()), m_controller(std::move(controller)), m_shield(services) {
+	: m_services(&services), m_stats(&services.get<Stats>()), m_controller(std::move(controller)), m_shield(services), m_arsenal(services) {
 	auto const& layout = services.get<Layout>();
 	ship.transform.position.x = layout.player_x;
 

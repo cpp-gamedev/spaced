@@ -15,9 +15,7 @@
 namespace spaced {
 using bave::Action;
 using bave::App;
-using bave::AssetList;
 using bave::AssetManifest;
-using bave::AsyncExec;
 using bave::FocusChange;
 using bave::im_text;
 using bave::Key;
@@ -34,33 +32,6 @@ using bave::Styles;
 namespace ui = bave::ui;
 
 namespace {
-auto get_manifest() -> AssetManifest {
-	return AssetManifest{
-		.textures =
-			{
-				"images/player_ship.png",
-				"images/player_ship_icon.png",
-				"images/shield.png",
-				"images/creep_ship.png",
-				"images/background.png",
-				"images/kinetic_projectile.png",
-			},
-		.audio_clips =
-			{
-				"sfx/swish.wav",
-				"sfx/kinetic_fire.wav",
-				"sfx/beam_fire.wav",
-				"music/game.mp3",
-			},
-		.particle_emitters =
-			{
-				"particles/exhaust.json",
-				"particles/explode.json",
-				"particles/powerup.json",
-			},
-	};
-}
-
 [[nodiscard]] auto make_player_controller(Services const& services) {
 	auto ret = std::make_unique<PlayerController>(services);
 	if constexpr (bave::platform_v == bave::Platform::eAndroid) { ret->set_type(PlayerController::Type::eTouch); }
@@ -79,29 +50,64 @@ auto get_manifest() -> AssetManifest {
 
 GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_save(&app) { clear_colour = services.get<Styles>().rgbas["mocha"]; }
 
-auto GameScene::build_load_stages() -> std::vector<AsyncExec::Stage> {
-	auto ret = std::vector<AsyncExec::Stage>{};
-	auto asset_list = AssetList{make_loader(), get_services()};
-	asset_list.add_manifest(get_manifest());
-	ret.push_back(asset_list.build_load_stage());
-	return ret;
+auto GameScene::get_asset_manifest() -> AssetManifest {
+	return AssetManifest{
+		.textures =
+			{
+				"images/player_ship.png",
+				"images/player_ship_icon.png",
+				"images/shield.png",
+				"images/creep_ship.png",
+				"images/background.png",
+				"images/star_blue.png",
+				"images/star_red.png",
+				"images/star_yellow.png",
+				"images/kinetic_projectile.png",
+				"images/beam_round.png",
+			},
+		.audio_clips =
+			{
+				"sfx/swish.wav",
+				"sfx/kinetic_fire.wav",
+				"sfx/beam_fire.wav",
+				"music/game.mp3",
+			},
+		.particle_emitters =
+			{
+				"particles/exhaust.json",
+				"particles/explode.json",
+				"particles/powerup.json",
+			},
+	};
 }
 
 void GameScene::on_loaded() {
 	auto const& services = get_services();
-	m_world.emplace(&services, this);
-
-	m_player.emplace(services, make_player_controller(services));
 
 	auto hud = std::make_unique<Hud>(services);
 	m_hud = hud.get();
+	push_view(std::move(hud));
+
+	start_play();
+
+	switch_track("music/game.mp3");
+}
+
+void GameScene::start_play() {
+	auto const& services = get_services();
+
+	m_world.emplace(&services, this);
+	m_player.emplace(services, make_player_controller(services));
+
+	m_score = 0;
+	m_spare_lives = 2;
+	m_hud->set_score(m_score);
 	m_hud->set_hi_score(m_save.get_hi_score());
 	m_hud->set_lives(m_spare_lives);
-	push_view(std::move(hud));
 
 	++services.get<Stats>().game.play_count;
 
-	switch_track("music/game.mp3");
+	m_game_over_dialog_pushed = false;
 }
 
 void GameScene::on_focus(FocusChange const& focus_change) { m_player->on_focus(focus_change); }
@@ -123,7 +129,7 @@ void GameScene::tick(Seconds const dt) {
 	auto const player_state = Player::State{.targets = m_world->get_targets(), .powerups = m_world->get_powerups()};
 	auto const player_died = m_player->tick(player_state, dt);
 
-	if (player_died) { m_hud->on_death(); }
+	if (player_died) { m_hud->set_lives(m_spare_lives - 1); }
 
 	if (m_player->is_idle()) { on_player_death(); }
 
@@ -163,7 +169,7 @@ void GameScene::on_game_over() {
 	auto dci = ui::DialogCreateInfo{
 		.size = {600.0f, 200.0f},
 		.content_text = "GAME OVER",
-		.main_button = {.text = "RESTART", .callback = [this] { get_switcher().switch_to<GameScene>(); }},
+		.main_button = {.text = "RESTART", .callback = [this] { start_play(); }},
 		.second_button = {.text = "QUIT", .callback = [this] { get_app().shutdown(); }},
 	};
 
@@ -207,6 +213,8 @@ void GameScene::inspect(Seconds const dt, Seconds const frame_time) {
 			ImGui::Checkbox("fps lock", &m_debug.fps.lock);
 
 			ImGui::Separator();
+			if (ImGui::Button("restart")) { start_play(); }
+			ImGui::SameLine();
 			if (ImGui::Button("reload scene")) { get_switcher().switch_to<GameScene>(); }
 		}
 		ImGui::End();

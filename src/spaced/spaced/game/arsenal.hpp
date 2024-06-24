@@ -3,6 +3,7 @@
 
 namespace spaced {
 struct Stats;
+struct SigWeaponChanged;
 
 // Arsenal models a main/primary weapon, and an possible special weapon.
 // Weapons only switch when they are idle.
@@ -26,8 +27,10 @@ class Arsenal {
 	void fire_weapon(glm::vec2 muzzle_position);
 	void tick_rounds(IWeaponRound::State const& round_state, bave::Seconds dt);
 
-	GunKinetic m_primary; // main weapon
 	bave::NotNull<Stats*> m_stats;
+	bave::NotNull<SigWeaponChanged*> m_weapon_changed_signal;
+
+	GunKinetic m_primary;				 // main weapon
 	std::unique_ptr<Weapon> m_special{}; // special weapon
 	std::unique_ptr<Weapon> m_next{};	 // next special weapon (on standby until current weapon is idle)
 	std::vector<std::unique_ptr<Weapon::Round>> m_rounds{};

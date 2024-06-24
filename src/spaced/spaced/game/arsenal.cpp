@@ -1,4 +1,5 @@
 #include <spaced/game/arsenal.hpp>
+#include <spaced/services/game_signals.hpp>
 #include <spaced/services/stats.hpp>
 
 namespace spaced {
@@ -6,7 +7,10 @@ using bave::Seconds;
 using bave::Services;
 using bave::Shader;
 
-Arsenal::Arsenal(Services const& services) : m_primary(services), m_stats(&services.get<Stats>()) {}
+Arsenal::Arsenal(Services const& services)
+	: m_stats(&services.get<Stats>()), m_weapon_changed_signal(&services.get<GameSignals>().weapon_changed), m_primary(services) {
+	m_weapon_changed_signal->dispatch(get_weapon());
+}
 
 auto Arsenal::get_weapon() const -> Weapon const& {
 	if (m_special) { return *m_special; }
@@ -34,13 +38,19 @@ void Arsenal::tick_weapons(Seconds const dt) {
 	if (m_special) {
 		m_special->tick(dt);
 		// if the special weapon has no more rounds and is idle, reset it.
-		if (m_special->get_rounds_remaining() == 0 && m_special->is_idle()) { m_special.reset(); }
+		if (m_special->get_rounds_remaining() == 0 && m_special->is_idle()) {
+			m_special.reset();
+			m_weapon_changed_signal->dispatch(get_weapon());
+		}
 	}
 }
 
 void Arsenal::check_switch_weapon() {
 	// if there is a next weapon on standby and the current weapon is idle, switch to the next weapon.
-	if (m_next && get_weapon().is_idle()) { m_special = std::move(m_next); }
+	if (m_next && get_weapon().is_idle()) {
+		m_special = std::move(m_next);
+		m_weapon_changed_signal->dispatch(get_weapon());
+	}
 }
 
 void Arsenal::fire_weapon(glm::vec2 const muzzle_position) {

@@ -7,7 +7,7 @@ class MenuScene : public bave::Scene {
 	explicit MenuScene(bave::App& app, bave::Services const& services);
 
   private:
-	auto build_load_stages() -> std::vector<bave::AsyncExec::Stage> final;
+	auto get_asset_manifest() -> bave::AssetManifest final;
 	void on_loaded() final;
 
 	void create_ui();

@@ -37,6 +37,7 @@ class Player : public bave::IDrawable {
 	[[nodiscard]] auto get_controller() const -> IController const& { return *m_controller; }
 
 	void set_special_weapon(std::unique_ptr<Weapon> weapon) { m_arsenal.set_special(std::move(weapon)); }
+	[[nodiscard]] auto get_weapon() const -> Weapon const& { return m_arsenal.get_weapon(); }
 
 	void set_shield(bave::Seconds ttl);
 
@@ -67,7 +68,7 @@ class Player : public bave::IDrawable {
 	bave::ParticleEmitter m_death_source{};
 	std::optional<bave::ParticleEmitter> m_death{};
 
-	Arsenal m_arsenal{*m_services};
+	Arsenal m_arsenal;
 	Health m_health{};
 };
 } // namespace spaced

@@ -1,8 +1,8 @@
 #pragma once
 #include <bave/graphics/sprite.hpp>
-#include <bave/services/display.hpp>
 #include <spaced/game/instigator.hpp>
 #include <spaced/game/weapon_round.hpp>
+#include <spaced/services/layout.hpp>
 
 namespace spaced {
 class Projectile : public IWeaponRound {
@@ -17,14 +17,14 @@ class Projectile : public IWeaponRound {
 		Instigator instigator{Instigator::ePlayer};
 	};
 
-	explicit Projectile(bave::NotNull<bave::IDisplay const*> display, Config config, glm::vec2 muzzle_position);
+	explicit Projectile(bave::NotNull<Layout const*> layout, Config config, glm::vec2 muzzle_position);
 
 	void tick(State const& state, bave::Seconds dt) override;
 	[[nodiscard]] auto is_destroyed() const -> bool override { return m_destroyed; }
 	void draw(bave::Shader& shader) const override;
 
   protected:
-	bave::NotNull<bave::IDisplay const*> m_display;
+	bave::NotNull<Layout const*> m_layout;
 	Config m_config{};
 
 	bave::Sprite m_sprite{};
