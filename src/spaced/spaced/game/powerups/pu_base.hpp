@@ -20,7 +20,7 @@ class PUBase : public IPowerup {
 	[[nodiscard]] auto is_destroyed() const -> bool final { return m_destroyed; }
 
 	float speed{300.0f};
-	bave::RoundedQuadShape shape{};
+	bave::CircleShape shape{};
 	bave::ParticleEmitter emitter{};
 
   protected:

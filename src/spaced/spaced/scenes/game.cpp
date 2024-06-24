@@ -106,6 +106,8 @@ void GameScene::start_play() {
 	m_hud->set_lives(m_spare_lives);
 
 	++services.get<Stats>().game.play_count;
+
+	m_game_over_dialog_pushed = false;
 }
 
 void GameScene::on_focus(FocusChange const& focus_change) { m_player->on_focus(focus_change); }
