@@ -3,6 +3,7 @@
 #include <bave/services/styles.hpp>
 #include <spaced/game/enemies/creep_factory.hpp>
 #include <spaced/game/world.hpp>
+#include <spaced/services/game_signals.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/stats.hpp>
 
@@ -22,9 +23,9 @@ using bave::Shader;
 using bave::Styles;
 using bave::Texture;
 
-World::World(bave::NotNull<Services const*> services, bave::NotNull<IScorer*> scorer)
-	: m_services(services), m_resources(&services->get<Resources>()), m_audio(&services->get<IAudio>()), m_stats(&services->get<Stats>()), m_scorer(scorer),
-	  m_star_field(*services) {
+World::World(bave::NotNull<Services const*> services)
+	: m_services(services), m_resources(&services->get<Resources>()), m_audio(&services->get<IAudio>()), m_stats(&services->get<Stats>()),
+	  m_on_player_scored(&services->get<GameSignals>().player_scored), m_star_field(*services) {
 	m_enemy_factories["CreepFactory"] = std::make_unique<CreepFactory>(services);
 
 	auto const& resources = services->get<Resources>();
@@ -89,7 +90,7 @@ void World::on_death(Enemy const& enemy, bool const add_score) {
 	m_audio->play_any_sfx(enemy.death_sfx);
 
 	if (add_score) {
-		m_scorer->add_score(enemy.points);
+		m_on_player_scored->dispatch(enemy.points);
 		++m_stats->player.enemies_poofed;
 
 		// temp

@@ -10,6 +10,7 @@
 #include <spaced/game/controllers/player_controller.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/menu.hpp>
+#include <spaced/services/game_signals.hpp>
 #include <spaced/services/stats.hpp>
 
 namespace spaced {
@@ -48,7 +49,14 @@ namespace {
 }
 } // namespace
 
-GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_save(&app) { clear_colour = services.get<Styles>().rgbas["mocha"]; }
+GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_save(&app) {
+	clear_colour = services.get<Styles>().rgbas["mocha"];
+	m_on_player_scored = services.get<GameSignals>().player_scored.connect([this](std::int64_t const points) {
+		m_score += points;
+		m_hud->set_score(m_score);
+		update_hi_score();
+	});
+}
 
 auto GameScene::get_asset_manifest() -> AssetManifest {
 	return AssetManifest{
@@ -96,7 +104,7 @@ void GameScene::on_loaded() {
 void GameScene::start_play() {
 	auto const& services = get_services();
 
-	m_world.emplace(&services, this);
+	m_world.emplace(&services);
 	m_player.emplace(services, make_player_controller(services));
 
 	m_score = 0;
@@ -139,12 +147,6 @@ void GameScene::tick(Seconds const dt) {
 void GameScene::render(Shader& shader) const {
 	m_world->draw(shader);
 	m_player->draw(shader);
-}
-
-void GameScene::add_score(std::int64_t const score) {
-	m_score += score;
-	m_hud->set_score(m_score);
-	update_hi_score();
 }
 
 void GameScene::on_player_death() {
@@ -201,7 +203,7 @@ void GameScene::inspect(Seconds const dt, Seconds const frame_time) {
 			}
 
 			ImGui::Separator();
-			im_text("score: {}", get_score());
+			im_text("score: {}", m_score);
 
 			ImGui::Separator();
 			if (ImGui::Button("end game")) { m_player->on_death(dt); }

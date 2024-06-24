@@ -5,9 +5,11 @@
 
 namespace spaced {
 struct SigWeaponChanged : Signal<void(Weapon)> {};
+struct SigPlayerScored : Signal<void(std::int64_t)> {};
 
 class GameSignals : public bave::IService {
   public:
 	SigWeaponChanged weapon_changed{};
+	SigPlayerScored player_scored{};
 };
 } // namespace spaced

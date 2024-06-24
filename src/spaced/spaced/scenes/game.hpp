@@ -3,12 +3,12 @@
 #include <spaced/game/game_save.hpp>
 #include <spaced/game/hud.hpp>
 #include <spaced/game/player.hpp>
-#include <spaced/game/scorer.hpp>
 #include <spaced/game/target_provider.hpp>
 #include <spaced/game/world.hpp>
+#include <spaced/signal.hpp>
 
 namespace spaced {
-class GameScene : public bave::Scene, public IScorer {
+class GameScene : public bave::Scene {
   public:
 	GameScene(bave::App& app, bave::Services const& services);
 
@@ -24,9 +24,6 @@ class GameScene : public bave::Scene, public IScorer {
 	void tick(bave::Seconds dt) final;
 	void render(bave::Shader& shader) const final;
 
-	[[nodiscard]] auto get_score() const -> std::int64_t final { return m_score; }
-	void add_score(std::int64_t score) final;
-
 	void start_play();
 
 	void on_player_death();
@@ -38,6 +35,8 @@ class GameScene : public bave::Scene, public IScorer {
 	void inspect(bave::Seconds dt, bave::Seconds frame_time);
 
 	void debug_controller_type();
+
+	SignalHandle m_on_player_scored{};
 
 	GameSave m_save;
 	std::optional<World> m_world{};
