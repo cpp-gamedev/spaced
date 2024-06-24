@@ -7,6 +7,7 @@
 #include <bave/services/styles.hpp>
 #include <spaced/prefs.hpp>
 #include <spaced/scenes/menu.hpp>
+#include <spaced/services/game_signals.hpp>
 #include <spaced/services/gamepad_provider.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/serializer.hpp>
@@ -108,6 +109,8 @@ void Spaced::create_services() {
 	auto stats = std::make_unique<PersistentStats>(&get_app());
 	++stats->run_count;
 	m_services.bind<Stats>(std::move(stats));
+
+	m_services.bind<GameSignals>(std::make_unique<GameSignals>());
 }
 
 void Spaced::set_layout() {

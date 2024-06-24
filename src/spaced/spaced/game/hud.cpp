@@ -3,6 +3,7 @@
 #include <bave/services/styles.hpp>
 #include <bave/ui/button.hpp>
 #include <spaced/game/hud.hpp>
+#include <spaced/services/game_signals.hpp>
 #include <spaced/services/layout.hpp>
 
 namespace spaced {
@@ -25,6 +26,8 @@ Hud::Hud(Services const& services) : ui::View(services), m_layout(&services.get<
 
 	block_input_events = false;
 	render_view = services.get<Display>().world.render_view;
+
+	m_on_weapon_changed = services.get<GameSignals>().weapon_changed.connect([this](Weapon const& weapon) { set_weapon(weapon.get_icon()); });
 }
 
 void Hud::set_lives(int lives) {
@@ -39,14 +42,6 @@ void Hud::set_hi_score(std::int64_t const score) { m_hi_score->text.set_string(f
 void Hud::set_weapon(std::shared_ptr<Texture const> texture) {
 	if (texture) { m_weapon_icon->sprite.set_size(texture->get_size()); }
 	m_weapon_icon->sprite.set_texture(std::move(texture));
-}
-
-void Hud::set_rounds(int const count) {
-	if (count < 0) {
-		m_round_count->text.set_string("--");
-	} else {
-		m_round_count->text.set_string(fmt::format("{}", count));
-	}
 }
 
 auto Hud::make_text(Services const& services) const -> std::unique_ptr<ui::Text> {
@@ -109,7 +104,7 @@ void Hud::create_lives(Services const& services) {
 	push(std::move(text));
 }
 
-void Hud::create_weapon(Services const& services) {
+void Hud::create_weapon(Services const& /*services*/) {
 	auto sprite = std::make_unique<ui::Sprite>();
 	m_weapon_icon = sprite.get();
 	sprite->sprite.set_size(glm::vec2{50.0f});
@@ -118,13 +113,5 @@ void Hud::create_weapon(Services const& services) {
 	position.x = m_lives_count->get_position().x + 200.0f;
 	sprite->set_position(position);
 	push(std::move(sprite));
-
-	auto text = make_text(services);
-	m_round_count = text.get();
-	text->text.transform.position.x = position.x + m_weapon_icon->get_size().x;
-	text->text.transform.position.y -= 0.5f * m_text_bounds_size.y;
-	text->text.set_align(Text::Align::eRight);
-	text->text.set_string("--");
-	push(std::move(text));
 }
 } // namespace spaced

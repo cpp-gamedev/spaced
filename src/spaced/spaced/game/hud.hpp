@@ -4,6 +4,7 @@
 #include <bave/ui/sprite.hpp>
 #include <bave/ui/text.hpp>
 #include <bave/ui/view.hpp>
+#include <spaced/signal.hpp>
 
 namespace spaced {
 struct Layout;
@@ -16,7 +17,6 @@ class Hud : public bave::ui::View {
 	void set_score(std::int64_t score);
 	void set_hi_score(std::int64_t score);
 	void set_weapon(std::shared_ptr<bave::Texture const> texture);
-	void set_rounds(int count);
 
   private:
 	[[nodiscard]] auto make_text(bave::Services const& services) const -> std::unique_ptr<bave::ui::Text>;
@@ -30,6 +30,8 @@ class Hud : public bave::ui::View {
 	bave::NotNull<bave::Styles const*> m_styles;
 	glm::vec2 m_text_bounds_size{};
 
+	SignalHandle m_on_weapon_changed{};
+
 	bave::Ptr<bave::ui::OutlineQuad> m_background{};
 	bave::Ptr<bave::ui::Text> m_score{};
 	bave::Ptr<bave::ui::Text> m_hi_score{};
@@ -38,6 +40,5 @@ class Hud : public bave::ui::View {
 	bave::Ptr<bave::ui::Text> m_lives_count{};
 
 	bave::Ptr<bave::ui::Sprite> m_weapon_icon{};
-	bave::Ptr<bave::ui::Text> m_round_count{};
 };
 } // namespace spaced

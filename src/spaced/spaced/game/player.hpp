@@ -68,7 +68,7 @@ class Player : public bave::IDrawable {
 	bave::ParticleEmitter m_death_source{};
 	std::optional<bave::ParticleEmitter> m_death{};
 
-	Arsenal m_arsenal{*m_services};
+	Arsenal m_arsenal;
 	Health m_health{};
 };
 } // namespace spaced

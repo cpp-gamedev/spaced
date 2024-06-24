@@ -128,9 +128,6 @@ void GameScene::tick(Seconds const dt) {
 	auto const player_died = m_player->tick(player_state, dt);
 
 	if (player_died) { m_hud->set_lives(m_spare_lives - 1); }
-	auto const& weapon = m_player->get_weapon();
-	m_hud->set_weapon(weapon.get_icon());
-	m_hud->set_rounds(weapon.get_rounds_remaining());
 
 	if (m_player->is_idle()) { on_player_death(); }
 
