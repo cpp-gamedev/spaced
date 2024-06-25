@@ -15,7 +15,11 @@ struct SigPlayerScored;
 
 class World : public ITargetProvider {
   public:
-	explicit World(bave::NotNull<bave::Services const*> services);
+	struct CreateInfo {
+		float starfield_density{1.0f};
+	};
+
+	explicit World(bave::NotNull<bave::Services const*> services, CreateInfo const& create_info);
 
 	[[nodiscard]] auto get_targets() const -> std::span<bave::NotNull<IDamageable*> const> final { return m_targets; }
 	[[nodiscard]] auto get_powerups() const -> std::span<bave::NotNull<IPowerup*> const> { return m_powerups; }

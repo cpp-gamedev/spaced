@@ -8,6 +8,7 @@
 #include <bave/ui/dialog.hpp>
 #include <spaced/game/controllers/auto_controller.hpp>
 #include <spaced/game/controllers/player_controller.hpp>
+#include <spaced/prefs.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/menu.hpp>
 #include <spaced/services/game_signals.hpp>
@@ -56,6 +57,9 @@ GameScene::GameScene(App& app, Services const& services) : Scene(app, services, 
 		m_hud->set_score(m_score);
 		update_hi_score();
 	});
+
+	auto const prefs = Prefs::load(app);
+	m_wci.starfield_density = prefs.starfield_density;
 }
 
 auto GameScene::get_asset_manifest() -> AssetManifest {
@@ -104,7 +108,7 @@ void GameScene::on_loaded() {
 void GameScene::start_play() {
 	auto const& services = get_services();
 
-	m_world.emplace(&services);
+	m_world.emplace(&services, m_wci);
 	m_player.emplace(services, make_player_controller(services));
 
 	m_score = 0;

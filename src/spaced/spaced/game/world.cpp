@@ -23,7 +23,11 @@ using bave::Shader;
 using bave::Styles;
 using bave::Texture;
 
-World::World(bave::NotNull<Services const*> services)
+namespace {
+[[nodiscard]] constexpr auto to_spawn_rate(float const starfield_density) { return Seconds{std::lerp(2.0f, 0.2f, starfield_density)}; }
+} // namespace
+
+World::World(bave::NotNull<Services const*> services, CreateInfo const& create_info)
 	: m_services(services), m_resources(&services->get<Resources>()), m_audio(&services->get<IAudio>()), m_stats(&services->get<Stats>()),
 	  m_on_player_scored(&services->get<GameSignals>().player_scored), m_star_field(*services) {
 	m_enemy_factories["CreepFactory"] = std::make_unique<CreepFactory>(services);
@@ -39,7 +43,7 @@ World::World(bave::NotNull<Services const*> services)
 	m_background.set_geometry(std::move(geometry));
 	m_background.transform.position = play_area.centre();
 
-	auto const config = StarField::Config{.spawn_rate = 0.2s};
+	auto const config = StarField::Config{.spawn_rate = to_spawn_rate(create_info.starfield_density)};
 	m_star_field.add_field(resources.get<Texture>("images/star_blue.png"), config);
 	m_star_field.add_field(resources.get<Texture>("images/star_red.png"), config);
 	m_star_field.add_field(resources.get<Texture>("images/star_yellow.png"), config);

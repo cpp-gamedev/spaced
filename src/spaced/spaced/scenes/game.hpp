@@ -39,6 +39,7 @@ class GameScene : public bave::Scene {
 	SignalHandle m_on_player_scored{};
 
 	GameSave m_save;
+	World::CreateInfo m_wci{};
 	std::optional<World> m_world{};
 	std::optional<Player> m_player{};
 	int m_spare_lives{2};
