@@ -27,8 +27,8 @@ Enemy::Enemy(Services const& services, std::string_view const type) : m_layout(&
 }
 
 auto Enemy::get_bounds() const -> bave::Rect<> {
-	if (hitbox) { return Rect<>::from_size(*hitbox, sprite.transform.position); }
-	return sprite.get_bounds();
+	if (m_hitbox) { return Rect<>::from_size(*m_hitbox, m_sprite.transform.position); }
+	return m_sprite.get_bounds();
 }
 
 auto Enemy::take_damage(float const damage) -> bool {
@@ -43,14 +43,14 @@ void Enemy::force_death() {
 }
 
 void Enemy::update_health_bar() {
-	m_health_bar.position = sprite.transform.position;
-	m_health_bar.position.y += 0.5f * sprite.get_shape().size.y + 20.0f;
-	m_health_bar.size = {sprite.get_shape().size.x, 10.0f};
+	m_health_bar.position = m_sprite.transform.position;
+	m_health_bar.position.y += 0.5f * m_sprite.get_shape().size.y + 20.0f;
+	m_health_bar.size = {m_sprite.get_shape().size.x, 10.0f};
 	m_health_bar.set_progress(health.get_hit_points() / health.get_total_hit_points());
 }
 
 void Enemy::draw(Shader& shader) const {
-	sprite.draw(shader);
+	m_sprite.draw(shader);
 	m_health_bar.draw(shader);
 }
 
@@ -58,9 +58,9 @@ void Enemy::setup(glm::vec2 max_size, float y_position) {
 	auto rounded_quad = RoundedQuad{};
 	rounded_quad.size = max_size;
 	rounded_quad.corner_radius = 0.2f * max_size.x;
-	sprite.set_shape(rounded_quad);
-	sprite.transform.position.x = 0.5f * (get_layout().world_space.x + rounded_quad.size.x);
-	sprite.transform.position.y = y_position;
+	m_sprite.set_shape(rounded_quad);
+	m_sprite.transform.position.x = 0.5f * (get_layout().world_space.x + rounded_quad.size.x);
+	m_sprite.transform.position.y = y_position;
 }
 
 void Enemy::do_inspect() {

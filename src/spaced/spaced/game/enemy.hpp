@@ -15,6 +15,8 @@ class Enemy : public IDamageable, public bave::IDrawable {
 
 	[[nodiscard]] auto get_instigator() const -> Instigator final { return Instigator::eEnemy; }
 	[[nodiscard]] auto get_bounds() const -> bave::Rect<> override;
+	[[nodiscard]] auto get_position() const -> glm::vec2 { return m_sprite.transform.position; }
+
 	auto take_damage(float damage) -> bool override;
 	void force_death() override;
 
@@ -34,17 +36,19 @@ class Enemy : public IDamageable, public bave::IDrawable {
 		if constexpr (bave::debug_v) { do_inspect(); }
 	}
 
-	bave::Sprite sprite{};
-	std::optional<glm::vec2> hitbox{};
 	Health health{};
 	std::int64_t points{10};
 
 	std::string death_emitter{"particles/explode.json"};
 	std::vector<std::string> death_sfx{"sfx/swish.wav"};
 
-  private:
+  protected:
+	bave::Sprite m_sprite{};
+	std::optional<glm::vec2> m_hitbox{};
+
 	virtual void do_inspect();
 
+  private:
 	bave::NotNull<Layout const*> m_layout;
 
 	bave::ui::ProgressBar m_health_bar;

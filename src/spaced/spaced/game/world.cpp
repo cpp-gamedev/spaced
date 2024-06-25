@@ -1,7 +1,6 @@
 #include <bave/imgui/im_text.hpp>
 #include <bave/services/resources.hpp>
 #include <bave/services/styles.hpp>
-#include <spaced/game/enemies/creep_factory.hpp>
 #include <spaced/game/world.hpp>
 #include <spaced/services/game_signals.hpp>
 #include <spaced/services/layout.hpp>
@@ -30,8 +29,6 @@ namespace {
 World::World(bave::NotNull<Services const*> services, CreateInfo const& create_info)
 	: m_services(services), m_resources(&services->get<Resources>()), m_audio(&services->get<IAudio>()), m_stats(&services->get<Stats>()),
 	  m_on_player_scored(&services->get<GameSignals>().player_scored), m_star_field(*services) {
-	m_enemy_factories["CreepFactory"] = std::make_unique<CreepFactory>(services);
-
 	auto const& resources = services->get<Resources>();
 
 	auto const play_area = services->get<Layout>().play_area;
@@ -50,12 +47,7 @@ World::World(bave::NotNull<Services const*> services, CreateInfo const& create_i
 }
 
 void World::tick(Seconds const dt, bool const in_play) {
-	if (in_play) {
-		m_star_field.tick(dt);
-		for (auto& [_, factory] : m_enemy_factories) {
-			// if (auto enemy = factory->tick(dt)) { m_active_enemies.push_back(std::move(enemy)); }
-		}
-	}
+	if (in_play) { m_star_field.tick(dt); }
 
 	for (auto const& enemy : m_active_enemies) {
 		enemy->tick(dt, in_play);
@@ -93,7 +85,7 @@ void World::on_death(Enemy const& enemy, bool const add_score) {
 	if (auto source = m_resources->get<ParticleEmitter>(enemy.death_emitter)) {
 		auto& emitter = m_enemy_death_emitters.emplace_back(*source);
 		emitter.config.respawn = false;
-		emitter.set_position(enemy.sprite.transform.position);
+		emitter.set_position(enemy.get_position());
 	}
 
 	m_audio->play_any_sfx(enemy.death_sfx);
@@ -103,7 +95,7 @@ void World::on_death(Enemy const& enemy, bool const add_score) {
 		++m_stats->player.enemies_poofed;
 
 		// temp
-		if (random_in_range(0, 10) < 3) { debug_spawn_powerup(enemy.sprite.transform.position); }
+		if (random_in_range(0, 10) < 3) { debug_spawn_powerup(enemy.get_position()); }
 		// temp
 	}
 }

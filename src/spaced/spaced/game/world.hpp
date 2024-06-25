@@ -1,6 +1,8 @@
 #pragma once
+#include <bave/graphics/particle_emitter.hpp>
+#include <bave/services/audio.hpp>
 #include <spaced/game/damageable.hpp>
-#include <spaced/game/enemy_factory.hpp>
+#include <spaced/game/enemy.hpp>
 #include <spaced/game/powerup.hpp>
 #include <spaced/game/star_field.hpp>
 #include <spaced/game/target_provider.hpp>
@@ -28,6 +30,7 @@ class World : public ITargetProvider {
 	void draw(bave::Shader& shader) const;
 
 	void push(std::unique_ptr<Enemy> enemy);
+	void push(std::unique_ptr<IPowerup> powerup);
 
 	void on_death(Enemy const& enemy, bool add_score);
 
@@ -49,8 +52,6 @@ class World : public ITargetProvider {
 
 	bave::CustomShape m_background{};
 	StarField m_star_field;
-
-	std::unordered_map<std::string, std::unique_ptr<EnemyFactory>> m_enemy_factories{};
 
 	std::vector<std::unique_ptr<Enemy>> m_active_enemies{};
 	std::vector<bave::ParticleEmitter> m_enemy_death_emitters{};
