@@ -94,15 +94,13 @@ auto GameScene::get_asset_manifest() -> AssetManifest {
 }
 
 void GameScene::on_loaded() {
-	auto const& services = get_services();
+	switch_track("music/game.mp3");
 
-	auto hud = std::make_unique<Hud>(services);
+	auto hud = std::make_unique<Hud>(get_services());
 	m_hud = hud.get();
 	push_view(std::move(hud));
 
 	start_play();
-
-	switch_track("music/game.mp3");
 }
 
 void GameScene::start_play() {

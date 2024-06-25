@@ -12,16 +12,18 @@ class GameScene : public bave::Scene {
   public:
 	GameScene(bave::App& app, bave::Services const& services);
 
-  private:
-	auto get_asset_manifest() -> bave::AssetManifest final;
-	void on_loaded() final;
+  protected:
+	auto get_asset_manifest() -> bave::AssetManifest override;
+	void on_loaded() override;
 
+	void tick(bave::Seconds dt) override;
+
+  private:
 	void on_focus(bave::FocusChange const& focus_change) final;
 	void on_key(bave::KeyInput const& key_input) final;
 	void on_move(bave::PointerMove const& pointer_move) final;
 	void on_tap(bave::PointerTap const& pointer_tap) final;
 
-	void tick(bave::Seconds dt) final;
 	void render(bave::Shader& shader) const final;
 
 	void start_play();
