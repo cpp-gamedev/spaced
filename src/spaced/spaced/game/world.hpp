@@ -27,6 +27,8 @@ class World : public ITargetProvider {
 	void tick(bave::Seconds dt, bool in_play);
 	void draw(bave::Shader& shader) const;
 
+	void push(std::unique_ptr<Enemy> enemy);
+
 	void on_death(Enemy const& enemy, bool add_score);
 
 	void inspect() {

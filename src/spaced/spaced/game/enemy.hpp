@@ -22,10 +22,11 @@ class Enemy : public IDamageable, public bave::IDrawable {
 	[[nodiscard]] auto is_destroyed() const -> bool { return is_dead() || m_destroyed; }
 	void set_destroyed() { m_destroyed = true; }
 
-	virtual void tick(bave::Seconds dt, bool in_play);
+	virtual void tick(bave::Seconds dt, bool in_play) = 0;
 	void draw(bave::Shader& shader) const override;
 
 	void setup(glm::vec2 max_size, float y_position);
+	void update_health_bar();
 
 	[[nodiscard]] auto get_layout() const -> Layout const& { return *m_layout; }
 

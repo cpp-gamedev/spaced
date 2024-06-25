@@ -22,6 +22,8 @@ Enemy::Enemy(Services const& services, std::string_view const type) : m_layout(&
 	setup(init_size_v, random_in_range(y_min, y_max));
 
 	m_health_bar.set_style(services.get<Styles>().progress_bars["enemy"]);
+
+	update_health_bar();
 }
 
 auto Enemy::get_bounds() const -> bave::Rect<> {
@@ -40,7 +42,7 @@ void Enemy::force_death() {
 	m_health_bar.set_progress(0.0f);
 }
 
-void Enemy::tick(Seconds const /*dt*/, bool const /*in_play*/) {
+void Enemy::update_health_bar() {
 	m_health_bar.position = sprite.transform.position;
 	m_health_bar.position.y += 0.5f * sprite.get_shape().size.y + 20.0f;
 	m_health_bar.size = {sprite.get_shape().size.x, 10.0f};

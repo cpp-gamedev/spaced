@@ -53,7 +53,7 @@ void World::tick(Seconds const dt, bool const in_play) {
 	if (in_play) {
 		m_star_field.tick(dt);
 		for (auto& [_, factory] : m_enemy_factories) {
-			if (auto enemy = factory->tick(dt)) { m_active_enemies.push_back(std::move(enemy)); }
+			// if (auto enemy = factory->tick(dt)) { m_active_enemies.push_back(std::move(enemy)); }
 		}
 	}
 
@@ -82,6 +82,11 @@ void World::draw(Shader& shader) const {
 	for (auto const& enemy : m_active_enemies) { enemy->draw(shader); }
 	for (auto const& emitter : m_enemy_death_emitters) { emitter.draw(shader); }
 	for (auto const& powerup : m_active_powerups) { powerup->draw(shader); }
+}
+
+void World::push(std::unique_ptr<Enemy> enemy) {
+	if (!enemy) { return; }
+	m_active_enemies.push_back(std::move(enemy));
 }
 
 void World::on_death(Enemy const& enemy, bool const add_score) {

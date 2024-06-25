@@ -13,10 +13,15 @@ class GameScene : public bave::Scene {
 	GameScene(bave::App& app, bave::Services const& services);
 
   protected:
+	[[nodiscard]] auto is_game_over() const -> bool { return m_player->is_idle() && m_spare_lives == 0; }
+	[[nodiscard]] auto is_in_play() const -> bool { return !is_game_over(); }
+
 	auto get_asset_manifest() -> bave::AssetManifest override;
 	void on_loaded() override;
 
 	void tick(bave::Seconds dt) override;
+
+	void push_enemy(std::unique_ptr<Enemy> enemy) { m_world.value().push(std::move(enemy)); }
 
   private:
 	void on_focus(bave::FocusChange const& focus_change) final;
