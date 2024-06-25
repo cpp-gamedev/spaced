@@ -1,5 +1,4 @@
 #pragma once
-#include <spaced/game/enemies/creep.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/signal.hpp>
 
@@ -9,13 +8,19 @@ class EndlessScene : public GameScene {
 	EndlessScene(bave::App& app, bave::Services const& services);
 
   private:
+	struct ISpawnTimer : bave::Polymorphic {
+		virtual auto tick(bave::Seconds dt) -> std::unique_ptr<Enemy> = 0;
+	};
+
 	template <std::derived_from<Enemy> T>
-	struct SpawnTimer {
+	struct SpawnTimer : ISpawnTimer {
 		bave::NotNull<bave::Services const*> services;
 		bave::Seconds spawn_rate{1s};
 		bave::Seconds elapsed{};
 
-		auto tick(bave::Seconds const dt) -> std::unique_ptr<T> {
+		explicit SpawnTimer(bave::NotNull<bave::Services const*> services) : services(services) {}
+
+		auto tick(bave::Seconds const dt) -> std::unique_ptr<Enemy> final {
 			auto ret = std::unique_ptr<T>{};
 			elapsed += dt;
 			if (elapsed >= spawn_rate) {
@@ -32,6 +37,6 @@ class EndlessScene : public GameScene {
 
 	SignalHandle m_on_player_scored{};
 
-	SpawnTimer<enemy::Creep> m_creeps;
+	std::vector<std::unique_ptr<ISpawnTimer>> m_spawn_timers{};
 };
 } // namespace spaced
