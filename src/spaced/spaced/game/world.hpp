@@ -25,13 +25,13 @@ class World : public ITargetProvider {
 
 	[[nodiscard]] auto get_targets() const -> std::span<bave::NotNull<IDamageable*> const> final { return m_targets; }
 
-	[[nodiscard]] auto get_powerups() const -> std::span<bave::NotNull<IPowerup*> const> { return m_powerups; }
+	[[nodiscard]] auto get_powerups() const -> std::span<bave::NotNull<Powerup*> const> { return m_powerups; }
 
 	void tick(bave::Seconds dt, bool in_play);
 	void draw(bave::Shader& shader) const;
 
 	void push(std::unique_ptr<Enemy> enemy);
-	void push(std::unique_ptr<IPowerup> powerup);
+	void push(std::unique_ptr<Powerup> powerup);
 
 	void inspect() {
 		if constexpr (bave::debug_v) { do_inspect(); }
@@ -54,9 +54,9 @@ class World : public ITargetProvider {
 
 	std::vector<std::unique_ptr<Enemy>> m_active_enemies{};
 	std::vector<bave::ParticleEmitter> m_enemy_death_emitters{};
-	std::vector<std::unique_ptr<IPowerup>> m_active_powerups{};
+	std::vector<std::unique_ptr<Powerup>> m_active_powerups{};
 
 	std::vector<bave::NotNull<IDamageable*>> m_targets{};
-	std::vector<bave::NotNull<IPowerup*>> m_powerups{};
+	std::vector<bave::NotNull<Powerup*>> m_powerups{};
 };
 } // namespace spaced

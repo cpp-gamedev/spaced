@@ -77,7 +77,7 @@ void World::push(std::unique_ptr<Enemy> enemy) {
 	m_active_enemies.push_back(std::move(enemy));
 }
 
-void World::push(std::unique_ptr<IPowerup> powerup) {
+void World::push(std::unique_ptr<Powerup> powerup) {
 	if (!powerup) { return; }
 	m_active_powerups.push_back(std::move(powerup));
 }

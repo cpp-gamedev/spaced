@@ -22,7 +22,7 @@ class GameScene : public bave::Scene {
 	void tick(bave::Seconds dt) override;
 
 	void push_enemy(std::unique_ptr<Enemy> enemy) { m_world.value().push(std::move(enemy)); }
-	void push_powerup(std::unique_ptr<IPowerup> powerup) { m_world.value().push(std::move(powerup)); }
+	void push_powerup(std::unique_ptr<Powerup> powerup) { m_world.value().push(std::move(powerup)); }
 
   private:
 	void on_focus(bave::FocusChange const& focus_change) final;

@@ -1,5 +1,5 @@
 #include <bave/core/random.hpp>
-#include <spaced/game/powerups/pu_beam.hpp>
+#include <spaced/game/powerups/beam.hpp>
 #include <spaced/scenes/endless.hpp>
 #include <spaced/services/game_signals.hpp>
 
@@ -24,7 +24,7 @@ void EndlessScene::tick(Seconds const dt) {
 }
 
 void EndlessScene::debug_spawn_powerup(glm::vec2 const position) {
-	auto powerup = std::make_unique<PUBeam>(get_services());
+	auto powerup = std::make_unique<powerup::Beam>(get_services());
 	powerup->shape.transform.position = position;
 	push_powerup(std::move(powerup));
 }

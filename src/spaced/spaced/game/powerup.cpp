@@ -1,5 +1,5 @@
 #include <bave/services/resources.hpp>
-#include <spaced/game/powerups/pu_base.hpp>
+#include <spaced/game/powerup.hpp>
 
 namespace spaced {
 using bave::Circle;
@@ -9,7 +9,7 @@ using bave::Seconds;
 using bave::Services;
 using bave::Shader;
 
-PUBase::PUBase(Services const& services, std::string_view const name) : m_services(&services), m_layout(&services.get<Layout>()), m_name(name) {
+Powerup::Powerup(Services const& services, std::string_view const name) : m_services(&services), m_layout(&services.get<Layout>()), m_name(name) {
 	auto circle = Circle{};
 	circle.diameter = 40.0f;
 	shape.set_shape(circle);
@@ -20,7 +20,7 @@ PUBase::PUBase(Services const& services, std::string_view const name) : m_servic
 	emitter.config.respawn = true;
 }
 
-void PUBase::tick(Seconds const dt) {
+void Powerup::tick(Seconds const dt) {
 	shape.transform.position.x -= speed * dt.count();
 	if (shape.transform.position.x < m_layout->play_area.lt.x - 0.5f * shape.get_shape().diameter) { m_destroyed = true; }
 
@@ -32,12 +32,12 @@ void PUBase::tick(Seconds const dt) {
 	emitter.tick(dt);
 }
 
-void PUBase::draw(Shader& shader) const {
+void Powerup::draw(Shader& shader) const {
 	shape.draw(shader);
 	emitter.draw(shader);
 }
 
-void PUBase::activate(Player& player) {
+void Powerup::activate(Player& player) {
 	do_activate(player);
 	m_destroyed = true;
 }

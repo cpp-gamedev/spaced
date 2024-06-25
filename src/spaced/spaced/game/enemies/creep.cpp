@@ -1,7 +1,7 @@
 #include <bave/services/resources.hpp>
 #include <spaced/game/enemies/creep.hpp>
 
-namespace spaced {
+namespace spaced::enemy {
 using bave::Resources;
 using bave::Seconds;
 using bave::Texture;
@@ -20,4 +20,4 @@ void Creep::tick(Seconds const dt, bool const in_play) {
 
 	update_health_bar();
 }
-} // namespace spaced
+} // namespace spaced::enemy

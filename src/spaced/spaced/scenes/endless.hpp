@@ -32,6 +32,6 @@ class EndlessScene : public GameScene {
 
 	SignalHandle m_on_player_scored{};
 
-	SpawnTimer<Creep> m_creeps;
+	SpawnTimer<enemy::Creep> m_creeps;
 };
 } // namespace spaced
