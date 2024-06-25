@@ -1,6 +1,7 @@
 #pragma once
 #include <spaced/game/enemies/creep.hpp>
 #include <spaced/scenes/game.hpp>
+#include <spaced/signal.hpp>
 
 namespace spaced {
 class EndlessScene : public GameScene {
@@ -26,6 +27,10 @@ class EndlessScene : public GameScene {
 	};
 
 	void tick(bave::Seconds dt) final;
+
+	void debug_spawn_powerup(glm::vec2 position);
+
+	SignalHandle m_on_player_scored{};
 
 	SpawnTimer<Creep> m_creeps;
 };

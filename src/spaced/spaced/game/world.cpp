@@ -6,15 +6,11 @@
 #include <spaced/services/layout.hpp>
 #include <spaced/services/stats.hpp>
 
-#include <bave/core/random.hpp>
-#include <spaced/game/powerups/pu_beam.hpp>
-
 namespace spaced {
 using bave::FixedString;
 using bave::IAudio;
 using bave::NotNull;
 using bave::ParticleEmitter;
-using bave::random_in_range;
 using bave::Resources;
 using bave::Seconds;
 using bave::Services;
@@ -81,6 +77,11 @@ void World::push(std::unique_ptr<Enemy> enemy) {
 	m_active_enemies.push_back(std::move(enemy));
 }
 
+void World::push(std::unique_ptr<IPowerup> powerup) {
+	if (!powerup) { return; }
+	m_active_powerups.push_back(std::move(powerup));
+}
+
 void World::on_death(Enemy const& enemy, bool const add_score) {
 	if (auto source = m_resources->get<ParticleEmitter>(enemy.death_emitter)) {
 		auto& emitter = m_enemy_death_emitters.emplace_back(*source);
@@ -91,12 +92,8 @@ void World::on_death(Enemy const& enemy, bool const add_score) {
 	m_audio->play_any_sfx(enemy.death_sfx);
 
 	if (add_score) {
-		m_on_player_scored->dispatch(enemy.points);
+		m_on_player_scored->dispatch(enemy);
 		++m_stats->player.enemies_poofed;
-
-		// temp
-		if (random_in_range(0, 10) < 3) { debug_spawn_powerup(enemy.get_position()); }
-		// temp
 	}
 }
 
@@ -118,11 +115,5 @@ void World::inspect_enemies() {
 			}
 		}
 	}
-}
-
-void World::debug_spawn_powerup(glm::vec2 const position) {
-	auto powerup = std::make_unique<PUBeam>(*m_services);
-	powerup->shape.transform.position = position;
-	m_active_powerups.push_back(std::move(powerup));
 }
 } // namespace spaced

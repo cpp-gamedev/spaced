@@ -24,6 +24,7 @@ class World : public ITargetProvider {
 	explicit World(bave::NotNull<bave::Services const*> services, CreateInfo const& create_info);
 
 	[[nodiscard]] auto get_targets() const -> std::span<bave::NotNull<IDamageable*> const> final { return m_targets; }
+
 	[[nodiscard]] auto get_powerups() const -> std::span<bave::NotNull<IPowerup*> const> { return m_powerups; }
 
 	void tick(bave::Seconds dt, bool in_play);
@@ -32,17 +33,15 @@ class World : public ITargetProvider {
 	void push(std::unique_ptr<Enemy> enemy);
 	void push(std::unique_ptr<IPowerup> powerup);
 
-	void on_death(Enemy const& enemy, bool add_score);
-
 	void inspect() {
 		if constexpr (bave::debug_v) { do_inspect(); }
 	}
 
   private:
+	void on_death(Enemy const& enemy, bool add_score);
+
 	void do_inspect();
 	void inspect_enemies();
-
-	void debug_spawn_powerup(glm::vec2 position);
 
 	bave::NotNull<bave::Services const*> m_services;
 	bave::NotNull<bave::Resources const*> m_resources;

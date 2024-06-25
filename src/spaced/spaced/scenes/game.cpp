@@ -52,8 +52,8 @@ namespace {
 
 GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_save(&app) {
 	clear_colour = services.get<Styles>().rgbas["mocha"];
-	m_on_player_scored = services.get<GameSignals>().player_scored.connect([this](std::int64_t const points) {
-		m_score += points;
+	m_on_player_scored = services.get<GameSignals>().player_scored.connect([this](Enemy const& e) {
+		m_score += e.points;
 		m_hud->set_score(m_score);
 		update_hi_score();
 	});
