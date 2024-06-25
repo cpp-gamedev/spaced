@@ -9,7 +9,7 @@ using bave::random_in_range;
 using bave::Seconds;
 using bave::Services;
 
-EndlessScene::EndlessScene(App& app, Services const& services) : GameScene(app, services), m_creeps(&services) {
+EndlessScene::EndlessScene(App& app, Services const& services) : GameScene(app, services), m_creeps{.services = &services} {
 	m_on_player_scored = services.get<GameSignals>().player_scored.connect([this](Enemy const& e) {
 		if (random_in_range(0, 10) < 3) { debug_spawn_powerup(e.get_position()); }
 	});
