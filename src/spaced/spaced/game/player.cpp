@@ -4,6 +4,7 @@
 #include <bave/services/resources.hpp>
 #include <bave/services/styles.hpp>
 #include <spaced/game/player.hpp>
+#include <spaced/services/game_signals.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/stats.hpp>
 
@@ -22,7 +23,8 @@ using bave::Shader;
 using bave::Texture;
 
 Player::Player(Services const& services, std::unique_ptr<IController> controller)
-	: m_services(&services), m_stats(&services.get<Stats>()), m_controller(std::move(controller)), m_shield(services), m_arsenal(services) {
+	: m_services(&services), m_stats(&services.get<Stats>()), m_controller(std::move(controller)), m_on_1up(&services.get<GameSignals>().one_up),
+	  m_shield(services), m_arsenal(services) {
 	auto const& layout = services.get<Layout>();
 	ship.transform.position.x = layout.player_x;
 
@@ -113,6 +115,8 @@ void Player::set_shield(Seconds const ttl) {
 	m_shield.set_position(ship.transform.position);
 }
 
+void Player::one_up() { m_on_1up->dispatch(); }
+
 void Player::on_death(Seconds const dt) {
 	m_health = 0.0f;
 	m_death = m_death_source;
@@ -163,6 +167,8 @@ void Player::do_inspect() {
 			m_health.inspect();
 			ImGui::TreePop();
 		}
+
+		if (ImGui::Button("1up")) { one_up(); }
 	}
 }
 } // namespace spaced

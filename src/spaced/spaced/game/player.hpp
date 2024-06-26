@@ -10,6 +10,7 @@
 
 namespace spaced {
 struct Stats;
+struct Sig1up;
 
 class Player : public bave::IDrawable {
   public:
@@ -40,6 +41,7 @@ class Player : public bave::IDrawable {
 	[[nodiscard]] auto get_weapon() const -> Weapon const& { return m_arsenal.get_weapon(); }
 
 	void set_shield(bave::Seconds ttl);
+	void one_up();
 
 	[[nodiscard]] auto is_dead() const -> bool { return m_health.is_dead(); }
 	[[nodiscard]] auto is_idle() const -> bool { return m_exhaust.active_particles() == 0; }
@@ -62,6 +64,8 @@ class Player : public bave::IDrawable {
 	bave::NotNull<bave::Services const*> m_services;
 	bave::NotNull<Stats*> m_stats;
 	std::unique_ptr<IController> m_controller;
+	bave::NotNull<Sig1up*> m_on_1up;
+
 	bave::ParticleEmitter m_exhaust{};
 	Shield m_shield;
 

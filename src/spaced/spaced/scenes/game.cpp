@@ -52,10 +52,16 @@ namespace {
 
 GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_save(&app) {
 	clear_colour = services.get<Styles>().rgbas["mocha"];
-	m_on_player_scored = services.get<GameSignals>().player_scored.connect([this](Enemy const& e) {
+
+	auto& game_signals = services.get<GameSignals>();
+	m_on_player_scored = game_signals.player_scored.connect([this](Enemy const& e) {
 		m_score += e.points;
 		m_hud->set_score(m_score);
 		update_hi_score();
+	});
+	m_on_1up = game_signals.one_up.connect([this] {
+		++m_spare_lives;
+		m_hud->set_lives(m_spare_lives);
 	});
 
 	auto const prefs = Prefs::load(app);

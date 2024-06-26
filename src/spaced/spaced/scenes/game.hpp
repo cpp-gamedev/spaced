@@ -45,6 +45,7 @@ class GameScene : public bave::Scene {
 	void debug_controller_type();
 
 	SignalHandle m_on_player_scored{};
+	SignalHandle m_on_1up{};
 
 	GameSave m_save;
 	World::CreateInfo m_wci{};

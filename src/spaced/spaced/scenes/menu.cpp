@@ -52,11 +52,31 @@ void MenuScene::create_ui() {
 	quit->set_position({0.0f, -400.0f});
 	quit->callback = [this]() { get_app().shutdown(); };
 
+	auto pb = std::make_unique<ui::ProgressBar>(get_services());
+	pb->set_size({400.0f, 50.0f});
+	auto s = pb->get_style();
+	s.padding = 20.0f;
+	pb->set_style(s);
+	m_pb = pb.get();
+
 	auto view = std::make_unique<ui::View>(get_services());
 	view->push(std::move(m_header));
 	view->push(std::move(start));
 	view->push(std::move(options));
 	view->push(std::move(quit));
+
+	view->push(std::move(pb));
+
 	push_view(std::move(view));
+}
+
+void MenuScene::tick(Seconds const dt) {
+	Scene::tick(dt);
+
+	if (ImGui::Begin("Debug")) {
+		auto progress = m_pb->get_progress();
+		if (ImGui::DragFloat("progress", &progress, 0.05f, 0.0f, 1.0f)) { m_pb->set_progress(progress); }
+	}
+	ImGui::End();
 }
 } // namespace spaced
