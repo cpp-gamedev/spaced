@@ -6,6 +6,7 @@
 #include <spaced/game/powerup.hpp>
 #include <spaced/game/star_field.hpp>
 #include <spaced/game/target_provider.hpp>
+#include <spaced/game/weapon_round.hpp>
 
 namespace bave {
 struct Resources;
@@ -27,7 +28,7 @@ class World : public ITargetProvider {
 
 	[[nodiscard]] auto get_powerups() const -> std::span<bave::NotNull<Powerup*> const> { return m_powerups; }
 
-	void tick(bave::Seconds dt, bool in_play);
+	void tick(bave::Seconds dt, bave::NotNull<IDamageable*> player, bool in_play);
 	void draw(bave::Shader& shader) const;
 
 	void push(std::unique_ptr<Enemy> enemy);
@@ -55,6 +56,7 @@ class World : public ITargetProvider {
 	std::vector<std::unique_ptr<Enemy>> m_active_enemies{};
 	std::vector<bave::ParticleEmitter> m_enemy_death_emitters{};
 	std::vector<std::unique_ptr<Powerup>> m_active_powerups{};
+	std::vector<std::unique_ptr<IWeaponRound>> m_enemy_rounds{};
 
 	std::vector<bave::NotNull<IDamageable*>> m_targets{};
 	std::vector<bave::NotNull<Powerup*>> m_powerups{};

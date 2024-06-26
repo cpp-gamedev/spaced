@@ -18,7 +18,7 @@ class PlayerController : public FollowController {
 
 	[[nodiscard]] auto get_type_name() const -> std::string_view final { return type_name_v; };
 
-	explicit PlayerController(bave::Services const& services);
+	explicit PlayerController(bave::Services const& services, Type type);
 
 	void on_move(bave::PointerMove const& pointer_move) final;
 	void on_tap(bave::PointerTap const& pointer_tap) final;

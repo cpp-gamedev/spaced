@@ -12,6 +12,7 @@ class Projectile : public IWeaponRound {
 		glm::vec2 size{60.0f, 10.0f};
 		float corner_radius{0.5f * size.y};
 		float x_speed{1500.0f};
+		float x_scale{1.0f};
 		bave::Rgba tint{bave::white_v};
 		float damage{1.0f};
 		Instigator instigator{Instigator::ePlayer};

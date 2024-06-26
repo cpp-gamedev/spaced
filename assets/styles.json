@@ -7,6 +7,7 @@
     "ice": "#d6dbe1e1",
     "orange": "#f75c03ff",
     "gun_beam": "#bc96e6ff",
+    "exhaust": "#36bbf5ff",
     "bg_top": "#10020eff",
     "bg_bottom": "#040003ff"
   },
@@ -36,7 +37,7 @@
       "background": "#9f2b68ff",
       "fill": "milk",
       "corner_ratio": 0.5,
-      "padding": 10
+      "padding": 20
     },
     "enemy": {
       "background": "orange",

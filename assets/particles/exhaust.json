@@ -33,7 +33,7 @@
     },
     "lerp": {
       "tint": {
-        "lo": "#36bbf5ff",
+        "lo": "#ffffffff",
         "hi": "#00000000"
       },
       "scale": {

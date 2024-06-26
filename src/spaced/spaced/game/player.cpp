@@ -4,6 +4,7 @@
 #include <bave/services/resources.hpp>
 #include <bave/services/styles.hpp>
 #include <spaced/game/player.hpp>
+#include <spaced/services/game_signals.hpp>
 #include <spaced/services/layout.hpp>
 #include <spaced/services/stats.hpp>
 
@@ -19,21 +20,25 @@ using bave::Resources;
 using bave::Seconds;
 using bave::Services;
 using bave::Shader;
+using bave::Styles;
 using bave::Texture;
 
 Player::Player(Services const& services, std::unique_ptr<IController> controller)
-	: m_services(&services), m_stats(&services.get<Stats>()), m_controller(std::move(controller)), m_shield(services), m_arsenal(services) {
+	: m_services(&services), m_stats(&services.get<Stats>()), m_controller(std::move(controller)), m_on_1up(&services.get<GameSignals>().one_up),
+	  m_shield(services), m_arsenal(services) {
 	auto const& layout = services.get<Layout>();
 	ship.transform.position.x = layout.player_x;
 
 	auto const& resources = services.get<Resources>();
+	auto const& rgbas = services.get<Styles>().rgbas;
 
-	if (auto const texture = services.get<Resources>().get<Texture>("images/player_ship.png")) {
+	if (auto const texture = services.get<Resources>().get<Texture>("images/ship_player.png")) {
 		ship.set_texture(texture);
 		ship.set_size(texture->get_size());
 	}
 
 	if (auto const exhaust = resources.get<ParticleEmitter>("particles/exhaust.json")) { m_exhaust = *exhaust; }
+	m_exhaust.config.lerp.tint.lo = rgbas["exhaust"];
 	m_exhaust.set_position(get_exhaust_position());
 	m_exhaust.config.respawn = true;
 	m_exhaust.pre_warm();
@@ -48,7 +53,7 @@ void Player::on_move(PointerMove const& pointer_move) { m_controller->on_move(po
 
 void Player::on_tap(PointerTap const& pointer_tap) { m_controller->on_tap(pointer_tap); }
 
-auto Player::tick(State const& state, Seconds const dt) -> bool {
+void Player::tick(State const& state, Seconds const dt) {
 	if (m_death) {
 		m_death->tick(dt);
 		if (m_death->active_particles() == 0) { m_death.reset(); }
@@ -66,16 +71,15 @@ auto Player::tick(State const& state, Seconds const dt) -> bool {
 
 	m_exhaust.tick(dt);
 
-	if (m_health.is_dead()) { return false; }
+	if (m_health.is_dead()) { return; }
 
 	auto const y_position = m_controller->tick(dt);
 	set_y(y_position);
 
 	m_exhaust.set_position(get_exhaust_position());
 
-	auto ret = false;
-	auto const hitbox = Rect<>::from_size(hitbox_size, ship.transform.position);
-	for (auto const& target : state.targets) { ret |= check_hit(*target, hitbox, dt); }
+	auto const bounds = get_bounds();
+	for (auto const& target : state.targets) { check_hit(*target, bounds, dt); }
 
 	for (auto const& powerup : state.powerups) {
 		if (is_intersecting(powerup->get_bounds(), ship.get_bounds())) {
@@ -83,8 +87,6 @@ auto Player::tick(State const& state, Seconds const dt) -> bool {
 			++m_stats->player.powerups_collected;
 		}
 	}
-
-	return ret;
 }
 
 void Player::draw(Shader& shader) const {
@@ -96,6 +98,22 @@ void Player::draw(Shader& shader) const {
 	m_arsenal.draw(shader);
 	if (m_death) { m_death->draw(shader); }
 }
+
+auto Player::get_bounds() const -> Rect<> {
+	if (m_shield.is_active()) { return m_shield.get_bounds(); }
+	return bave::Rect<>::from_size(hitbox_size, ship.transform.position);
+}
+
+auto Player::take_damage(float damage) -> bool {
+	if (is_dead()) { return false; }
+	if (!m_shield.is_active()) {
+		m_health.inflict_damage(damage);
+		if (m_health.is_dead()) { on_death({}); }
+	}
+	return true;
+}
+
+void Player::force_death() { on_death({}); }
 
 void Player::set_y(float const y) { ship.transform.position.y = y; }
 
@@ -112,6 +130,8 @@ void Player::set_shield(Seconds const ttl) {
 	m_shield.ttl = ttl;
 	m_shield.set_position(ship.transform.position);
 }
+
+void Player::one_up() { m_on_1up->dispatch(); }
 
 void Player::on_death(Seconds const dt) {
 	m_health = 0.0f;
@@ -163,6 +183,8 @@ void Player::do_inspect() {
 			m_health.inspect();
 			ImGui::TreePop();
 		}
+
+		if (ImGui::Button("1up")) { one_up(); }
 	}
 }
 } // namespace spaced

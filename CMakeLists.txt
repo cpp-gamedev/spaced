@@ -11,9 +11,7 @@ include(FetchContent)
 FetchContent_Declare(
   bgf
   GIT_REPOSITORY https://github.com/karnkaul/bgf
-
-  # GIT_TAG v0.1.5
-  GIT_TAG adc217f
+  GIT_TAG v0.1.7
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ext/bgf"
 )
 

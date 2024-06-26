@@ -15,9 +15,12 @@ using bave::PointerTap;
 using bave::Seconds;
 using bave::Services;
 
-PlayerController::PlayerController(Services const& services) : m_layout(&services.get<Layout>()), m_gamepad_provider(&services.get<IGamepadProvider>()) {
-	max_y = 0.5f * m_layout->world_space.y;
-	min_y = -max_y; // NOLINT(cppcoreguidelines-prefer-member-initializer)
+PlayerController::PlayerController(Services const& services, Type const type)
+	: m_layout(&services.get<Layout>()), m_gamepad_provider(&services.get<IGamepadProvider>()), m_type(type) {
+	auto const half_size = 0.5f * m_layout->player_size;
+	auto const play_area = m_layout->play_area;
+	max_y = play_area.lt.y - half_size.y;
+	min_y = play_area.rb.y + half_size.y;
 }
 
 void PlayerController::on_move(PointerMove const& pointer_move) {

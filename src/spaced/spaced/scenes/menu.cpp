@@ -57,6 +57,7 @@ void MenuScene::create_ui() {
 	view->push(std::move(start));
 	view->push(std::move(options));
 	view->push(std::move(quit));
+
 	push_view(std::move(view));
 }
 } // namespace spaced

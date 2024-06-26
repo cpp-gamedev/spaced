@@ -23,6 +23,7 @@ using bave::im_text;
 using bave::Key;
 using bave::KeyInput;
 using bave::KeyMods;
+using bave::Platform;
 using bave::PointerMove;
 using bave::PointerTap;
 using bave::Ptr;
@@ -35,14 +36,9 @@ namespace ui = bave::ui;
 
 namespace {
 [[nodiscard]] auto make_player_controller(Services const& services) {
-	auto ret = std::make_unique<PlayerController>(services);
-	if constexpr (bave::platform_v == bave::Platform::eAndroid) { ret->set_type(PlayerController::Type::eTouch); }
-	auto const& layout = services.get<Layout>();
-	auto const half_size = 0.5f * layout.player_size;
-	auto const play_area = layout.play_area;
-	ret->max_y = play_area.lt.y - half_size.y;
-	ret->min_y = play_area.rb.y + half_size.y;
-	return ret;
+	using enum PlayerController::Type;
+	static constexpr auto type_v = bave::platform_v == Platform::eAndroid ? eTouch : eMouse;
+	return std::make_unique<PlayerController>(services, type_v);
 }
 
 [[nodiscard]] auto make_auto_controller(ITargetProvider const& target_provider, Services const& services) {
@@ -52,10 +48,16 @@ namespace {
 
 GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_save(&app) {
 	clear_colour = services.get<Styles>().rgbas["mocha"];
-	m_on_player_scored = services.get<GameSignals>().player_scored.connect([this](Enemy const& e) {
+
+	auto& game_signals = services.get<GameSignals>();
+	m_on_player_scored = game_signals.player_scored.connect([this](Enemy const& e) {
 		m_score += e.points;
 		m_hud->set_score(m_score);
 		update_hi_score();
+	});
+	m_on_1up = game_signals.one_up.connect([this] {
+		++m_spare_lives;
+		m_hud->set_lives(m_spare_lives);
 	});
 
 	auto const prefs = Prefs::load(app);
@@ -66,22 +68,27 @@ auto GameScene::get_asset_manifest() -> AssetManifest {
 	return AssetManifest{
 		.textures =
 			{
-				"images/player_ship.png",
-				"images/player_ship_icon.png",
+				"images/ship_player.png",
+				"images/icon_player.png",
 				"images/shield.png",
-				"images/creep_ship.png",
+				"images/ship_creep.png",
+				"images/ship_gunner.png",
+				"images/ship_trooper.png",
 				"images/background.png",
 				"images/star_blue.png",
 				"images/star_red.png",
 				"images/star_yellow.png",
-				"images/kinetic_projectile.png",
-				"images/beam_round.png",
+				"images/round_kinetic_green.png",
+				"images/round_kinetic_red.png",
+				"images/round_beam.png",
 			},
 		.audio_clips =
 			{
 				"sfx/swish.wav",
 				"sfx/kinetic_fire.wav",
+				"sfx/kinetic_fire1.wav",
 				"sfx/beam_fire.wav",
+				"sfx/powerup_collect.wav",
 				"music/game.mp3",
 			},
 		.particle_emitters =
@@ -133,12 +140,10 @@ void GameScene::on_tap(PointerTap const& pointer_tap) { m_player->on_tap(pointer
 void GameScene::tick(Seconds const dt) {
 	auto ft = bave::DeltaTime{};
 
-	m_world->tick(dt, is_in_play());
+	m_world->tick(dt, &*m_player, is_in_play());
 
 	auto const player_state = Player::State{.targets = m_world->get_targets(), .powerups = m_world->get_powerups()};
-	auto const player_died = m_player->tick(player_state, dt);
-
-	if (player_died) { m_hud->set_lives(m_spare_lives - 1); }
+	m_player->tick(player_state, dt);
 
 	if (m_player->is_idle()) { on_player_death(); }
 
@@ -153,6 +158,7 @@ void GameScene::render(Shader& shader) const {
 void GameScene::on_player_death() {
 	if (m_spare_lives > 0) {
 		--m_spare_lives;
+		m_hud->set_lives(m_spare_lives);
 		respawn_player();
 		return;
 	}
@@ -207,7 +213,7 @@ void GameScene::inspect(Seconds const dt, Seconds const frame_time) {
 			im_text("score: {}", m_score);
 
 			ImGui::Separator();
-			if (ImGui::Button("end game")) { m_player->on_death(dt); }
+			if (ImGui::Button("die")) { m_player->force_death(); }
 
 			ImGui::Separator();
 			im_text("dt: {:05.2f}", std::chrono::duration<float, std::milli>(dt).count());

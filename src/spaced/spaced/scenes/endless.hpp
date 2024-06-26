@@ -1,4 +1,6 @@
 #pragma once
+#include <spaced/game/spawn_timer.hpp>
+#include <spaced/game/weapons/gun_kinetic.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/signal.hpp>
 
@@ -8,35 +10,15 @@ class EndlessScene : public GameScene {
 	EndlessScene(bave::App& app, bave::Services const& services);
 
   private:
-	struct ISpawnTimer : bave::Polymorphic {
-		virtual auto tick(bave::Seconds dt) -> std::unique_ptr<Enemy> = 0;
-	};
-
-	template <std::derived_from<Enemy> T>
-	struct SpawnTimer : ISpawnTimer {
-		bave::NotNull<bave::Services const*> services;
-		bave::Seconds spawn_rate{1s};
-		bave::Seconds elapsed{};
-
-		explicit SpawnTimer(bave::NotNull<bave::Services const*> services) : services(services) {}
-
-		auto tick(bave::Seconds const dt) -> std::unique_ptr<Enemy> final {
-			auto ret = std::unique_ptr<T>{};
-			elapsed += dt;
-			if (elapsed >= spawn_rate) {
-				ret = std::make_unique<T>(*services);
-				elapsed = {};
-			}
-			return ret;
-		}
-	};
+	void on_loaded() final;
 
 	void tick(bave::Seconds dt) final;
 
 	void debug_spawn_powerup(glm::vec2 position);
 
 	SignalHandle m_on_player_scored{};
+	GunKinetic m_enemy_gun;
 
-	std::vector<std::unique_ptr<ISpawnTimer>> m_spawn_timers{};
+	std::vector<std::unique_ptr<SpawnTimer<Enemy>>> m_spawn_timers{};
 };
 } // namespace spaced

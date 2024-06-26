@@ -6,6 +6,7 @@
 #include <bave/ui/progress_bar.hpp>
 #include <spaced/game/damageable.hpp>
 #include <spaced/game/health.hpp>
+#include <spaced/game/weapon_round.hpp>
 #include <spaced/services/layout.hpp>
 
 namespace spaced {
@@ -24,7 +25,7 @@ class Enemy : public IDamageable, public bave::IDrawable {
 	[[nodiscard]] auto is_destroyed() const -> bool { return is_dead() || m_destroyed; }
 	void set_destroyed() { m_destroyed = true; }
 
-	virtual void tick(bave::Seconds dt, bool in_play) = 0;
+	auto tick(bave::Seconds dt) -> std::unique_ptr<IWeaponRound>;
 	void draw(bave::Shader& shader) const override;
 
 	void setup(glm::vec2 max_size, float y_position);
@@ -38,11 +39,15 @@ class Enemy : public IDamageable, public bave::IDrawable {
 
 	Health health{};
 	std::int64_t points{10};
+	float speed{100.0f};
 
 	std::string death_emitter{"particles/explode.json"};
 	std::vector<std::string> death_sfx{"sfx/swish.wav"};
 
   protected:
+	virtual void do_tick(bave::Seconds /*dt*/) {}
+	virtual auto make_round() -> std::unique_ptr<IWeaponRound> { return {}; }
+
 	bave::Sprite m_sprite{};
 	std::optional<glm::vec2> m_hitbox{};
 
