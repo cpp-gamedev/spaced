@@ -72,21 +72,24 @@ auto GameScene::get_asset_manifest() -> AssetManifest {
 	return AssetManifest{
 		.textures =
 			{
-				"images/player_ship.png",
-				"images/player_ship_icon.png",
+				"images/ship_player.png",
+				"images/icon_player.png",
 				"images/shield.png",
-				"images/creep_ship.png",
+				"images/ship_creep.png",
 				"images/background.png",
 				"images/star_blue.png",
 				"images/star_red.png",
 				"images/star_yellow.png",
-				"images/kinetic_projectile.png",
-				"images/beam_round.png",
+				"images/round_kinetic_green.png",
+				"images/round_kinetic_red.png",
+				"images/round_beam.png",
+				"images/ship_trooper.png",
 			},
 		.audio_clips =
 			{
 				"sfx/swish.wav",
 				"sfx/kinetic_fire.wav",
+				"sfx/kinetic_fire1.wav",
 				"sfx/beam_fire.wav",
 				"sfx/powerup_collect.wav",
 				"music/game.mp3",

@@ -7,8 +7,10 @@ using bave::Seconds;
 using bave::Texture;
 
 Creep::Creep(bave::Services const& services) : Enemy(services, "Creep") {
-	m_sprite.set_texture(services.get<Resources>().get<Texture>("images/creep_ship.png"));
-	m_sprite.set_size(glm::vec2{80.0f});
+	if (auto texture = services.get<Resources>().get<Texture>("images/ship_creep.png")) {
+		m_sprite.set_size(texture->get_size());
+		m_sprite.set_texture(std::move(texture));
+	}
 	health = 2.0f;
 }
 

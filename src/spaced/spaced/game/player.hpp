@@ -29,7 +29,7 @@ class Player : public IDamageable, public bave::IDrawable {
 	void draw(bave::Shader& shader) const final;
 
 	[[nodiscard]] auto get_instigator() const -> Instigator final { return Instigator::ePlayer; }
-	[[nodiscard]] auto get_bounds() const -> bave::Rect<> final { return bave::Rect<>::from_size(hitbox_size, ship.transform.position); }
+	[[nodiscard]] auto get_bounds() const -> bave::Rect<> final;
 	auto take_damage(float damage) -> bool final;
 	void force_death() final;
 

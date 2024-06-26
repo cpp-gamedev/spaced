@@ -32,7 +32,7 @@ Player::Player(Services const& services, std::unique_ptr<IController> controller
 	auto const& resources = services.get<Resources>();
 	auto const& rgbas = services.get<Styles>().rgbas;
 
-	if (auto const texture = services.get<Resources>().get<Texture>("images/player_ship.png")) {
+	if (auto const texture = services.get<Resources>().get<Texture>("images/ship_player.png")) {
 		ship.set_texture(texture);
 		ship.set_size(texture->get_size());
 	}
@@ -99,10 +99,17 @@ void Player::draw(Shader& shader) const {
 	if (m_death) { m_death->draw(shader); }
 }
 
+auto Player::get_bounds() const -> Rect<> {
+	if (m_shield.is_active()) { return m_shield.get_bounds(); }
+	return bave::Rect<>::from_size(hitbox_size, ship.transform.position);
+}
+
 auto Player::take_damage(float damage) -> bool {
 	if (is_dead()) { return false; }
-	m_health.inflict_damage(damage);
-	if (m_health.is_dead()) { on_death({}); }
+	if (!m_shield.is_active()) {
+		m_health.inflict_damage(damage);
+		if (m_health.is_dead()) { on_death({}); }
+	}
 	return true;
 }
 

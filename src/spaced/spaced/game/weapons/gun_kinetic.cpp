@@ -12,7 +12,7 @@ using bave::Services;
 using bave::Texture;
 
 GunKinetic::GunKinetic(Services const& services) : Weapon(services, "GunKinetic"), m_audio(&services.get<IAudio>()) {
-	projectile_config.texture = services.get<Resources>().get<Texture>("images/kinetic_projectile.png");
+	projectile_config.texture = services.get<Resources>().get<Texture>("images/round_kinetic_green.png");
 	if (projectile_config.texture) { projectile_config.size = projectile_config.texture->get_size(); }
 }
 
@@ -25,7 +25,7 @@ auto GunKinetic::do_fire(glm::vec2 const muzzle_position) -> std::unique_ptr<Rou
 
 	if (rounds > 0) { --rounds; }
 	m_reload_remain = reload_delay;
-	get_audio().play_sfx("sfx/kinetic_fire.wav");
+	get_audio().play_sfx(fire_sfx);
 	return std::make_unique<Projectile>(&get_display(), projectile_config, muzzle_position);
 }
 

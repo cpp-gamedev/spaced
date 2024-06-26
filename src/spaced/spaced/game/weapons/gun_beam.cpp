@@ -108,7 +108,7 @@ class LaserCharge : public IWeaponRound {
 } // namespace
 
 GunBeam::GunBeam(Services const& services) : Weapon(services, "GunBeam") {
-	config.beam_texture = services.get<Resources>().get<Texture>("images/beam_round.png");
+	config.beam_texture = services.get<Resources>().get<Texture>("images/round_beam.png");
 }
 
 void GunBeam::tick(Seconds const dt) {

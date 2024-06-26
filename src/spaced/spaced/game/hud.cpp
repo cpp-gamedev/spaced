@@ -86,7 +86,7 @@ void Hud::create_lives(Services const& services) {
 	m_lives_icon = sprite.get();
 	m_lives_icon->sprite.set_size(glm::vec2{20.0f});
 	auto const& resources = services.get<Resources>();
-	if (auto const texture = resources.get<Texture>("images/player_ship_icon.png")) {
+	if (auto const texture = resources.get<Texture>("images/icon_player.png")) {
 		m_lives_icon->sprite.set_texture(texture);
 		m_lives_icon->sprite.set_size(texture->get_size());
 	}
