@@ -21,6 +21,7 @@ Projectile::Projectile(NotNull<Layout const*> layout, Config config, glm::vec2 c
 	m_sprite.set_auto_size(m_config.size);
 	m_sprite.tint = m_config.tint;
 	m_sprite.transform.position = muzzle_position + glm::vec2{0.5f * m_config.size.x, 0.0f};
+	m_sprite.transform.scale.x = m_config.x_scale;
 }
 
 void Projectile::tick(State const& state, Seconds const dt) {

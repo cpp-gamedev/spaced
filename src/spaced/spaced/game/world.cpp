@@ -42,14 +42,23 @@ World::World(bave::NotNull<Services const*> services, CreateInfo const& create_i
 	m_star_field.add_field(resources.get<Texture>("images/star_yellow.png"), config);
 }
 
-void World::tick(Seconds const dt, bool const in_play) {
-	if (in_play) { m_star_field.tick(dt); }
+void World::tick(Seconds const dt, NotNull<IDamageable*> player, bool const in_play) {
+	if (in_play) {
+		m_star_field.tick(dt);
 
-	for (auto const& enemy : m_active_enemies) {
-		enemy->tick(dt, in_play);
-		if (enemy->is_dead()) { on_death(*enemy, true); }
+		for (auto const& enemy : m_active_enemies) {
+			if (auto round = enemy->tick(dt)) { m_enemy_rounds.push_back(std::move(round)); }
+			if (enemy->is_dead()) { on_death(*enemy, true); }
+		}
+		std::erase_if(m_active_enemies, [](auto const& enemy) { return enemy->is_destroyed(); });
 	}
-	std::erase_if(m_active_enemies, [](auto const& enemy) { return enemy->is_destroyed(); });
+
+	auto const round_state = IWeaponRound::State{
+		.targets = {&player, 1},
+		.in_play = in_play,
+	};
+	for (auto const& round : m_enemy_rounds) { round->tick(round_state, dt); }
+	std::erase_if(m_enemy_rounds, [](auto const& r) { return r->is_destroyed(); });
 
 	for (auto& emitter : m_enemy_death_emitters) { emitter.tick(dt); }
 	std::erase_if(m_enemy_death_emitters, [](ParticleEmitter const& emitter) { return emitter.active_particles() == 0; });
@@ -69,6 +78,7 @@ void World::draw(Shader& shader) const {
 	m_star_field.draw(shader);
 	for (auto const& enemy : m_active_enemies) { enemy->draw(shader); }
 	for (auto const& emitter : m_enemy_death_emitters) { emitter.draw(shader); }
+	for (auto const& round : m_enemy_rounds) { round->draw(shader); }
 	for (auto const& powerup : m_active_powerups) { powerup->draw(shader); }
 }
 

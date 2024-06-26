@@ -6,8 +6,9 @@ class Creep : public Enemy {
   public:
 	explicit Creep(bave::Services const& services);
 
-	void tick(bave::Seconds dt, bool in_play) override;
+  private:
+	auto tick(bave::Seconds dt) -> std::unique_ptr<IWeaponRound> final;
 
-	float x_speed{100.0f};
+	float m_speed{100.0f};
 };
 } // namespace spaced::enemy

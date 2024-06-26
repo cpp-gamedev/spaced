@@ -12,12 +12,12 @@ Creep::Creep(bave::Services const& services) : Enemy(services, "Creep") {
 	health = 2.0f;
 }
 
-void Creep::tick(Seconds const dt, bool const in_play) {
-	if (!in_play) { return; }
-
-	m_sprite.transform.position.x -= x_speed * dt.count();
+auto Creep::tick(Seconds const dt) -> std::unique_ptr<IWeaponRound> {
+	m_sprite.transform.position.x -= m_speed * dt.count();
 	if (m_sprite.transform.position.x < -0.5f * (get_layout().world_space.x + m_sprite.get_shape().size.x)) { set_destroyed(); }
 
 	update_health_bar();
+
+	return {};
 }
 } // namespace spaced::enemy

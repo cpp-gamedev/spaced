@@ -140,7 +140,7 @@ void GameScene::on_tap(PointerTap const& pointer_tap) { m_player->on_tap(pointer
 void GameScene::tick(Seconds const dt) {
 	auto ft = bave::DeltaTime{};
 
-	m_world->tick(dt, is_in_play());
+	m_world->tick(dt, &*m_player, is_in_play());
 
 	auto const player_state = Player::State{.targets = m_world->get_targets(), .powerups = m_world->get_powerups()};
 	m_player->tick(player_state, dt);
