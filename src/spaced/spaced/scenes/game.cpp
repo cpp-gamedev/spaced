@@ -72,6 +72,8 @@ auto GameScene::get_asset_manifest() -> AssetManifest {
 				"images/icon_player.png",
 				"images/shield.png",
 				"images/ship_creep.png",
+				"images/ship_gunner.png",
+				"images/ship_trooper.png",
 				"images/background.png",
 				"images/star_blue.png",
 				"images/star_red.png",
@@ -79,7 +81,6 @@ auto GameScene::get_asset_manifest() -> AssetManifest {
 				"images/round_kinetic_green.png",
 				"images/round_kinetic_red.png",
 				"images/round_beam.png",
-				"images/ship_trooper.png",
 			},
 		.audio_clips =
 			{

@@ -17,7 +17,7 @@ class EndlessScene : public GameScene {
 	void debug_spawn_powerup(glm::vec2 position);
 
 	SignalHandle m_on_player_scored{};
-	GunKinetic m_trooper_gun;
+	GunKinetic m_enemy_gun;
 
 	std::vector<std::unique_ptr<SpawnTimer<Enemy>>> m_spawn_timers{};
 };

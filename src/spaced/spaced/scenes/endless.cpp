@@ -1,6 +1,7 @@
 #include <bave/core/random.hpp>
 #include <bave/services/resources.hpp>
 #include <spaced/game/enemies/creep.hpp>
+#include <spaced/game/enemies/gunner.hpp>
 #include <spaced/game/enemies/trooper.hpp>
 #include <spaced/game/powerups/beam.hpp>
 #include <spaced/game/powerups/one_up.hpp>
@@ -25,18 +26,22 @@ struct CreepSpawner : SpawnTimer<Enemy> {
 	[[nodiscard]] auto spawn() const -> std::unique_ptr<Enemy> final { return std::make_unique<enemy::Creep>(*services); }
 };
 
-struct TrooperSpawner : SpawnTimer<Enemy> {
+template <std::derived_from<enemy::GunnerBase> T>
+struct GunnerSpawnerT : SpawnTimer<Enemy> {
 	NotNull<Services const*> services;
 	NotNull<GunKinetic*> gun;
 
-	explicit TrooperSpawner(NotNull<Services const*> services, NotNull<GunKinetic*> gun, Seconds spawn_rate)
+	explicit GunnerSpawnerT(NotNull<Services const*> services, NotNull<GunKinetic*> gun, Seconds spawn_rate)
 		: SpawnTimer(spawn_rate), services(services), gun(gun) {}
 
-	[[nodiscard]] auto spawn() const -> std::unique_ptr<Enemy> final { return std::make_unique<enemy::Trooper>(*services, gun); }
+	[[nodiscard]] auto spawn() const -> std::unique_ptr<Enemy> final { return std::make_unique<T>(*services, gun); }
 };
+
+using GunnerSpawner = GunnerSpawnerT<enemy::Gunner>;
+using TrooperSpawner = GunnerSpawnerT<enemy::Trooper>;
 } // namespace
 
-EndlessScene::EndlessScene(App& app, Services const& services) : GameScene(app, services), m_trooper_gun(services) {
+EndlessScene::EndlessScene(App& app, Services const& services) : GameScene(app, services), m_enemy_gun(services) {
 	m_on_player_scored = services.get<GameSignals>().player_scored.connect([this](Enemy const& e) {
 		if (random_in_range(0, 10) < 3) { debug_spawn_powerup(e.get_position()); }
 	});
@@ -47,15 +52,16 @@ void EndlessScene::on_loaded() {
 
 	auto const& resources = get_services().get<Resources>();
 
-	m_trooper_gun.reload_delay = 0s;
-	m_trooper_gun.fire_sfx = "sfx/kinetic_fire1.wav";
-	m_trooper_gun.projectile_config.texture = resources.get<Texture>("images/round_kinetic_red.png");
-	m_trooper_gun.projectile_config.instigator = Instigator::eEnemy;
-	m_trooper_gun.projectile_config.x_speed = -m_trooper_gun.projectile_config.x_speed;
-	m_trooper_gun.projectile_config.x_scale = -1.0f;
+	m_enemy_gun.reload_delay = 0s;
+	m_enemy_gun.fire_sfx = "sfx/kinetic_fire1.wav";
+	m_enemy_gun.projectile_config.texture = resources.get<Texture>("images/round_kinetic_red.png");
+	m_enemy_gun.projectile_config.instigator = Instigator::eEnemy;
+	m_enemy_gun.projectile_config.x_speed = -m_enemy_gun.projectile_config.x_speed;
+	m_enemy_gun.projectile_config.x_scale = -1.0f;
 
 	m_spawn_timers.push_back(std::make_unique<CreepSpawner>(&get_services(), 1s));
-	m_spawn_timers.push_back(std::make_unique<TrooperSpawner>(&get_services(), &m_trooper_gun, 2s));
+	m_spawn_timers.push_back(std::make_unique<GunnerSpawner>(&get_services(), &m_enemy_gun, 2s));
+	m_spawn_timers.push_back(std::make_unique<TrooperSpawner>(&get_services(), &m_enemy_gun, 5s));
 }
 
 void EndlessScene::tick(Seconds const dt) {
