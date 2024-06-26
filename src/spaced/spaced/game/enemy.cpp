@@ -43,9 +43,10 @@ void Enemy::force_death() {
 }
 
 void Enemy::update_health_bar() {
-	m_health_bar.position = m_sprite.transform.position;
-	m_health_bar.position.y += 0.5f * m_sprite.get_shape().size.y + 20.0f;
-	m_health_bar.size = {m_sprite.get_shape().size.x, 10.0f};
+	auto position = m_sprite.transform.position;
+	position.y += 0.5f * m_sprite.get_shape().size.y + 20.0f;
+	m_health_bar.set_position(position);
+	m_health_bar.set_size({m_sprite.get_shape().size.x, 10.0f});
 	m_health_bar.set_progress(health.get_hit_points() / health.get_total_hit_points());
 }
 

@@ -12,8 +12,8 @@ FetchContent_Declare(
   bgf
   GIT_REPOSITORY https://github.com/karnkaul/bgf
 
-  # GIT_TAG v0.1.5
-  GIT_TAG adc217f
+  # GIT_TAG v0.1.7
+  GIT_TAG 59cf60b
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ext/bgf"
 )
 
