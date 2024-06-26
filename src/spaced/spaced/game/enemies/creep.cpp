@@ -3,7 +3,6 @@
 
 namespace spaced::enemy {
 using bave::Resources;
-using bave::Seconds;
 using bave::Texture;
 
 Creep::Creep(bave::Services const& services) : Enemy(services, "Creep") {
@@ -11,15 +10,8 @@ Creep::Creep(bave::Services const& services) : Enemy(services, "Creep") {
 		m_sprite.set_size(texture->get_size());
 		m_sprite.set_texture(std::move(texture));
 	}
+
 	health = 2.0f;
-}
-
-auto Creep::tick(Seconds const dt) -> std::unique_ptr<IWeaponRound> {
-	m_sprite.transform.position.x -= m_speed * dt.count();
-	if (m_sprite.transform.position.x < -0.5f * (get_layout().world_space.x + m_sprite.get_shape().size.x)) { set_destroyed(); }
-
-	update_health_bar();
-
-	return {};
+	speed = 100.0f;
 }
 } // namespace spaced::enemy

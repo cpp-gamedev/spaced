@@ -50,6 +50,17 @@ void Enemy::update_health_bar() {
 	m_health_bar.set_progress(health.get_hit_points() / health.get_total_hit_points());
 }
 
+auto Enemy::tick(Seconds const dt) -> std::unique_ptr<IWeaponRound> {
+	do_tick(dt);
+
+	m_sprite.transform.position.x -= speed * dt.count();
+	if (m_sprite.transform.position.x < -0.5f * (get_layout().world_space.x + m_sprite.get_shape().size.x)) { set_destroyed(); }
+
+	update_health_bar();
+
+	return make_round();
+}
+
 void Enemy::draw(Shader& shader) const {
 	m_sprite.draw(shader);
 	m_health_bar.draw(shader);

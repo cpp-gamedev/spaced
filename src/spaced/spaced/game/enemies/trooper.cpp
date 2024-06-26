@@ -8,31 +8,24 @@ using bave::Seconds;
 using bave::Services;
 using bave::Texture;
 
-Trooper::Trooper(Services const& services, NotNull<GunKinetic*> gun) : Enemy(services, "Creep"), m_gun(gun) {
-	auto const& resources = services.get<Resources>();
-
-	if (auto texture = resources.get<Texture>("images/ship_trooper.png")) {
+Trooper::Trooper(Services const& services, NotNull<GunKinetic*> gun) : Enemy(services, "Trooper"), m_gun(gun) {
+	if (auto texture = services.get<Resources>().get<Texture>("images/ship_trooper.png")) {
 		texture->sampler.wrap_s = texture->sampler.wrap_t = Texture::Wrap::eClampEdge;
 		m_sprite.set_size(texture->get_size());
 		m_sprite.set_texture(std::move(texture));
 	}
-	health = 2.0f;
+
+	health = 3.0f;
+	speed = 120.0f;
 }
 
-auto Trooper::tick(Seconds const dt) -> std::unique_ptr<IWeaponRound> {
-	m_sprite.transform.position.x -= m_speed.x * dt.count();
-	if (m_sprite.transform.position.x < -0.5f * (get_layout().world_space.x + m_sprite.get_shape().size.x)) { set_destroyed(); }
+void Trooper::do_tick(Seconds const dt) { m_fire_elapsed += dt; }
 
-	auto ret = std::unique_ptr<IWeaponRound>{};
-	m_fire_elapsed += dt;
-	if (m_fire_elapsed >= m_fire_rate) {
-		m_fire_elapsed = 0s;
-		ret = m_gun->fire(get_muzzle_position());
-	}
+auto Trooper::make_round() -> std::unique_ptr<IWeaponRound> {
+	if (m_fire_elapsed < m_fire_rate) { return {}; }
 
-	update_health_bar();
-
-	return ret;
+	m_fire_elapsed = 0s;
+	return m_gun->fire(get_muzzle_position());
 }
 
 auto Trooper::get_muzzle_position() const -> glm::vec2 {

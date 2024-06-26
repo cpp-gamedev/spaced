@@ -8,14 +8,14 @@ class Trooper : public Enemy {
 	explicit Trooper(bave::Services const& services, bave::NotNull<GunKinetic*> gun);
 
   private:
-	auto tick(bave::Seconds dt) -> std::unique_ptr<IWeaponRound> final;
+	auto make_round() -> std::unique_ptr<IWeaponRound> final;
+	void do_tick(bave::Seconds dt) final;
 
 	[[nodiscard]] auto get_muzzle_position() const -> glm::vec2;
 
 	bave::NotNull<GunKinetic*> m_gun;
 	bave::Seconds m_fire_rate{3.3s};
 
-	glm::vec2 m_speed{100.0f};
 	bave::Seconds m_fire_elapsed{};
 };
 } // namespace spaced::enemy
