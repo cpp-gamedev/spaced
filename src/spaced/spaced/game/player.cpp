@@ -20,6 +20,7 @@ using bave::Resources;
 using bave::Seconds;
 using bave::Services;
 using bave::Shader;
+using bave::Styles;
 using bave::Texture;
 
 Player::Player(Services const& services, std::unique_ptr<IController> controller)
@@ -29,6 +30,7 @@ Player::Player(Services const& services, std::unique_ptr<IController> controller
 	ship.transform.position.x = layout.player_x;
 
 	auto const& resources = services.get<Resources>();
+	auto const& rgbas = services.get<Styles>().rgbas;
 
 	if (auto const texture = services.get<Resources>().get<Texture>("images/player_ship.png")) {
 		ship.set_texture(texture);
@@ -36,6 +38,7 @@ Player::Player(Services const& services, std::unique_ptr<IController> controller
 	}
 
 	if (auto const exhaust = resources.get<ParticleEmitter>("particles/exhaust.json")) { m_exhaust = *exhaust; }
+	m_exhaust.config.lerp.tint.lo = rgbas["exhaust"];
 	m_exhaust.set_position(get_exhaust_position());
 	m_exhaust.config.respawn = true;
 	m_exhaust.pre_warm();

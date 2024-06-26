@@ -3,13 +3,15 @@
 
 namespace spaced {
 using bave::Circle;
+using bave::IAudio;
 using bave::ParticleEmitter;
 using bave::Resources;
 using bave::Seconds;
 using bave::Services;
 using bave::Shader;
 
-Powerup::Powerup(Services const& services, std::string_view const name) : m_services(&services), m_layout(&services.get<Layout>()), m_name(name) {
+Powerup::Powerup(Services const& services, std::string_view const name)
+	: m_services(&services), m_layout(&services.get<Layout>()), m_audio(&services.get<IAudio>()), m_name(name) {
 	auto circle = Circle{};
 	circle.diameter = 40.0f;
 	shape.set_shape(circle);
@@ -39,6 +41,7 @@ void Powerup::draw(Shader& shader) const {
 
 void Powerup::activate(Player& player) {
 	do_activate(player);
+	m_audio->play_sfx("sfx/powerup_collect.wav");
 	m_destroyed = true;
 }
 } // namespace spaced

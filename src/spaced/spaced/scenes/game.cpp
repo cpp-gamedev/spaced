@@ -88,6 +88,7 @@ auto GameScene::get_asset_manifest() -> AssetManifest {
 				"sfx/swish.wav",
 				"sfx/kinetic_fire.wav",
 				"sfx/beam_fire.wav",
+				"sfx/powerup_collect.wav",
 				"music/game.mp3",
 			},
 		.particle_emitters =

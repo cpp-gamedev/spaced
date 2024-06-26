@@ -2,6 +2,7 @@
 #include <bave/core/time.hpp>
 #include <bave/graphics/particle_system.hpp>
 #include <bave/graphics/shape.hpp>
+#include <bave/services/audio.hpp>
 #include <bave/services/services.hpp>
 #include <spaced/services/layout.hpp>
 
@@ -29,6 +30,8 @@ class Powerup : public bave::IDrawable {
 
 	bave::NotNull<bave::Services const*> m_services;
 	bave::NotNull<Layout const*> m_layout;
+	bave::NotNull<bave::IAudio*> m_audio;
+
 	std::string_view m_name{};
 	bool m_emitter_ticked{};
 	bool m_destroyed{};

@@ -1,6 +1,7 @@
 #include <bave/core/random.hpp>
 #include <spaced/game/enemies/creep.hpp>
 #include <spaced/game/powerups/beam.hpp>
+#include <spaced/game/powerups/one_up.hpp>
 #include <spaced/scenes/endless.hpp>
 #include <spaced/services/game_signals.hpp>
 
@@ -29,7 +30,12 @@ void EndlessScene::tick(Seconds const dt) {
 }
 
 void EndlessScene::debug_spawn_powerup(glm::vec2 const position) {
-	auto powerup = std::make_unique<powerup::Beam>(get_services());
+	auto powerup = std::unique_ptr<Powerup>{};
+	if (random_in_range(0, 1) == 0) {
+		powerup = std::make_unique<powerup::Beam>(get_services());
+	} else {
+		powerup = std::make_unique<powerup::OneUp>(get_services());
+	}
 	powerup->shape.transform.position = position;
 	push_powerup(std::move(powerup));
 }
