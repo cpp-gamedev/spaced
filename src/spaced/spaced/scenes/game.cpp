@@ -23,6 +23,7 @@ using bave::im_text;
 using bave::Key;
 using bave::KeyInput;
 using bave::KeyMods;
+using bave::Platform;
 using bave::PointerMove;
 using bave::PointerTap;
 using bave::Ptr;
@@ -35,14 +36,9 @@ namespace ui = bave::ui;
 
 namespace {
 [[nodiscard]] auto make_player_controller(Services const& services) {
-	auto ret = std::make_unique<PlayerController>(services);
-	if constexpr (bave::platform_v == bave::Platform::eAndroid) { ret->set_type(PlayerController::Type::eTouch); }
-	auto const& layout = services.get<Layout>();
-	auto const half_size = 0.5f * layout.player_size;
-	auto const play_area = layout.play_area;
-	ret->max_y = play_area.lt.y - half_size.y;
-	ret->min_y = play_area.rb.y + half_size.y;
-	return ret;
+	using enum PlayerController::Type;
+	static constexpr auto type_v = bave::platform_v == Platform::eAndroid ? eTouch : eMouse;
+	return std::make_unique<PlayerController>(services, type_v);
 }
 
 [[nodiscard]] auto make_auto_controller(ITargetProvider const& target_provider, Services const& services) {
