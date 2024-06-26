@@ -15,7 +15,7 @@ class Player : public bave::IDrawable {
   public:
 	struct State {
 		std::span<bave::NotNull<IDamageable*> const> targets{};
-		std::span<bave::NotNull<IPowerup*> const> powerups{};
+		std::span<bave::NotNull<Powerup*> const> powerups{};
 	};
 
 	explicit Player(bave::Services const& services, std::unique_ptr<IController> controller);

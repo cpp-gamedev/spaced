@@ -3,29 +3,34 @@
 #include <spaced/game/game_save.hpp>
 #include <spaced/game/hud.hpp>
 #include <spaced/game/player.hpp>
-#include <spaced/game/scorer.hpp>
 #include <spaced/game/target_provider.hpp>
 #include <spaced/game/world.hpp>
+#include <spaced/signal.hpp>
 
 namespace spaced {
-class GameScene : public bave::Scene, public IScorer {
+class GameScene : public bave::Scene {
   public:
 	GameScene(bave::App& app, bave::Services const& services);
 
-  private:
-	auto get_asset_manifest() -> bave::AssetManifest final;
-	void on_loaded() final;
+  protected:
+	[[nodiscard]] auto is_game_over() const -> bool { return m_player->is_idle() && m_spare_lives == 0; }
+	[[nodiscard]] auto is_in_play() const -> bool { return !is_game_over(); }
 
+	auto get_asset_manifest() -> bave::AssetManifest override;
+	void on_loaded() override;
+
+	void tick(bave::Seconds dt) override;
+
+	void push_enemy(std::unique_ptr<Enemy> enemy) { m_world.value().push(std::move(enemy)); }
+	void push_powerup(std::unique_ptr<Powerup> powerup) { m_world.value().push(std::move(powerup)); }
+
+  private:
 	void on_focus(bave::FocusChange const& focus_change) final;
 	void on_key(bave::KeyInput const& key_input) final;
 	void on_move(bave::PointerMove const& pointer_move) final;
 	void on_tap(bave::PointerTap const& pointer_tap) final;
 
-	void tick(bave::Seconds dt) final;
 	void render(bave::Shader& shader) const final;
-
-	[[nodiscard]] auto get_score() const -> std::int64_t final { return m_score; }
-	void add_score(std::int64_t score) final;
 
 	void start_play();
 
@@ -39,7 +44,10 @@ class GameScene : public bave::Scene, public IScorer {
 
 	void debug_controller_type();
 
+	SignalHandle m_on_player_scored{};
+
 	GameSave m_save;
+	World::CreateInfo m_wci{};
 	std::optional<World> m_world{};
 	std::optional<Player> m_player{};
 	int m_spare_lives{2};

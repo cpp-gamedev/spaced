@@ -9,6 +9,7 @@ struct Prefs {
 
 	float music_gain{1.0f};
 	float sfx_gain{1.0f};
+	float starfield_density{0.75f};
 
 	static auto load(bave::App const& app) -> Prefs;
 	void save(bave::App const& app) const;

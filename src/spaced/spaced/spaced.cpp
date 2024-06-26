@@ -117,7 +117,6 @@ void Spaced::set_layout() {
 	static constexpr auto world_space_v = glm::vec2{1920.0f, 1080.0f};
 
 	auto layout = std::make_unique<Layout>(&get_app().get_render_device());
-	m_layout = layout.get();
 	auto& world_space = m_services.get<Display>().world;
 	world_space.render_view.viewport = world_space.get_viewport_scaler().match_width(world_space_v);
 

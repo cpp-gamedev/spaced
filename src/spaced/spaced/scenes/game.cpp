@@ -8,8 +8,10 @@
 #include <bave/ui/dialog.hpp>
 #include <spaced/game/controllers/auto_controller.hpp>
 #include <spaced/game/controllers/player_controller.hpp>
+#include <spaced/prefs.hpp>
 #include <spaced/scenes/game.hpp>
 #include <spaced/scenes/menu.hpp>
+#include <spaced/services/game_signals.hpp>
 #include <spaced/services/stats.hpp>
 
 namespace spaced {
@@ -48,7 +50,17 @@ namespace {
 }
 } // namespace
 
-GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_save(&app) { clear_colour = services.get<Styles>().rgbas["mocha"]; }
+GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_save(&app) {
+	clear_colour = services.get<Styles>().rgbas["mocha"];
+	m_on_player_scored = services.get<GameSignals>().player_scored.connect([this](Enemy const& e) {
+		m_score += e.points;
+		m_hud->set_score(m_score);
+		update_hi_score();
+	});
+
+	auto const prefs = Prefs::load(app);
+	m_wci.starfield_density = prefs.starfield_density;
+}
 
 auto GameScene::get_asset_manifest() -> AssetManifest {
 	return AssetManifest{
@@ -82,21 +94,19 @@ auto GameScene::get_asset_manifest() -> AssetManifest {
 }
 
 void GameScene::on_loaded() {
-	auto const& services = get_services();
+	switch_track("music/game.mp3");
 
-	auto hud = std::make_unique<Hud>(services);
+	auto hud = std::make_unique<Hud>(get_services());
 	m_hud = hud.get();
 	push_view(std::move(hud));
 
 	start_play();
-
-	switch_track("music/game.mp3");
 }
 
 void GameScene::start_play() {
 	auto const& services = get_services();
 
-	m_world.emplace(&services, this);
+	m_world.emplace(&services, m_wci);
 	m_player.emplace(services, make_player_controller(services));
 
 	m_score = 0;
@@ -123,8 +133,7 @@ void GameScene::on_tap(PointerTap const& pointer_tap) { m_player->on_tap(pointer
 void GameScene::tick(Seconds const dt) {
 	auto ft = bave::DeltaTime{};
 
-	auto const game_over = m_player->is_idle() && m_spare_lives == 0;
-	m_world->tick(dt, !game_over);
+	m_world->tick(dt, is_in_play());
 
 	auto const player_state = Player::State{.targets = m_world->get_targets(), .powerups = m_world->get_powerups()};
 	auto const player_died = m_player->tick(player_state, dt);
@@ -139,12 +148,6 @@ void GameScene::tick(Seconds const dt) {
 void GameScene::render(Shader& shader) const {
 	m_world->draw(shader);
 	m_player->draw(shader);
-}
-
-void GameScene::add_score(std::int64_t const score) {
-	m_score += score;
-	m_hud->set_score(m_score);
-	update_hi_score();
 }
 
 void GameScene::on_player_death() {
@@ -201,7 +204,7 @@ void GameScene::inspect(Seconds const dt, Seconds const frame_time) {
 			}
 
 			ImGui::Separator();
-			im_text("score: {}", get_score());
+			im_text("score: {}", m_score);
 
 			ImGui::Separator();
 			if (ImGui::Button("end game")) { m_player->on_death(dt); }

@@ -53,6 +53,5 @@ class StarField : public bave::IDrawable {
 	bave::NotNull<Layout const*> m_layout;
 
 	std::vector<Field> m_fields{};
-	bave::Seconds m_next_spawn{};
 };
 } // namespace spaced

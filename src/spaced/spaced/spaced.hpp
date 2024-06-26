@@ -25,7 +25,5 @@ class Spaced : public bave::GameDriver {
 	void set_scene();
 
 	bave::Logger m_log{"Spaced"};
-	bave::Ptr<bave::Resources> m_resources{};
-	bave::Ptr<Layout> m_layout{};
 };
 } // namespace spaced
