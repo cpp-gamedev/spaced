@@ -11,9 +11,5 @@ class MenuScene : public bave::Scene {
 	void on_loaded() final;
 
 	void create_ui();
-
-	void tick(bave::Seconds dt) final;
-
-	bave::Ptr<bave::ui::ProgressBar> m_pb{};
 };
 } // namespace spaced
