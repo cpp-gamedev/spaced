@@ -143,9 +143,7 @@ void GameScene::tick(Seconds const dt) {
 	m_world->tick(dt, is_in_play());
 
 	auto const player_state = Player::State{.targets = m_world->get_targets(), .powerups = m_world->get_powerups()};
-	auto const player_died = m_player->tick(player_state, dt);
-
-	if (player_died) { m_hud->set_lives(m_spare_lives - 1); }
+	m_player->tick(player_state, dt);
 
 	if (m_player->is_idle()) { on_player_death(); }
 
@@ -160,6 +158,7 @@ void GameScene::render(Shader& shader) const {
 void GameScene::on_player_death() {
 	if (m_spare_lives > 0) {
 		--m_spare_lives;
+		m_hud->set_lives(m_spare_lives);
 		respawn_player();
 		return;
 	}
@@ -214,7 +213,7 @@ void GameScene::inspect(Seconds const dt, Seconds const frame_time) {
 			im_text("score: {}", m_score);
 
 			ImGui::Separator();
-			if (ImGui::Button("end game")) { m_player->on_death(dt); }
+			if (ImGui::Button("die")) { m_player->force_death(); }
 
 			ImGui::Separator();
 			im_text("dt: {:05.2f}", std::chrono::duration<float, std::milli>(dt).count());

@@ -12,7 +12,7 @@ namespace spaced {
 struct Stats;
 struct Sig1up;
 
-class Player : public bave::IDrawable {
+class Player : public IDamageable, public bave::IDrawable {
   public:
 	struct State {
 		std::span<bave::NotNull<IDamageable*> const> targets{};
@@ -25,8 +25,13 @@ class Player : public bave::IDrawable {
 	void on_move(bave::PointerMove const& pointer_move);
 	void on_tap(bave::PointerTap const& pointer_tap);
 
-	auto tick(State const& state, bave::Seconds dt) -> bool;
+	void tick(State const& state, bave::Seconds dt);
 	void draw(bave::Shader& shader) const final;
+
+	[[nodiscard]] auto get_instigator() const -> Instigator final { return Instigator::ePlayer; }
+	[[nodiscard]] auto get_bounds() const -> bave::Rect<> final { return bave::Rect<>::from_size(hitbox_size, ship.transform.position); }
+	auto take_damage(float damage) -> bool final;
+	void force_death() final;
 
 	void set_y(float y);
 	[[nodiscard]] auto get_y() const -> float { return ship.transform.position.y; }
@@ -46,8 +51,6 @@ class Player : public bave::IDrawable {
 	[[nodiscard]] auto is_dead() const -> bool { return m_health.is_dead(); }
 	[[nodiscard]] auto is_idle() const -> bool { return m_exhaust.active_particles() == 0; }
 
-	void on_death(bave::Seconds dt);
-
 	void inspect() {
 		if constexpr (bave::debug_v) { do_inspect(); }
 	}
@@ -56,6 +59,7 @@ class Player : public bave::IDrawable {
 	glm::vec2 hitbox_size{75.0f};
 
   private:
+	void on_death(bave::Seconds dt);
 	auto check_hit(IDamageable& out, bave::Rect<> const& hitbox, bave::Seconds dt) -> bool;
 
 	void do_inspect();

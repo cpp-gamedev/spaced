@@ -53,7 +53,7 @@ void Player::on_move(PointerMove const& pointer_move) { m_controller->on_move(po
 
 void Player::on_tap(PointerTap const& pointer_tap) { m_controller->on_tap(pointer_tap); }
 
-auto Player::tick(State const& state, Seconds const dt) -> bool {
+void Player::tick(State const& state, Seconds const dt) {
 	if (m_death) {
 		m_death->tick(dt);
 		if (m_death->active_particles() == 0) { m_death.reset(); }
@@ -71,16 +71,15 @@ auto Player::tick(State const& state, Seconds const dt) -> bool {
 
 	m_exhaust.tick(dt);
 
-	if (m_health.is_dead()) { return false; }
+	if (m_health.is_dead()) { return; }
 
 	auto const y_position = m_controller->tick(dt);
 	set_y(y_position);
 
 	m_exhaust.set_position(get_exhaust_position());
 
-	auto ret = false;
-	auto const hitbox = Rect<>::from_size(hitbox_size, ship.transform.position);
-	for (auto const& target : state.targets) { ret |= check_hit(*target, hitbox, dt); }
+	auto const bounds = get_bounds();
+	for (auto const& target : state.targets) { check_hit(*target, bounds, dt); }
 
 	for (auto const& powerup : state.powerups) {
 		if (is_intersecting(powerup->get_bounds(), ship.get_bounds())) {
@@ -88,8 +87,6 @@ auto Player::tick(State const& state, Seconds const dt) -> bool {
 			++m_stats->player.powerups_collected;
 		}
 	}
-
-	return ret;
 }
 
 void Player::draw(Shader& shader) const {
@@ -101,6 +98,15 @@ void Player::draw(Shader& shader) const {
 	m_arsenal.draw(shader);
 	if (m_death) { m_death->draw(shader); }
 }
+
+auto Player::take_damage(float damage) -> bool {
+	if (is_dead()) { return false; }
+	m_health.inflict_damage(damage);
+	if (m_health.is_dead()) { on_death({}); }
+	return true;
+}
+
+void Player::force_death() { on_death({}); }
 
 void Player::set_y(float const y) { ship.transform.position.y = y; }
 
