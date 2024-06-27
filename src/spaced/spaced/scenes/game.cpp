@@ -19,6 +19,7 @@ using bave::Action;
 using bave::App;
 using bave::AssetManifest;
 using bave::FocusChange;
+using bave::IAudio;
 using bave::im_text;
 using bave::Key;
 using bave::KeyInput;
@@ -46,7 +47,7 @@ namespace {
 }
 } // namespace
 
-GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_save(&app) {
+GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_audio(&services.get<IAudio>()), m_save(&app) {
 	clear_colour = services.get<Styles>().rgbas["mocha"];
 
 	auto& game_signals = services.get<GameSignals>();
@@ -89,6 +90,8 @@ auto GameScene::get_asset_manifest() -> AssetManifest {
 				"sfx/kinetic_fire1.wav",
 				"sfx/beam_fire.wav",
 				"sfx/powerup_collect.wav",
+				"sfx/crunch.wav",
+				"sfx/lose.wav",
 				"music/game.mp3",
 			},
 		.particle_emitters =
@@ -180,6 +183,8 @@ void GameScene::respawn_player() {
 }
 
 void GameScene::on_game_over() {
+	m_audio->play_sfx("sfx/lose.wav");
+
 	auto dci = ui::DialogCreateInfo{
 		.size = {600.0f, 200.0f},
 		.content_text = "GAME OVER",

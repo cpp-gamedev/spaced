@@ -12,6 +12,7 @@
 #include <spaced/game/weapons/gun_beam.hpp>
 
 namespace spaced {
+using bave::IAudio;
 using bave::ParticleEmitter;
 using bave::PointerMove;
 using bave::PointerTap;
@@ -24,8 +25,8 @@ using bave::Styles;
 using bave::Texture;
 
 Player::Player(Services const& services, std::unique_ptr<IController> controller)
-	: m_services(&services), m_stats(&services.get<Stats>()), m_controller(std::move(controller)), m_on_1up(&services.get<GameSignals>().one_up),
-	  m_shield(services), m_arsenal(services) {
+	: m_services(&services), m_audio(&services.get<IAudio>()), m_stats(&services.get<Stats>()), m_controller(std::move(controller)),
+	  m_on_1up(&services.get<GameSignals>().one_up), m_shield(services), m_arsenal(services) {
 	auto const& layout = services.get<Layout>();
 	ship.transform.position.x = layout.player_x;
 
@@ -134,6 +135,8 @@ void Player::set_shield(Seconds const ttl) {
 void Player::one_up() { m_on_1up->dispatch(); }
 
 void Player::on_death(Seconds const dt) {
+	m_audio->play_sfx("sfx/crunch.wav");
+
 	m_health = 0.0f;
 	m_death = m_death_source;
 	m_death->set_position(ship.transform.position);

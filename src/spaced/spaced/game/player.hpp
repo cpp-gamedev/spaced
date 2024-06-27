@@ -66,6 +66,7 @@ class Player : public IDamageable, public bave::IDrawable {
 
 	bave::Logger m_log{"Player"};
 	bave::NotNull<bave::Services const*> m_services;
+	bave::NotNull<bave::IAudio*> m_audio;
 	bave::NotNull<Stats*> m_stats;
 	std::unique_ptr<IController> m_controller;
 	bave::NotNull<Sig1up*> m_on_1up;

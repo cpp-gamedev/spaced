@@ -44,6 +44,8 @@ class GameScene : public bave::Scene {
 
 	void debug_controller_type();
 
+	bave::NotNull<bave::IAudio*> m_audio;
+
 	SignalHandle m_on_player_scored{};
 	SignalHandle m_on_1up{};
 
