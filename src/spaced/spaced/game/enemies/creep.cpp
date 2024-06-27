@@ -13,5 +13,6 @@ Creep::Creep(bave::Services const& services) : Enemy(services, "Creep") {
 
 	health = 1.0f;
 	speed = 100.0f;
+	points = 10;
 }
 } // namespace spaced::enemy

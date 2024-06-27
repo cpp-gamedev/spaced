@@ -13,5 +13,6 @@ Gunner::Gunner(bave::Services const& services, bave::NotNull<GunKinetic*> gun) :
 
 	health = 2.0f;
 	speed = 120.0f;
+	points = 20;
 }
 } // namespace spaced::enemy

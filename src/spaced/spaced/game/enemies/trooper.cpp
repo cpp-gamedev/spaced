@@ -20,6 +20,7 @@ Trooper::Trooper(Services const& services, NotNull<GunKinetic*> gun) : GunnerBas
 
 	health = 3.0f;
 	speed = 150.0f;
+	points = 30;
 }
 
 void Trooper::do_tick(Seconds const dt) {

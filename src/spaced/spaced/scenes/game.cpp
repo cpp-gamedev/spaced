@@ -128,6 +128,8 @@ void GameScene::start_play() {
 	++services.get<Stats>().game.play_count;
 
 	m_game_over_dialog_pushed = false;
+
+	on_start();
 }
 
 void GameScene::on_focus(FocusChange const& focus_change) {
@@ -180,6 +182,7 @@ void GameScene::on_player_death() {
 void GameScene::respawn_player() {
 	m_player.emplace(get_services(), make_player_controller(get_services()));
 	m_player->set_shield(2s);
+	on_respawn();
 }
 
 void GameScene::on_game_over() {
@@ -224,6 +227,8 @@ void GameScene::inspect(Seconds const dt, Seconds const frame_time) {
 
 			ImGui::Separator();
 			if (ImGui::Button("die")) { m_player->force_death(); }
+
+			do_inspect(dt);
 
 			ImGui::Separator();
 			im_text("dt: {:05.2f}", std::chrono::duration<float, std::milli>(dt).count());

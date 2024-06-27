@@ -179,7 +179,7 @@ void Player::do_inspect() {
 		}
 		if (ImGui::TreeNodeEx("Shield", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
 			auto ttl = m_shield.ttl.count();
-			if (ImGui::DragFloat("ttl", &ttl, 0.25f, 0.0f, 60.0f, "%.2f")) { m_shield.ttl = Seconds{ttl}; }
+			if (ImGui::DragFloat("ttl", &ttl, 0.25f, 0.0f, 600.0f, "%.2f")) { m_shield.ttl = Seconds{ttl}; }
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNodeEx("Status", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
