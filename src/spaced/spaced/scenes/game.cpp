@@ -127,7 +127,10 @@ void GameScene::start_play() {
 	m_game_over_dialog_pushed = false;
 }
 
-void GameScene::on_focus(FocusChange const& focus_change) { m_player->on_focus(focus_change); }
+void GameScene::on_focus(FocusChange const& focus_change) {
+	m_player->on_focus(focus_change);
+	m_paused = !focus_change.in_focus;
+}
 
 void GameScene::on_key(KeyInput const& key_input) {
 	if (key_input.key == Key::eEscape && key_input.action == Action::eRelease && key_input.mods == KeyMods{}) { get_switcher().switch_to<MenuScene>(); }
@@ -138,6 +141,8 @@ void GameScene::on_move(PointerMove const& pointer_move) { m_player->on_move(poi
 void GameScene::on_tap(PointerTap const& pointer_tap) { m_player->on_tap(pointer_tap); }
 
 void GameScene::tick(Seconds const dt) {
+	if (m_paused) { return; }
+
 	auto ft = bave::DeltaTime{};
 
 	m_world->tick(dt, &*m_player, is_in_play());

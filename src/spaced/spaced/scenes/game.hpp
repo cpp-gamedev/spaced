@@ -52,6 +52,7 @@ class GameScene : public bave::Scene {
 	std::optional<World> m_world{};
 	std::optional<Player> m_player{};
 	int m_spare_lives{2};
+	bool m_paused{};
 
 	std::int64_t m_score{};
 	bave::Ptr<Hud> m_hud{};

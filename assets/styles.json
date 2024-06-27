@@ -34,8 +34,8 @@
   },
   "progress_bars": {
     "default": {
-      "background": "#9f2b68ff",
-      "fill": "milk",
+      "background": "#db7a7eff",
+      "fill": "#9f2b68ff",
       "corner_ratio": 0.5,
       "padding": 20
     },
