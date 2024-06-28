@@ -18,7 +18,7 @@ using bave::Texture;
 
 namespace ui = bave::ui;
 
-Hud::Hud(Services const& services) : ui::View(services), m_layout(&services.get<Layout>()), m_styles(&services.get<Styles>()) {
+Hud::Hud(Services const& services) : m_layout(&services.get<Layout>()), m_styles(&services.get<Styles>()) {
 	create_background();
 	create_score(services);
 	create_lives(services);
