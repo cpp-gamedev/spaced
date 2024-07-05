@@ -5,6 +5,8 @@ if("${PACKAGE_NAME}" STREQUAL "")
   set(PACKAGE_NAME "NovaSwarm.zip")
 endif()
 
+message(STATUS "package name: ${PACKAGE_NAME}")
+
 set(exe_name "NovaSwarm")
 set(assets_zip assets.zip)
 set(exe_ext "")
@@ -19,7 +21,14 @@ set(build_dir out/release)
 message(STATUS "building to: ${build_dir}")
 
 message(STATUS "configuring")
-execute_process(COMMAND ${CMAKE_COMMAND} -S . -B ${build_dir} --preset=default
+
+if(WIN32)
+  set(preset vs22)
+else()
+  set(preset default)
+endif()
+
+execute_process(COMMAND ${CMAKE_COMMAND} -S . -B ${build_dir} --preset=${preset}
   COMMAND_ERROR_IS_FATAL ANY
 )
 
