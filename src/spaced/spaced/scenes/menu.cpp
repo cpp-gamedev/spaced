@@ -6,6 +6,7 @@
 #include <bave/ui/dialog.hpp>
 #include <bave/ui/text.hpp>
 #include <spaced/build_version.hpp>
+#include <spaced/game_title.hpp>
 #include <spaced/prefs.hpp>
 #include <spaced/scenes/endless.hpp>
 #include <spaced/scenes/menu.hpp>
@@ -93,7 +94,7 @@ void MenuScene::on_loaded() {
 
 void MenuScene::create_ui() {
 	auto header = std::make_unique<ui::Text>(get_services());
-	header->text.set_height(TextHeight{100}).set_string("Nova Swarm");
+	header->text.set_height(TextHeight{100}).set_string(std::string{game_title_v});
 	header->set_position({0.0f, 300.0f});
 	header->text.tint = bave::white_v;
 
