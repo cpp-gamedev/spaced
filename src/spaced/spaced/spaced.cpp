@@ -88,6 +88,8 @@ Spaced::Spaced(App& app) : GameDriver(app, gdci_v) {
 	create_services();
 	set_prefs();
 	set_scene();
+
+	if constexpr (bave::imgui_v && !bave::debug_v) { ImGui::GetIO().IniFilename = ""; }
 }
 
 void Spaced::save_styles() {
