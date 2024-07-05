@@ -3,7 +3,6 @@
 #include <bave/core/random.hpp>
 #include <bave/imgui/im_text.hpp>
 #include <bave/services/scene_switcher.hpp>
-#include <bave/services/styles.hpp>
 #include <bave/ui/button.hpp>
 #include <bave/ui/dialog.hpp>
 #include <spaced/game/controllers/auto_controller.hpp>
@@ -31,7 +30,6 @@ using bave::Ptr;
 using bave::Seconds;
 using bave::Services;
 using bave::Shader;
-using bave::Styles;
 
 namespace ui = bave::ui;
 
@@ -48,8 +46,6 @@ namespace {
 } // namespace
 
 GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_audio(&services.get<IAudio>()), m_save(&app) {
-	clear_colour = services.get<Styles>().rgbas["mocha"];
-
 	auto& game_signals = services.get<GameSignals>();
 	m_on_player_scored = game_signals.player_scored.connect([this](Enemy const& e) {
 		m_score += e.points;

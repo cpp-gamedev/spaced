@@ -76,7 +76,7 @@ void Hud::create_score(Services const& services) {
 	m_hi_score = text.get();
 	text->text.transform.position.x = m_layout->hud_area.rb.x - 50.0f;
 	text->text.transform.position.y -= 0.5f * m_text_bounds_size.y;
-	text->text.set_align(Text::Align::eLeft);
+	text->text.set_align(Text::Align::eRight);
 	set_hi_score(0);
 	push(std::move(text));
 }
@@ -98,7 +98,7 @@ void Hud::create_lives(Services const& services) {
 	auto text = make_text(services);
 	text->text.transform.position.y -= 0.5f * m_text_bounds_size.y;
 	text->text.transform.position.x = m_lives_icon->get_position().x + m_lives_icon->get_size().x;
-	text->text.set_align(Text::Align::eRight);
+	text->text.set_align(Text::Align::eLeft);
 	text->text.set_string("0");
 	m_lives_count = text.get();
 	push(std::move(text));
