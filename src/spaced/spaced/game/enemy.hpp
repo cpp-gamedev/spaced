@@ -41,8 +41,8 @@ class Enemy : public IDamageable, public bave::IDrawable {
 	std::int64_t points{10};
 	float speed{100.0f};
 
-	std::string death_emitter{"particles/explode.json"};
-	std::vector<std::string> death_sfx{"sfx/swish.wav"};
+	std::string death_emitter{"assets/particles/explode.json"};
+	std::vector<std::string> death_sfx{"assets/sfx/swish.wav"};
 
   protected:
 	virtual void do_tick(bave::Seconds /*dt*/) {}

@@ -10,7 +10,7 @@ using bave::Shader;
 using bave::Texture;
 
 Shield::Shield(Services const& services) {
-	if (auto const texture = services.get<Resources>().get<Texture>("images/shield.png")) {
+	if (auto const texture = services.get<Resources>().get<Texture>("assets/images/shield.png")) {
 		m_sprite.set_texture(texture);
 		m_sprite.set_size(texture->get_size());
 	}

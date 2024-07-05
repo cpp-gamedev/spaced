@@ -6,7 +6,7 @@ using bave::Resources;
 using bave::Texture;
 
 Gunner::Gunner(bave::Services const& services, bave::NotNull<GunKinetic*> gun) : GunnerBase(services, gun, "Gunner") {
-	if (auto texture = services.get<Resources>().get<Texture>("images/ship_gunner.png")) {
+	if (auto texture = services.get<Resources>().get<Texture>("assets/images/ship_gunner.png")) {
 		m_sprite.set_size(texture->get_size());
 		m_sprite.set_texture(std::move(texture));
 	}

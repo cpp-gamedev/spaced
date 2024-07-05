@@ -14,7 +14,7 @@ class GunKinetic final : public Weapon {
 	void tick(bave::Seconds dt) final;
 
 	Projectile::Config projectile_config{};
-	std::string_view fire_sfx{"sfx/kinetic_fire.wav"};
+	std::string_view fire_sfx{"assets/sfx/kinetic_fire.wav"};
 	bave::Seconds reload_delay{0.25s};
 
   private:

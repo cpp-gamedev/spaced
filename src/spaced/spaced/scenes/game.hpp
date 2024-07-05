@@ -1,14 +1,14 @@
 #pragma once
-#include <bave/scene.hpp>
 #include <spaced/game/game_save.hpp>
 #include <spaced/game/hud.hpp>
 #include <spaced/game/player.hpp>
 #include <spaced/game/target_provider.hpp>
 #include <spaced/game/world.hpp>
+#include <spaced/scenes/base.hpp>
 #include <spaced/signal.hpp>
 
 namespace spaced {
-class GameScene : public bave::Scene {
+class GameScene : public BaseScene {
   public:
 	GameScene(bave::App& app, bave::Services const& services);
 

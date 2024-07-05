@@ -69,12 +69,12 @@ constexpr auto gdci_v = bave::GameDriver::CreateInfo{
 		{
 			.main_font =
 				{
-					.uri = "fonts/CuteDino.otf",
+					.uri = "assets/fonts/CuteDino.otf",
 					.preload_heights = preload_text_heights_v,
 				},
-			.spinner = "images/spinner.png",
-			.styles = "styles.json",
-			.interact_sfx = "sfx/interact.wav",
+			.spinner = "assets/images/spinner.png",
+			.styles = "assets/styles.json",
+			.interact_sfx = "assets/sfx/interact.wav",
 		},
 };
 } // namespace

@@ -1,8 +1,8 @@
 #pragma once
-#include <bave/scene.hpp>
+#include <spaced/scenes/base.hpp>
 
 namespace spaced {
-class MenuScene : public bave::Scene {
+class MenuScene : public BaseScene {
   public:
 	explicit MenuScene(bave::App& app, bave::Services const& services);
 
