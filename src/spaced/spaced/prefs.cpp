@@ -42,8 +42,7 @@ void Prefs::save(App const& app) const {
 	persistor.write_json(uri_v, json);
 }
 
-Prefs::View::View(NotNull<App const*> app, Services const& services)
-	: ui::View(services), m_app(app), m_audio(&services.get<IAudio>()), m_prefs(Prefs::load(*app)) {
+Prefs::View::View(NotNull<App const*> app, Services const& services) : m_app(app), m_audio(&services.get<IAudio>()), m_prefs(Prefs::load(*app)) {
 	auto const& styles = services.get<Styles>();
 
 	auto bg = std::make_unique<ui::OutlineQuad>();

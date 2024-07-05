@@ -3,7 +3,6 @@
 #include <bave/core/random.hpp>
 #include <bave/imgui/im_text.hpp>
 #include <bave/services/scene_switcher.hpp>
-#include <bave/services/styles.hpp>
 #include <bave/ui/button.hpp>
 #include <bave/ui/dialog.hpp>
 #include <spaced/game/controllers/auto_controller.hpp>
@@ -19,6 +18,7 @@ using bave::Action;
 using bave::App;
 using bave::AssetManifest;
 using bave::FocusChange;
+using bave::IAudio;
 using bave::im_text;
 using bave::Key;
 using bave::KeyInput;
@@ -30,7 +30,6 @@ using bave::Ptr;
 using bave::Seconds;
 using bave::Services;
 using bave::Shader;
-using bave::Styles;
 
 namespace ui = bave::ui;
 
@@ -46,9 +45,7 @@ namespace {
 }
 } // namespace
 
-GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_save(&app) {
-	clear_colour = services.get<Styles>().rgbas["mocha"];
-
+GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_audio(&services.get<IAudio>()), m_save(&app) {
 	auto& game_signals = services.get<GameSignals>();
 	m_on_player_scored = game_signals.player_scored.connect([this](Enemy const& e) {
 		m_score += e.points;
@@ -89,6 +86,8 @@ auto GameScene::get_asset_manifest() -> AssetManifest {
 				"sfx/kinetic_fire1.wav",
 				"sfx/beam_fire.wav",
 				"sfx/powerup_collect.wav",
+				"sfx/crunch.wav",
+				"sfx/lose.wav",
 				"music/game.mp3",
 			},
 		.particle_emitters =
@@ -125,9 +124,14 @@ void GameScene::start_play() {
 	++services.get<Stats>().game.play_count;
 
 	m_game_over_dialog_pushed = false;
+
+	on_start();
 }
 
-void GameScene::on_focus(FocusChange const& focus_change) { m_player->on_focus(focus_change); }
+void GameScene::on_focus(FocusChange const& focus_change) {
+	m_player->on_focus(focus_change);
+	m_paused = !focus_change.in_focus;
+}
 
 void GameScene::on_key(KeyInput const& key_input) {
 	if (key_input.key == Key::eEscape && key_input.action == Action::eRelease && key_input.mods == KeyMods{}) { get_switcher().switch_to<MenuScene>(); }
@@ -138,6 +142,8 @@ void GameScene::on_move(PointerMove const& pointer_move) { m_player->on_move(poi
 void GameScene::on_tap(PointerTap const& pointer_tap) { m_player->on_tap(pointer_tap); }
 
 void GameScene::tick(Seconds const dt) {
+	if (m_paused) { return; }
+
 	auto ft = bave::DeltaTime{};
 
 	m_world->tick(dt, &*m_player, is_in_play());
@@ -172,9 +178,12 @@ void GameScene::on_player_death() {
 void GameScene::respawn_player() {
 	m_player.emplace(get_services(), make_player_controller(get_services()));
 	m_player->set_shield(2s);
+	on_respawn();
 }
 
 void GameScene::on_game_over() {
+	m_audio->play_sfx("sfx/lose.wav");
+
 	auto dci = ui::DialogCreateInfo{
 		.size = {600.0f, 200.0f},
 		.content_text = "GAME OVER",
@@ -214,6 +223,8 @@ void GameScene::inspect(Seconds const dt, Seconds const frame_time) {
 
 			ImGui::Separator();
 			if (ImGui::Button("die")) { m_player->force_death(); }
+
+			do_inspect(dt);
 
 			ImGui::Separator();
 			im_text("dt: {:05.2f}", std::chrono::duration<float, std::milli>(dt).count());

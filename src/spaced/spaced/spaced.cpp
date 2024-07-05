@@ -74,6 +74,7 @@ constexpr auto gdci_v = bave::GameDriver::CreateInfo{
 				},
 			.spinner = "images/spinner.png",
 			.styles = "styles.json",
+			.interact_sfx = "sfx/interact.wav",
 		},
 };
 } // namespace

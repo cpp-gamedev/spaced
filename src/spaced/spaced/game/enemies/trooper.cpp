@@ -10,10 +10,6 @@ using bave::Seconds;
 using bave::Services;
 using bave::Texture;
 
-namespace {
-constexpr auto at_end(float const y, float const y_min, float const y_max) { return y_min > y || y > y_max; }
-} // namespace
-
 Trooper::Trooper(Services const& services, NotNull<GunKinetic*> gun) : GunnerBase(services, gun, "Trooper") {
 	if (auto texture = services.get<Resources>().get<Texture>("images/ship_trooper.png")) {
 		m_sprite.set_size(texture->get_size());
@@ -24,6 +20,7 @@ Trooper::Trooper(Services const& services, NotNull<GunKinetic*> gun) : GunnerBas
 
 	health = 3.0f;
 	speed = 150.0f;
+	points = 30;
 }
 
 void Trooper::do_tick(Seconds const dt) {
@@ -32,6 +29,10 @@ void Trooper::do_tick(Seconds const dt) {
 	m_sprite.transform.position.y += m_direction * m_y_speed * dt.count();
 	auto const y_min = get_layout().play_area.rb.y + m_sprite.get_size().y;
 	auto const y_max = get_layout().play_area.lt.y - m_sprite.get_size().y;
-	if (at_end(m_sprite.transform.position.y, y_min, y_max)) { m_direction = -m_direction; }
+	if (m_sprite.transform.position.y < y_min) {
+		m_direction = 1.0f;
+	} else if (m_sprite.transform.position.y > y_max) {
+		m_direction = -1.0f;
+	}
 }
 } // namespace spaced::enemy

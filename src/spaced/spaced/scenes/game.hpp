@@ -32,6 +32,9 @@ class GameScene : public bave::Scene {
 
 	void render(bave::Shader& shader) const final;
 
+	virtual void on_start() {}
+	virtual void on_respawn() {}
+
 	void start_play();
 
 	void on_player_death();
@@ -41,8 +44,11 @@ class GameScene : public bave::Scene {
 	void update_hi_score();
 
 	void inspect(bave::Seconds dt, bave::Seconds frame_time);
+	virtual void do_inspect(bave::Seconds /*dt*/) {}
 
 	void debug_controller_type();
+
+	bave::NotNull<bave::IAudio*> m_audio;
 
 	SignalHandle m_on_player_scored{};
 	SignalHandle m_on_1up{};
@@ -52,6 +58,7 @@ class GameScene : public bave::Scene {
 	std::optional<World> m_world{};
 	std::optional<Player> m_player{};
 	int m_spare_lives{2};
+	bool m_paused{};
 
 	std::int64_t m_score{};
 	bave::Ptr<Hud> m_hud{};
