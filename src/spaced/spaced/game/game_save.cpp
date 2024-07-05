@@ -11,7 +11,7 @@ using bave::NotNull;
 using bave::Persistor;
 
 namespace {
-constexpr std::string_view uri_v{"spaced/game_save.bin"};
+constexpr std::string_view uri_v{"userdata/game_save.bin"};
 } // namespace
 
 GameSave::GameSave(NotNull<App const*> app) : m_app(app) {

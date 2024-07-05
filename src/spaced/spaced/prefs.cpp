@@ -18,7 +18,7 @@ using bave::Styles;
 namespace ui = bave::ui;
 
 namespace {
-constexpr std::string_view uri_v{"spaced/prefs.json"};
+constexpr std::string_view uri_v{"userdata/prefs.json"};
 } // namespace
 
 auto Prefs::load(App const& app) -> Prefs {

@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(spaced)
+file(READ build_version.txt build_version)
+
+message(STATUS "spaced build version: ${build_version}")
+
+project(spaced VERSION ${build_version})
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

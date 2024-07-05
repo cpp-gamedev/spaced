@@ -38,7 +38,7 @@ struct GamepadProvider : IGamepadProvider {
 };
 
 struct PersistentStats : Stats {
-	static constexpr std::string_view uri_v{"spaced/stats.json"};
+	static constexpr std::string_view uri_v{"userdata/stats.json"};
 
 	NotNull<App const*> app;
 
