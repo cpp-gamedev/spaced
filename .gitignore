@@ -13,7 +13,7 @@ compile_commands.json
 
 imgui.ini
 bave*.log
-/spaced
+/userdata
 /notes.txt
 /local_store
 /massif.*
