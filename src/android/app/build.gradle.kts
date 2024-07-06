@@ -11,8 +11,8 @@ android {
 		applicationId = "com.karnage.spaced"
 		minSdk = 28
 		targetSdk = 34
-		versionCode = 1
-		versionName = "1.0"
+		versionCode = 100
+		versionName = "0.1.0"
 
 		ndk {
 			abiFilters.add("arm64-v8a")

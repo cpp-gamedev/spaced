@@ -34,6 +34,28 @@ jobs:
           files: ${{ env.PACKAGE_NAME }}
           draft: true
           fail_on_unmatched_files: true
+  package-android:
+    env:
+      PACKAGE_NAME: NovaSwarm-arm64-android-v0.1.0.apk
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: init
+        run: |
+            wget https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz
+            tar xvzf jdk-17_linux-x64_bin.tar.gz -C /opt
+      - name: build APK
+        run: |
+            export JAVA_HOME=$(find /opt -name "jdk-17.*")
+            cd src/android
+            ./gradlew assembleRelease
+            mv app/build/outputs/apk/release/app-release-unsigned.apk ../../$PACKAGE_NAME
+      - name: upload release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.PACKAGE_NAME }}
+          draft: true
+          fail_on_unmatched_files: true
   package-macos:
     runs-on: macos-latest
     env:
