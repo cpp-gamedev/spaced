@@ -11,6 +11,19 @@ using bave::DataLoaderBuilder;
 using bave::DesktopApp;
 using bave::to_string;
 
+namespace {
+auto get_log_filename() {
+	auto ret = std::string{};
+	ret.reserve(spaced::game_title_v.size() + 4);
+	for (char const c : spaced::game_title_v) {
+		if (std::isspace(static_cast<unsigned char>(c)) != 0) { continue; }
+		ret += c;
+	}
+	ret += ".log";
+	return ret;
+}
+} // namespace
+
 auto parse_args(int const argc, char const* const* argv) -> std::optional<int> {
 	namespace clap = bave::clap;
 	auto name = clap::make_app_name(*argv);
@@ -52,6 +65,7 @@ auto run(int const argc, char const* const* argv) -> int {
 		.mode = bave::Windowed{.extent = {1920, 1080}},
 		.msaa = vk::SampleCountFlagBits::e4,
 		.data_loader = data_loader_builder.build(),
+		.log_filename = get_log_filename(),
 	};
 
 	set_log_max_levels();

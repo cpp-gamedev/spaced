@@ -13,6 +13,7 @@ compile_commands.json
 
 imgui.ini
 bave*.log
+NovaSwarm*.log
 /userdata
 /notes.txt
 /local_store
