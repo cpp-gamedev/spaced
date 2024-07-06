@@ -21,4 +21,4 @@
   1. arm64 (64 bit ARM).
   1. Vulkan SDK must be installed globally.
 1. Android:
-  1. arm64 (64 bit ARM).
+  1. arm64 (64 bit ARM) or x64 (64 bit Intel/AMD).
