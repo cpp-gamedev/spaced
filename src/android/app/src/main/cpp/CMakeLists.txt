@@ -19,6 +19,7 @@ target_sources(${PROJECT_NAME} PRIVATE
 add_custom_target(copy-assets ALL
   ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_SOURCE_DIR}/../assets"
   COMMAND ${CMAKE_COMMAND} -E copy_directory "${spaced_path}/assets" "${CMAKE_CURRENT_SOURCE_DIR}/../assets"
+  COMMAND ${CMAKE_COMMAND} -E rm -rf "${CMAKE_CURRENT_SOURCE_DIR}/../assets/assets.zip"
 )
 
 add_dependencies(${PROJECT_NAME} copy-assets)
