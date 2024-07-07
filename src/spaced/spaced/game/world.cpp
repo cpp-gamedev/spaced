@@ -37,9 +37,9 @@ World::World(bave::NotNull<Services const*> services, CreateInfo const& create_i
 	m_background.transform.position = play_area.centre();
 
 	auto const config = StarField::Config{.spawn_rate = to_spawn_rate(create_info.starfield_density)};
-	m_star_field.add_field(resources.get<Texture>("images/star_blue.png"), config);
-	m_star_field.add_field(resources.get<Texture>("images/star_red.png"), config);
-	m_star_field.add_field(resources.get<Texture>("images/star_yellow.png"), config);
+	m_star_field.add_field(resources.get<Texture>("assets/images/star_blue.png"), config);
+	m_star_field.add_field(resources.get<Texture>("assets/images/star_red.png"), config);
+	m_star_field.add_field(resources.get<Texture>("assets/images/star_yellow.png"), config);
 }
 
 void World::tick(Seconds const dt, NotNull<IDamageable*> player, bool const in_play) {

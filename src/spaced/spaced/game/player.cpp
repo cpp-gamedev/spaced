@@ -33,18 +33,18 @@ Player::Player(Services const& services, std::unique_ptr<IController> controller
 	auto const& resources = services.get<Resources>();
 	auto const& rgbas = services.get<Styles>().rgbas;
 
-	if (auto const texture = services.get<Resources>().get<Texture>("images/ship_player.png")) {
+	if (auto const texture = services.get<Resources>().get<Texture>("assets/images/ship_player.png")) {
 		ship.set_texture(texture);
 		ship.set_size(texture->get_size());
 	}
 
-	if (auto const exhaust = resources.get<ParticleEmitter>("particles/exhaust.json")) { m_exhaust = *exhaust; }
+	if (auto const exhaust = resources.get<ParticleEmitter>("assets/particles/exhaust.json")) { m_exhaust = *exhaust; }
 	m_exhaust.config.lerp.tint.lo = rgbas["exhaust"];
 	m_exhaust.set_position(get_exhaust_position());
 	m_exhaust.config.respawn = true;
 	m_exhaust.pre_warm();
 
-	if (auto const death = resources.get<ParticleEmitter>("particles/explode.json")) { m_death_source = *death; }
+	if (auto const death = resources.get<ParticleEmitter>("assets/particles/explode.json")) { m_death_source = *death; }
 	m_death_source.config.respawn = false;
 }
 
@@ -135,7 +135,7 @@ void Player::set_shield(Seconds const ttl) {
 void Player::one_up() { m_on_1up->dispatch(); }
 
 void Player::on_death(Seconds const dt) {
-	m_audio->play_sfx("sfx/crunch.wav");
+	m_audio->play_sfx("assets/sfx/crunch.wav");
 
 	m_health = 0.0f;
 	m_death = m_death_source;

@@ -11,7 +11,7 @@ using bave::Services;
 using bave::Texture;
 
 Trooper::Trooper(Services const& services, NotNull<GunKinetic*> gun) : GunnerBase(services, gun, "Trooper") {
-	if (auto texture = services.get<Resources>().get<Texture>("images/ship_trooper.png")) {
+	if (auto texture = services.get<Resources>().get<Texture>("assets/images/ship_trooper.png")) {
 		m_sprite.set_size(texture->get_size());
 		m_sprite.set_texture(std::move(texture));
 	}

@@ -1,6 +1,6 @@
 {
   "asset_type": "ParticleEmitter",
-  "texture": "images/explode.png",
+  "texture": "assets/images/foam_bubble.png",
   "config": {
     "initial": {
       "position": {
@@ -22,40 +22,36 @@
           "hi": 180.000000
         },
         "speed": {
-          "lo": -200.000000,
-          "hi": 200.000000
+          "lo": -360.000000,
+          "hi": -80.000000
         }
       },
       "angular": {
-        "lo": -360.000000,
-        "hi": 360.000000
+        "lo": -90.000000,
+        "hi": 90.000000
       }
     },
     "lerp": {
-      "tint": {
-        "lo": "#ffffffff",
-        "hi": "#00000000"
-      },
       "scale": {
         "lo": [
           1.000000,
           1.000000
         ],
         "hi": [
-          0.700000,
-          0.700000
+          0.000000,
+          0.000000
         ]
       }
     },
     "ttl": {
-      "lo": 0.200000,
-      "hi": 0.800000
+      "lo": 0.500000,
+      "hi": 1.000000
     },
     "quad_size": [
-      150.000000,
-      150.000000
+      50.000000,
+      50.000000
     ],
-    "count": 40,
+    "count": 20,
     "respawn": true
   }
 }

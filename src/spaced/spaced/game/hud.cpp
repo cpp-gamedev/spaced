@@ -44,9 +44,9 @@ void Hud::set_weapon(std::shared_ptr<Texture const> texture) {
 	m_weapon_icon->sprite.set_texture(std::move(texture));
 }
 
-auto Hud::make_text(Services const& services) const -> std::unique_ptr<ui::Text> {
+auto Hud::make_text(Services const& services) const -> std::unique_ptr<ui::TextWrap> {
 	auto const& rgbas = m_styles->rgbas;
-	auto text = std::make_unique<ui::Text>(services);
+	auto text = std::make_unique<ui::TextWrap>(services);
 	text->text.set_height(TextHeight{60});
 	text->text.transform.position = m_layout->hud_area.centre();
 	text->text.tint = rgbas["grey"];
@@ -82,11 +82,11 @@ void Hud::create_score(Services const& services) {
 }
 
 void Hud::create_lives(Services const& services) {
-	auto sprite = std::make_unique<ui::Sprite>();
+	auto sprite = std::make_unique<ui::SpriteWrap>();
 	m_lives_icon = sprite.get();
 	m_lives_icon->sprite.set_size(glm::vec2{20.0f});
 	auto const& resources = services.get<Resources>();
-	if (auto const texture = resources.get<Texture>("images/icon_player.png")) {
+	if (auto const texture = resources.get<Texture>("assets/images/icon_player.png")) {
 		m_lives_icon->sprite.set_texture(texture);
 		m_lives_icon->sprite.set_size(texture->get_size());
 	}
@@ -105,7 +105,7 @@ void Hud::create_lives(Services const& services) {
 }
 
 void Hud::create_weapon(Services const& /*services*/) {
-	auto sprite = std::make_unique<ui::Sprite>();
+	auto sprite = std::make_unique<ui::SpriteWrap>();
 	m_weapon_icon = sprite.get();
 	sprite->sprite.set_size(glm::vec2{50.0f});
 	auto position = m_lives_icon->get_position();

@@ -19,7 +19,7 @@ class Hud : public bave::ui::View {
 	void set_weapon(std::shared_ptr<bave::Texture const> texture);
 
   private:
-	[[nodiscard]] auto make_text(bave::Services const& services) const -> std::unique_ptr<bave::ui::Text>;
+	[[nodiscard]] auto make_text(bave::Services const& services) const -> std::unique_ptr<bave::ui::TextWrap>;
 
 	void create_background();
 	void create_score(bave::Services const& services);
@@ -33,12 +33,12 @@ class Hud : public bave::ui::View {
 	SignalHandle m_on_weapon_changed{};
 
 	bave::Ptr<bave::ui::OutlineQuad> m_background{};
-	bave::Ptr<bave::ui::Text> m_score{};
-	bave::Ptr<bave::ui::Text> m_hi_score{};
+	bave::Ptr<bave::ui::TextWrap> m_score{};
+	bave::Ptr<bave::ui::TextWrap> m_hi_score{};
 
-	bave::Ptr<bave::ui::Sprite> m_lives_icon{};
-	bave::Ptr<bave::ui::Text> m_lives_count{};
+	bave::Ptr<bave::ui::SpriteWrap> m_lives_icon{};
+	bave::Ptr<bave::ui::TextWrap> m_lives_count{};
 
-	bave::Ptr<bave::ui::Sprite> m_weapon_icon{};
+	bave::Ptr<bave::ui::SpriteWrap> m_weapon_icon{};
 };
 } // namespace spaced

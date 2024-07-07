@@ -1,0 +1,1 @@
+Nova Swarm does not collect any user data. It stores user preferences, play progression, and app statistics locally.

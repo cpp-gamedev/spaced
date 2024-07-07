@@ -82,8 +82,8 @@ void EndlessScene::on_loaded() {
 	auto const& resources = get_services().get<Resources>();
 
 	m_enemy_gun.reload_delay = 0s;
-	m_enemy_gun.fire_sfx = "sfx/kinetic_fire1.wav";
-	m_enemy_gun.projectile_config.texture = resources.get<Texture>("images/round_kinetic_red.png");
+	m_enemy_gun.fire_sfx = "assets/sfx/kinetic_fire1.wav";
+	m_enemy_gun.projectile_config.texture = resources.get<Texture>("assets/images/round_kinetic_red.png");
 	m_enemy_gun.projectile_config.instigator = Instigator::eEnemy;
 	m_enemy_gun.projectile_config.x_speed = -m_enemy_gun.projectile_config.x_speed;
 	m_enemy_gun.projectile_config.x_scale = -1.0f;

@@ -6,7 +6,7 @@ using bave::Resources;
 using bave::Texture;
 
 Creep::Creep(bave::Services const& services) : Enemy(services, "Creep") {
-	if (auto texture = services.get<Resources>().get<Texture>("images/ship_creep.png")) {
+	if (auto texture = services.get<Resources>().get<Texture>("assets/images/ship_creep.png")) {
 		m_sprite.set_size(texture->get_size());
 		m_sprite.set_texture(std::move(texture));
 	}

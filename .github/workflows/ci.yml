@@ -62,4 +62,4 @@ jobs:
         run: |
             export JAVA_HOME=$(find /opt -name "jdk-17.*")
             cd src/android
-            ./gradlew assembleDebug
+            ./gradlew assembleRelease

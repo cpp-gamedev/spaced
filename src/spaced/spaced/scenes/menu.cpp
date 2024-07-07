@@ -6,6 +6,7 @@
 #include <bave/ui/dialog.hpp>
 #include <bave/ui/text.hpp>
 #include <spaced/build_version.hpp>
+#include <spaced/game_title.hpp>
 #include <spaced/prefs.hpp>
 #include <spaced/scenes/endless.hpp>
 #include <spaced/scenes/menu.hpp>
@@ -78,26 +79,26 @@ struct FadeIn : ui::IWidget {
 };
 } // namespace
 
-MenuScene::MenuScene(App& app, Services const& services) : Scene(app, services, "Home") { clear_colour = services.get<Styles>().rgbas["bg_top"]; }
+MenuScene::MenuScene(App& app, Services const& services) : BaseScene(app, services, "Home") { clear_colour = services.get<Styles>().rgbas["bg_top"]; }
 
 auto MenuScene::get_asset_manifest() -> AssetManifest {
 	return AssetManifest{
-		.audio_clips = {"music/menu.mp3"},
+		.audio_clips = {"assets/music/menu.mp3"},
 	};
 }
 
 void MenuScene::on_loaded() {
-	switch_track("music/menu.mp3");
+	switch_track("assets/music/menu.mp3");
 	create_ui();
 }
 
 void MenuScene::create_ui() {
-	auto header = std::make_unique<ui::Text>(get_services());
-	header->text.set_height(TextHeight{100}).set_string("Nova Swarm");
+	auto header = std::make_unique<ui::TextWrap>(get_services());
+	header->text.set_height(TextHeight{100}).set_string(std::string{game_title_v});
 	header->set_position({0.0f, 300.0f});
 	header->text.tint = bave::white_v;
 
-	auto verstr = std::make_unique<ui::Text>(get_services());
+	auto verstr = std::make_unique<ui::TextWrap>(get_services());
 	verstr->text.set_height(TextHeight{30}).set_string(to_string(build_version_v));
 	auto const view_rect = Rect<>::from_size(get_services().get<Display>().world.get_size());
 	auto const verpos = view_rect.bottom_right() + glm::vec2{-50.0f, 50.0f};

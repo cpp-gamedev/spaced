@@ -13,7 +13,9 @@ compile_commands.json
 
 imgui.ini
 bave*.log
-/spaced
+NovaSwarm*.log
+/userdata
 /notes.txt
 /local_store
 /massif.*
+/assets/assets.zip

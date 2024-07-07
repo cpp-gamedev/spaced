@@ -18,7 +18,7 @@ using bave::Styles;
 namespace ui = bave::ui;
 
 namespace {
-constexpr std::string_view uri_v{"spaced/prefs.json"};
+constexpr std::string_view uri_v{"userdata/prefs.json"};
 } // namespace
 
 auto Prefs::load(App const& app) -> Prefs {
@@ -52,7 +52,7 @@ Prefs::View::View(NotNull<App const*> app, Services const& services) : m_app(app
 	bg->set_tint(styles.rgbas["milk"]);
 	push(std::move(bg));
 
-	auto text = std::make_unique<ui::Text>(services);
+	auto text = std::make_unique<ui::TextWrap>(services);
 	text->text.set_string("music");
 	text->set_position({0.0f, 230.0f});
 	push(std::move(text));
@@ -66,7 +66,7 @@ Prefs::View::View(NotNull<App const*> app, Services const& services) : m_app(app
 	slider->set_position({0.0f, 200.0f});
 	push(std::move(slider));
 
-	text = std::make_unique<ui::Text>(services);
+	text = std::make_unique<ui::TextWrap>(services);
 	text->text.set_string("sfx");
 	text->set_position({0.0f, 130.0f});
 	push(std::move(text));
@@ -80,7 +80,7 @@ Prefs::View::View(NotNull<App const*> app, Services const& services) : m_app(app
 	slider->set_position({0.0f, 100.0f});
 	push(std::move(slider));
 
-	text = std::make_unique<ui::Text>(services);
+	text = std::make_unique<ui::TextWrap>(services);
 	text->text.set_string("starfield density");
 	text->set_position({0.0f, 30.0f});
 	push(std::move(text));

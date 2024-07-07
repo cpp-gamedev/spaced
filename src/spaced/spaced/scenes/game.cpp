@@ -45,7 +45,7 @@ namespace {
 }
 } // namespace
 
-GameScene::GameScene(App& app, Services const& services) : Scene(app, services, "Game"), m_audio(&services.get<IAudio>()), m_save(&app) {
+GameScene::GameScene(App& app, Services const& services) : BaseScene(app, services, "Game"), m_audio(&services.get<IAudio>()), m_save(&app) {
 	auto& game_signals = services.get<GameSignals>();
 	m_on_player_scored = game_signals.player_scored.connect([this](Enemy const& e) {
 		m_score += e.points;
@@ -65,42 +65,42 @@ auto GameScene::get_asset_manifest() -> AssetManifest {
 	return AssetManifest{
 		.textures =
 			{
-				"images/ship_player.png",
-				"images/icon_player.png",
-				"images/shield.png",
-				"images/ship_creep.png",
-				"images/ship_gunner.png",
-				"images/ship_trooper.png",
-				"images/background.png",
-				"images/star_blue.png",
-				"images/star_red.png",
-				"images/star_yellow.png",
-				"images/round_kinetic_green.png",
-				"images/round_kinetic_red.png",
-				"images/round_beam.png",
+				"assets/images/ship_player.png",
+				"assets/images/icon_player.png",
+				"assets/images/shield.png",
+				"assets/images/ship_creep.png",
+				"assets/images/ship_gunner.png",
+				"assets/images/ship_trooper.png",
+				"assets/images/background.png",
+				"assets/images/star_blue.png",
+				"assets/images/star_red.png",
+				"assets/images/star_yellow.png",
+				"assets/images/round_kinetic_green.png",
+				"assets/images/round_kinetic_red.png",
+				"assets/images/round_beam.png",
 			},
 		.audio_clips =
 			{
-				"sfx/swish.wav",
-				"sfx/kinetic_fire.wav",
-				"sfx/kinetic_fire1.wav",
-				"sfx/beam_fire.wav",
-				"sfx/powerup_collect.wav",
-				"sfx/crunch.wav",
-				"sfx/lose.wav",
-				"music/game.mp3",
+				"assets/sfx/swish.wav",
+				"assets/sfx/kinetic_fire.wav",
+				"assets/sfx/kinetic_fire1.wav",
+				"assets/sfx/beam_fire.wav",
+				"assets/sfx/powerup_collect.wav",
+				"assets/sfx/crunch.wav",
+				"assets/sfx/lose.wav",
+				"assets/music/game.mp3",
 			},
 		.particle_emitters =
 			{
-				"particles/exhaust.json",
-				"particles/explode.json",
-				"particles/powerup.json",
+				"assets/particles/exhaust.json",
+				"assets/particles/explode.json",
+				"assets/particles/powerup.json",
 			},
 	};
 }
 
 void GameScene::on_loaded() {
-	switch_track("music/game.mp3");
+	switch_track("assets/music/game.mp3");
 
 	auto hud = std::make_unique<Hud>(get_services());
 	m_hud = hud.get();
@@ -182,7 +182,7 @@ void GameScene::respawn_player() {
 }
 
 void GameScene::on_game_over() {
-	m_audio->play_sfx("sfx/lose.wav");
+	m_audio->play_sfx("assets/sfx/lose.wav");
 
 	auto dci = ui::DialogCreateInfo{
 		.size = {600.0f, 200.0f},

@@ -12,7 +12,7 @@ using bave::Services;
 using bave::Texture;
 
 GunKinetic::GunKinetic(Services const& services) : Weapon(services, "GunKinetic"), m_audio(&services.get<IAudio>()) {
-	projectile_config.texture = services.get<Resources>().get<Texture>("images/round_kinetic_green.png");
+	projectile_config.texture = services.get<Resources>().get<Texture>("assets/images/round_kinetic_green.png");
 	if (projectile_config.texture) { projectile_config.size = projectile_config.texture->get_size(); }
 }
 

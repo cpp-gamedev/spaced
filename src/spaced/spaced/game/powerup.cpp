@@ -17,7 +17,7 @@ Powerup::Powerup(Services const& services, std::string_view const name)
 	shape.set_shape(circle);
 
 	auto const& resources = services.get<Resources>();
-	if (auto const pu_emitter = resources.get<ParticleEmitter>("particles/powerup.json")) { emitter = *pu_emitter; }
+	if (auto const pu_emitter = resources.get<ParticleEmitter>("assets/particles/powerup.json")) { emitter = *pu_emitter; }
 
 	emitter.config.respawn = true;
 }
@@ -41,7 +41,7 @@ void Powerup::draw(Shader& shader) const {
 
 void Powerup::activate(Player& player) {
 	do_activate(player);
-	m_audio->play_sfx("sfx/powerup_collect.wav");
+	m_audio->play_sfx("assets/sfx/powerup_collect.wav");
 	m_destroyed = true;
 }
 } // namespace spaced
