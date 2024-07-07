@@ -6,8 +6,6 @@ message(STATUS "spaced build version: ${build_version}")
 
 project(spaced VERSION ${build_version})
 
-configure_file(src/package.yml.in "${CMAKE_CURRENT_SOURCE_DIR}/.github/workflows/package.yml" @ONLY)
-
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
