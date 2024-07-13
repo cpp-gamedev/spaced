@@ -46,6 +46,8 @@ Player::Player(Services const& services, std::unique_ptr<IController> controller
 
 	if (auto const death = resources.get<ParticleEmitter>("assets/particles/explode.json")) { m_death_source = *death; }
 	m_death_source.config.respawn = false;
+
+	m_heat_color = rgbas["ship_heat"];
 }
 
 void Player::on_focus(bave::FocusChange const& /*focus_changed*/) { m_controller->untap(); }
@@ -65,7 +67,20 @@ void Player::tick(State const& state, Seconds const dt) {
 		.muzzle_position = get_muzzle_position(),
 		.in_play = !m_health.is_dead(),
 	};
-	m_arsenal.tick(round_state, m_controller->is_firing(), dt);
+
+	auto const has_fired = m_arsenal.tick(round_state, m_controller->is_firing() && !m_is_cooling_down, dt);
+
+	if (has_fired) {
+		m_heat += m_heat_increment;
+	} else {
+		m_heat -= (m_is_cooling_down ? m_heat_dissipated * 0.5f : m_heat_dissipated) * dt.count();
+	}
+	if (m_heat >= 1.0f) { m_is_cooling_down = true; }
+	if (m_heat <= m_cooldown_threshold) { m_is_cooling_down = false; }
+	m_heat = std::clamp(m_heat, 0.f, 1.0f);
+
+	m_heat_being_rendered = glm::mix(m_heat_being_rendered, m_heat, 0.5f);
+	ship.tint = bave::Rgba::from(glm::mix(bave::white_v.to_vec4(), m_heat_color.to_vec4(), m_heat_being_rendered));
 
 	m_shield.set_position(ship.transform.position);
 	m_shield.tick(dt);
@@ -188,6 +203,10 @@ void Player::do_inspect() {
 		}
 
 		if (ImGui::Button("1up")) { one_up(); }
+
+		ImGui::DragFloat("heat dissipated per sec", &m_heat_dissipated, 0.05f, 0.f, 1.f);
+		ImGui::DragFloat("heat per round fired", &m_heat_increment, 0.1f, 0.f, 1.f);
+		ImGui::DragFloat("cooldown threshold", &m_cooldown_threshold, 0.1f, 0.f, 0.9f);
 	}
 }
 } // namespace spaced

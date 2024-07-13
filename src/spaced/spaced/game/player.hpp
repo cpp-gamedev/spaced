@@ -74,6 +74,14 @@ class Player : public IDamageable, public bave::IDrawable {
 	bave::ParticleEmitter m_exhaust{};
 	Shield m_shield;
 
+	float m_heat_being_rendered{};
+	float m_heat{};
+	float m_heat_increment = 0.1f;
+	float m_heat_dissipated = 0.4f; // per second
+	bave::Rgba m_heat_color;
+	bool m_is_cooling_down{};
+	float m_cooldown_threshold = 0.5f;
+
 	bave::ParticleEmitter m_death_source{};
 	std::optional<bave::ParticleEmitter> m_death{};
 

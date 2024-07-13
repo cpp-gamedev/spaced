@@ -1,4 +1,5 @@
 #pragma once
+#include <bave/core/inclusive_range.hpp>
 #include <bave/services/audio.hpp>
 #include <spaced/game/weapon.hpp>
 #include <spaced/game/weapons/projectile.hpp>
@@ -15,7 +16,7 @@ class GunKinetic final : public Weapon {
 
 	Projectile::Config projectile_config{};
 	std::string_view fire_sfx{"assets/sfx/kinetic_fire.wav"};
-	bave::Seconds reload_delay{0.25s};
+	bave::Seconds reload_delay{0.15s};
 
   private:
 	auto do_fire(glm::vec2 muzzle_position) -> std::unique_ptr<Round> final;

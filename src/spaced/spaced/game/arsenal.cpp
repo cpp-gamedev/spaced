@@ -21,11 +21,13 @@ auto Arsenal::get_weapon() -> Weapon& {
 	return const_cast<Weapon&>(std::as_const(*this).get_weapon()); // NOLINT(cppcoreguidelines-pro-type-const-cast)
 }
 
-void Arsenal::tick(IWeaponRound::State const& round_state, bool const fire, Seconds const dt) {
+auto Arsenal::tick(IWeaponRound::State const& round_state, bool const fire, Seconds const dt) -> bool {
 	tick_weapons(dt);
 	check_switch_weapon();
-	if (round_state.in_play && fire) { fire_weapon(round_state.muzzle_position); }
+	bool has_fired = false;
+	if (round_state.in_play && fire) { has_fired = fire_weapon(round_state.muzzle_position); }
 	tick_rounds(round_state, dt);
+	return has_fired;
 }
 
 void Arsenal::draw(Shader& shader) const {
@@ -53,11 +55,13 @@ void Arsenal::check_switch_weapon() {
 	}
 }
 
-void Arsenal::fire_weapon(glm::vec2 const muzzle_position) {
+auto Arsenal::fire_weapon(glm::vec2 const muzzle_position) -> bool {
 	if (auto round = get_weapon().fire(muzzle_position)) {
 		m_rounds.push_back(std::move(round));
 		++m_stats->player.shots_fired;
+		return true;
 	}
+	return false;
 }
 
 void Arsenal::tick_rounds(IWeaponRound::State const& round_state, Seconds const dt) {
