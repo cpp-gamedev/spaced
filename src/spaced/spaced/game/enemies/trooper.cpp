@@ -18,7 +18,7 @@ Trooper::Trooper(Services const& services, NotNull<GunKinetic*> gun) : GunnerBas
 
 	m_direction = random_in_range(0, 1) == 0 ? 1.0f : -1.0f;
 
-	health = 3.0f;
+	health = 4.0f;
 	speed = 150.0f;
 	points = 30;
 }
