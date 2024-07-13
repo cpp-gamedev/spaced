@@ -9,12 +9,12 @@ using bave::Resources;
 using bave::Seconds;
 using bave::Services;
 using bave::Shader;
+using bave::Texture;
 
 Powerup::Powerup(Services const& services, std::string_view const name)
 	: m_services(&services), m_layout(&services.get<Layout>()), m_audio(&services.get<IAudio>()), m_name(name) {
-	auto circle = Circle{};
-	circle.diameter = 40.0f;
-	shape.set_shape(circle);
+
+	sprite.set_size({80., 80.});
 
 	auto const& resources = services.get<Resources>();
 	if (auto const pu_emitter = resources.get<ParticleEmitter>("assets/particles/powerup.json")) { emitter = *pu_emitter; }
@@ -23,10 +23,10 @@ Powerup::Powerup(Services const& services, std::string_view const name)
 }
 
 void Powerup::tick(Seconds const dt) {
-	shape.transform.position.x -= speed * dt.count();
-	if (shape.transform.position.x < m_layout->play_area.lt.x - 0.5f * shape.get_shape().diameter) { m_destroyed = true; }
+	sprite.transform.position.x -= speed * dt.count();
+	if (sprite.transform.position.x < m_layout->play_area.lt.x - 0.5f * sprite.get_size().x - 300.) { m_destroyed = true; }
 
-	emitter.set_position(shape.transform.position);
+	emitter.set_position(sprite.transform.position);
 	if (!m_emitter_ticked) {
 		m_emitter_ticked = true;
 		emitter.pre_warm();
@@ -35,8 +35,8 @@ void Powerup::tick(Seconds const dt) {
 }
 
 void Powerup::draw(Shader& shader) const {
-	shape.draw(shader);
 	emitter.draw(shader);
+	sprite.draw(shader);
 }
 
 void Powerup::activate(Player& player) {

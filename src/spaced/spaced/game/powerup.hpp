@@ -16,13 +16,13 @@ class Powerup : public bave::IDrawable {
 	void tick(bave::Seconds dt);
 	void draw(bave::Shader& shader) const final;
 
-	[[nodiscard]] auto get_bounds() const -> bave::Rect<> { return shape.get_bounds(); }
+	[[nodiscard]] auto get_bounds() const -> bave::Rect<> { return sprite.get_bounds(); }
 	void activate(Player& player);
 
 	[[nodiscard]] auto is_destroyed() const -> bool { return m_destroyed; }
 
 	float speed{300.0f};
-	bave::CircleShape shape{};
+	bave::Sprite sprite{};
 	bave::ParticleEmitter emitter{};
 
   protected:
