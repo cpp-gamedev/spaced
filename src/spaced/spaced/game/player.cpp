@@ -47,7 +47,7 @@ Player::Player(Services const& services, std::unique_ptr<IController> controller
 	if (auto const death = resources.get<ParticleEmitter>("assets/particles/explode.json")) { m_death_source = *death; }
 	m_death_source.config.respawn = false;
 
-	m_heat_color = rgbas["ship_heat"];
+	m_heat_color = rgbas.get_or("ship_heat", bave::red_v);
 }
 
 void Player::on_focus(bave::FocusChange const& /*focus_changed*/) { m_controller->untap(); }

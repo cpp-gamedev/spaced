@@ -1,5 +1,4 @@
 #pragma once
-#include <bave/core/inclusive_range.hpp>
 #include <bave/services/audio.hpp>
 #include <spaced/game/weapon.hpp>
 #include <spaced/game/weapons/projectile.hpp>
