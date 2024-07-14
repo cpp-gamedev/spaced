@@ -134,7 +134,7 @@ void EndlessScene::on_player_scored(Enemy const& enemy) {
 
 	if (!powerup) { return; }
 
-	powerup->shape.transform.position = enemy.get_position();
+	powerup->sprite.transform.position = enemy.get_position();
 	push_powerup(std::move(powerup));
 	m_since_powerup = 0s;
 }
