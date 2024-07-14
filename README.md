@@ -25,7 +25,7 @@
 1. Android:
     1. arm64 (64 bit ARM) or x64 (64 bit Intel/AMD).
 
-*Note: Adreno GPUs on Android seem to have driver bugs that cause rendering artifacts and can sometimes crash the app.*
+*Note: Some GPUs on Android seem to have driver bugs that cause rendering artifacts and can sometimes crash the app.*
 
 ### Steps
 

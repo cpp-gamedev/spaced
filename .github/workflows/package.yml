@@ -7,23 +7,23 @@ jobs:
   package-linux:
     runs-on: ubuntu-24.04
     env:
-      PACKAGE_NAME: NovaSwarm-x64-linux-v0.1.0.zip
+      PACKAGE_NAME: NovaSwarm-x64-linux-${{ github.ref_name }}.zip
     steps:
       - uses: actions/checkout@v4
       - name: init
         run: sudo apt update -yqq && sudo apt install -yqq ninja-build xorg-dev libpulse-dev libkpipewire-dev
       - name: package release
-        run: cmake -DPACKAGE_NAME=${{ env.PACKAGE_NAME }} -P tools/package_release.cmake
+        run: cmake -DPACKAGE_NAME="${{ env.PACKAGE_NAME }}" -P tools/package_release.cmake
       - name: upload release
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ env.PACKAGE_NAME }}
+          files: "${{ env.PACKAGE_NAME }}"
           draft: true
           fail_on_unmatched_files: true
   package-windows:
     runs-on: windows-latest
     env:
-      PACKAGE_NAME: NovaSwarm-x64-windows-v0.1.0.zip
+      PACKAGE_NAME: NovaSwarm-x64-windows-${{ github.ref_name }}.zip
     steps:
       - uses: actions/checkout@v4
       - name: package release
@@ -31,12 +31,16 @@ jobs:
       - name: upload release
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ env.PACKAGE_NAME }}
+          files: "${{ env.PACKAGE_NAME }}"
           draft: true
           fail_on_unmatched_files: true
   package-android:
     env:
-      PACKAGE_NAME: NovaSwarm-arm64-android-v0.1.0.apk
+      PACKAGE_NAME: NovaSwarm-arm64-android-${{ github.ref_name }}.apk
+      SIGN_ARGS: >
+        -Pandroid.injected.signing.key.alias=${{ secrets.ANDROID_KEYSTORE_ALIAS }}
+        -Pandroid.injected.signing.store.password=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        -Pandroid.injected.signing.key.password=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -46,14 +50,16 @@ jobs:
             tar xvzf jdk-17_linux-x64_bin.tar.gz -C /opt
       - name: build APK
         run: |
+            echo ${{ secrets.ANDROID_KEYSTORE_BASE64 }} | base64 -d > keystore.jks
+            export KEYSTORE_PATH=$(pwd)/keystore.jks
             export JAVA_HOME=$(find /opt -name "jdk-17.*")
             cd src/android
-            ./gradlew assembleRelease
-            mv app/build/outputs/apk/release/app-release-unsigned.apk ../../$PACKAGE_NAME
+            ./gradlew assembleRelease -Pandroid.injected.signing.store.file=$KEYSTORE_PATH $SIGN_ARGS
+            mv app/build/outputs/apk/release/app-release.apk ../../$PACKAGE_NAME
       - name: upload release
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ env.PACKAGE_NAME }}
+          files: "${{ env.PACKAGE_NAME }}"
           draft: true
           fail_on_unmatched_files: true
   package-macos:
@@ -61,7 +67,7 @@ jobs:
     env:
       CPU_ARCH: arm64
       OS_NAME: macos
-      PACKAGE_NAME: NovaSwarm-arm64-macos-v0.1.0.zip
+      PACKAGE_NAME: NovaSwarm-arm64-macos-${{ github.ref_name }}.zip
     steps:
       - uses: actions/checkout@v4
       - name: init
@@ -71,7 +77,7 @@ jobs:
       - name: upload release
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ env.PACKAGE_NAME }}
+          files: "${{ env.PACKAGE_NAME }}"
           draft: true
           fail_on_unmatched_files: true
 
