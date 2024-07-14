@@ -18,13 +18,14 @@ class Arsenal {
 
 	void set_special(std::unique_ptr<Weapon> weapon) { m_next = std::move(weapon); }
 
-	void tick(IWeaponRound::State const& round_state, bool fire, bave::Seconds dt);
+	// returns whether a round was fired this frame
+	auto tick(IWeaponRound::State const& round_state, bool fire, bave::Seconds dt) -> bool;
 	void draw(bave::Shader& shader) const;
 
   private:
 	void tick_weapons(bave::Seconds dt);
 	void check_switch_weapon();
-	void fire_weapon(glm::vec2 muzzle_position);
+	auto fire_weapon(glm::vec2 muzzle_position) -> bool;
 	void tick_rounds(IWeaponRound::State const& round_state, bave::Seconds dt);
 
 	bave::NotNull<Stats*> m_stats;

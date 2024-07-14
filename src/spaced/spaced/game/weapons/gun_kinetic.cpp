@@ -38,6 +38,8 @@ void GunKinetic::do_inspect() {
 		auto tint = projectile_config.tint.to_vec4();
 		if (ImGui::ColorEdit4("projectile tint", &tint.x)) { projectile_config.tint = Rgba::from(tint); }
 		ImGui::DragFloat("damage", &projectile_config.damage, 0.25f, 0.25f, 10.0f);
+		auto reload_delay_s = reload_delay.count();
+		if (ImGui::DragFloat("reload delay", &reload_delay_s, 0.05f, 0.1f, 1.f)) { reload_delay = Seconds{reload_delay_s}; }
 	}
 }
 } // namespace spaced

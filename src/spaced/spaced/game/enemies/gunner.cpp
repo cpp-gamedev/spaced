@@ -11,7 +11,7 @@ Gunner::Gunner(bave::Services const& services, bave::NotNull<GunKinetic*> gun) :
 		m_sprite.set_texture(std::move(texture));
 	}
 
-	health = 2.0f;
+	health = 3.0f;
 	speed = 120.0f;
 	points = 20;
 }

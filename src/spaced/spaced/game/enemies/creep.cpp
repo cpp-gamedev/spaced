@@ -11,7 +11,7 @@ Creep::Creep(bave::Services const& services) : Enemy(services, "Creep") {
 		m_sprite.set_texture(std::move(texture));
 	}
 
-	health = 1.0f;
+	health = 2.0f;
 	speed = 100.0f;
 	points = 10;
 }

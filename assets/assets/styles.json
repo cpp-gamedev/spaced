@@ -9,7 +9,8 @@
     "gun_beam": "#bc96e6ff",
     "exhaust": "#36bbf5ff",
     "bg_top": "#10020eff",
-    "bg_bottom": "#040003ff"
+    "bg_bottom": "#040003ff",
+    "ship_heat": "#ac3939ff"
   },
   "buttons": {
     "default": {
