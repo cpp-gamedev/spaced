@@ -15,7 +15,7 @@ Beam::Beam(Services const& services, int rounds) : Powerup(services, "Beam"), m_
 	emitter.config.lerp.tint.hi.channels.w = 0;
 
 	auto const& resources = services.get<Resources>();
-	sprite.set_texture(resources.get<Texture>("assets/images/beam_powerup.png"));
+	sprite.set_texture(resources.get<Texture>("assets/images/powerup_beam.png"));
 }
 
 void Beam::do_activate(Player& player) {

@@ -78,8 +78,8 @@ auto GameScene::get_asset_manifest() -> AssetManifest {
 				"assets/images/round_kinetic_green.png",
 				"assets/images/round_kinetic_red.png",
 				"assets/images/round_beam.png",
-				"assets/images/beam_powerup.png",
-				"assets/images/extra_life.png",
+				"assets/images/powerup_beam.png",
+				"assets/images/powerup_1up.png",
 			},
 		.audio_clips =
 			{

@@ -14,7 +14,7 @@ OneUp::OneUp(Services const& services) : Powerup(services, "OneUp") {
 	emitter.config.lerp.tint.hi.channels.w = 0;
 
 	auto const& resources = services.get<Resources>();
-	sprite.set_texture(resources.get<Texture>("assets/images/extra_life.png"));
+	sprite.set_texture(resources.get<Texture>("assets/images/powerup_1up.png"));
 }
 
 void OneUp::do_activate(Player& player) { player.one_up(); }
