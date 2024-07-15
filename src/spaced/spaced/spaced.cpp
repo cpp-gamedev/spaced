@@ -62,15 +62,12 @@ struct PersistentStats : Stats {
 	}
 };
 
-constexpr auto preload_text_heights_v = std::array{TextHeight{100}, TextHeight{60}};
-
 constexpr auto gdci_v = bave::GameDriver::CreateInfo{
 	.assets =
 		{
 			.main_font =
 				{
 					.uri = "assets/fonts/CuteDino.otf",
-					.preload_heights = preload_text_heights_v,
 				},
 			.spinner = "assets/images/spinner.png",
 			.styles = "assets/styles.json",
